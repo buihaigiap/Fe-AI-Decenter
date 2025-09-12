@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import { AuthMode } from '../types';
-import { DockerIcon } from '../components/icons/DockerIcon';
+import { AerugoIcon } from '../components/icons/DockerIcon';
 
 interface AuthPageProps {
   onLoginSuccess: (token: string) => void;
@@ -23,10 +24,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-center p-4 font-sans">
       <div className="w-full max-w-md mx-auto">
         <div className="flex justify-center mb-6">
-          <DockerIcon className="w-20 h-20 text-blue-500" />
+          <AerugoIcon className="w-20 h-20 text-blue-500" />
         </div>
         <h1 className="text-3xl font-bold text-center text-slate-50 mb-2">
-          Docker Registry
+          Aerugo Registry
         </h1>
         <p className="text-center text-slate-400 mb-8">
           {authMode === AuthMode.Login ? 'Sign in to your account' : 'Create a new account'}

@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Organization } from '../../types';
-import { DockerIcon } from '../icons/DockerIcon'; // Using as a placeholder icon
+import { AerugoIcon } from '../icons/DockerIcon';
 
 interface OrganizationListItemProps {
   organization: Organization;
@@ -25,7 +26,7 @@ const OrganizationListItem: React.FC<OrganizationListItemProps> = ({ organizatio
                         <img className="h-12 w-12 rounded-full object-cover" src={organization.avatar_url} alt={`${organization.display_name} avatar`} />
                     ) : (
                         <span className="h-12 w-12 rounded-full bg-slate-700 flex items-center justify-center">
-                            <DockerIcon className="h-7 w-7 text-slate-400" />
+                            <AerugoIcon className="h-7 w-7 text-slate-400" />
                         </span>
                     )}
                 </div>

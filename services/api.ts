@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../config';
-import { Organization, Repository, CreateOrganizationRequest, OrganizationMember, AddMemberRequest } from '../types';
+import { Organization, Repository, CreateOrganizationRequest, OrganizationMember, AddMemberRequest, CreateRepositoryRequest } from '../types';
 
 // Interface to match the structure of the API response for organizations
 interface OrganizationsApiResponse {
@@ -72,6 +72,13 @@ export const createOrganization = (data: CreateOrganizationRequest, token: strin
 export const fetchRepositories = async (orgId: number, token: string): Promise<Repository[]> => {
   const data = await fetchWithAuth<RepositoriesApiResponse>(`/api/v1/orgs/${orgId}/repos`, token);
   return data?.repositories || [];
+};
+
+export const createRepository = (orgId: number, data: CreateRepositoryRequest, token: string): Promise<Repository> => {
+  return fetchWithAuth<Repository>(`/api/v1/orgs/${orgId}/repos`, token, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
 };
 
 export const fetchOrganizationMembers = async (orgId: number, token: string): Promise<OrganizationMember[]> => {

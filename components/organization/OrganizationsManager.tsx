@@ -76,9 +76,9 @@ const OrganizationsManager: React.FC<OrganizationsManagerProps> = ({
 
         {!showCreateForm && !selectedOrganization && (
             <div className="h-full flex items-center justify-center bg-slate-800 border-2 border-dashed border-slate-700 rounded-lg">
-                <div className="text-center">
+                <div className="text-center p-6">
                     <h3 className="text-lg font-medium text-slate-300">Manage Your Organization</h3>
-                    <p className="text-slate-400 mt-1">Select an organization from the list to view its members.</p>
+                    <p className="text-slate-400 mt-1">Select an organization to manage its members and settings, or create a new one to get started.</p>
                 </div>
             </div>
         )}

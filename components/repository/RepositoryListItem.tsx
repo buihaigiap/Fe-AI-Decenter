@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Repository } from '../../types';
 import { LockIcon } from '../icons/LockIcon';
 import { GlobeIcon } from '../icons/GlobeIcon';
+import { ClipboardIcon } from '../icons/ClipboardIcon';
 
 interface RepositoryListItemProps {
   repository: Repository;
@@ -9,12 +10,26 @@ interface RepositoryListItemProps {
 
 const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository }) => {
   const isPrivate = repository.visibility === 'private';
+  const [copyStatus, setCopyStatus] = useState('Copy');
+
+  const pullCommand = `docker pull registry.example.com/org-${repository.organization_id}/${repository.name}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(pullCommand).then(() => {
+      setCopyStatus('Copied!');
+      setTimeout(() => setCopyStatus('Copy'), 2000);
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+      setCopyStatus('Failed');
+       setTimeout(() => setCopyStatus('Copy'), 2000);
+    });
+  };
 
   return (
-    <div className="bg-slate-800/50 hover:bg-slate-700/50 transition-colors duration-200 border border-slate-700 rounded-lg p-4 flex items-center justify-between">
+    <div className="bg-slate-800/50 hover:bg-slate-700/50 transition-colors duration-200 border border-slate-700 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div className="flex-1">
         <div className="flex items-center space-x-3">
-            <a href="#" className="text-lg font-semibold text-blue-400 hover:underline">
+            <a href={`#/repository/${repository.name}`} className="text-lg font-semibold text-blue-400 hover:underline">
               {repository.name}
             </a>
             <span 
@@ -31,6 +46,24 @@ const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository }) =
         <p className="mt-1 text-sm text-slate-400">
           {repository.description || 'No description provided.'}
         </p>
+      </div>
+      <div className="w-full sm:w-auto">
+        <div className="relative flex items-center w-full">
+            <input 
+                type="text" 
+                readOnly 
+                value={pullCommand}
+                className="bg-slate-900/70 text-slate-300 text-sm rounded-md pl-3 pr-10 py-1.5 w-full font-mono focus:outline-none"
+            />
+            <button
+                onClick={handleCopy}
+                title="Copy pull command"
+                className="absolute right-1 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 hover:bg-slate-700 hover:text-slate-100 transition-colors"
+            >
+                <ClipboardIcon className="w-4 h-4" />
+                <span className="sr-only">{copyStatus}</span>
+            </button>
+        </div>
       </div>
     </div>
   );

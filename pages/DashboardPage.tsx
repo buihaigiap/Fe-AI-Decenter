@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import Button from '../components/Button';
 import OrganizationSelector from '../components/organization/OrganizationSelector';
@@ -5,6 +6,7 @@ import RepositoryBrowser from '../components/repository/RepositoryBrowser';
 import OrganizationsManager from '../components/organization/OrganizationsManager';
 import { Organization } from '../types';
 import { fetchOrganizations } from '../services/api';
+import { AerugoIcon } from '../components/icons/DockerIcon';
 
 interface DashboardPageProps {
   token: string;
@@ -29,7 +31,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
       const validOrgs = Array.isArray(orgs) ? orgs : [];
       setOrganizations(validOrgs);
       
-      // If no org is selected or the selected one is gone, select the first available.
       if (validOrgs.length > 0 && (!selectedOrgId || !validOrgs.some(o => o.id === selectedOrgId))) {
         setSelectedOrgId(validOrgs[0].id);
       } else if (validOrgs.length === 0) {
@@ -46,7 +47,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
 
   useEffect(() => {
     getOrganizations();
-  }, [token]); // Removed getOrganizations from deps to avoid re-running on selectedOrgId change
+  }, [token]);
 
   const NavLink: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
@@ -67,7 +68,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-slate-50">Docker Registry</h1>
+               <div className="flex items-center space-x-3">
+                  <AerugoIcon className="h-7 w-7 text-blue-500" />
+                  <h1 className="text-xl font-bold text-slate-50">Aerugo Registry</h1>
+               </div>
               <div className="flex items-center space-x-4">
                   <NavLink active={view === 'repositories'} onClick={() => setView('repositories')}>
                     Repositories
@@ -100,9 +104,17 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
               <RepositoryBrowser key={selectedOrgId} token={token} organizationId={selectedOrgId} />
             ) : (
               <div className="text-center py-20 px-4">
-                <h2 className="text-2xl font-semibold text-slate-200 mb-4">Welcome to Your Dashboard</h2>
-                <p className="text-slate-400">
-                  {isLoadingOrgs ? 'Loading organizations...' : 'Please select an organization or create one to get started.'}
+                <h2 className="text-2xl font-semibold text-slate-200 mb-4">Welcome to Aerugo</h2>
+                <p className="text-slate-400 max-w-md mx-auto">
+                  {isLoadingOrgs ? 'Loading organizations...' : 
+                  <>
+                    It looks like you don't have any organizations. Please select one from the dropdown, or {' '}
+                    <button onClick={() => setView('organizations')} className="font-semibold text-blue-500 hover:text-blue-400 focus:outline-none rounded">
+                      create one
+                    </button>
+                    {' '} to get started.
+                  </>
+                  }
                 </p>
               </div>
             )

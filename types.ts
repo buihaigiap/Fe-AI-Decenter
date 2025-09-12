@@ -1,4 +1,4 @@
-// FIX: Define AuthMode enum to resolve circular dependency and "module has no exported member" error.
+// FIX: Removed incorrect import of 'AuthMode' from './pages/AuthPage' which caused a circular dependency.
 export enum AuthMode {
   Login = 'login',
   Register = 'register',
@@ -49,5 +49,11 @@ export interface Repository {
   organization_id: number;
   name: string;
   description: string | null;
+  visibility: 'public' | 'private';
+}
+
+export interface CreateRepositoryRequest {
+  name: string;
+  description?: string | null;
   visibility: 'public' | 'private';
 }

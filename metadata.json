@@ -1,5 +1,5 @@
 {
-  "name": "Docker Registry Auth",
-  "description": "A modern, sleek login and registration interface for a Docker Registry service, built with React and Tailwind CSS.",
+  "name": "Aerugo Registry UI",
+  "description": "A web interface for the Aerugo container registry, allowing management of organizations, repositories, and members.",
   "requestFramePermissions": []
 }
