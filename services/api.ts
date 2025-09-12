@@ -1,10 +1,21 @@
 import { API_BASE_URL } from '../config';
-import { Organization, Repository, CreateOrganizationRequest } from '../types';
+import { Organization, Repository, CreateOrganizationRequest, OrganizationMember, AddMemberRequest } from '../types';
 
 // Interface to match the structure of the API response for organizations
 interface OrganizationsApiResponse {
   organizations: Organization[];
 }
+
+// Interface to match the structure of the API response for repositories
+interface RepositoriesApiResponse {
+  repositories: Repository[];
+}
+
+// Interface to match a potential nested structure for members API response
+interface OrganizationMembersApiResponse {
+  members: OrganizationMember[];
+}
+
 
 class ApiError extends Error {
   constructor(message: string, public status: number) {
@@ -20,7 +31,9 @@ async function fetchWithAuth<T>(
 ): Promise<T> {
   const headers = new Headers(options.headers || {});
   headers.set('Authorization', `Bearer ${token}`);
-  headers.set('Content-Type', 'application/json');
+  if (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH') {
+    headers.set('Content-Type', 'application/json');
+  }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -56,6 +69,23 @@ export const createOrganization = (data: CreateOrganizationRequest, token: strin
   });
 };
 
-export const fetchRepositories = (orgId: number, token: string): Promise<Repository[]> => {
-  return fetchWithAuth<Repository[]>(`/api/v1/orgs/${orgId}/repos`, token);
+export const fetchRepositories = async (orgId: number, token: string): Promise<Repository[]> => {
+  const data = await fetchWithAuth<RepositoriesApiResponse>(`/api/v1/orgs/${orgId}/repos`, token);
+  return data?.repositories || [];
+};
+
+export const fetchOrganizationMembers = async (orgId: number, token: string): Promise<OrganizationMember[]> => {
+  const data = await fetchWithAuth<OrganizationMembersApiResponse | OrganizationMember[]>(`/api/v1/organizations/${orgId}/members`, token);
+  // Defensively handle both direct array response and nested object response
+  if (Array.isArray(data)) {
+    return data;
+  }
+  return data?.members || [];
+};
+
+export const addOrganizationMember = (orgId: number, data: AddMemberRequest, token: string): Promise<OrganizationMember> => {
+  return fetchWithAuth<OrganizationMember>(`/api/v1/organizations/${orgId}/members`, token, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
 };

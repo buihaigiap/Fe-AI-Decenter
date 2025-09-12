@@ -4,9 +4,11 @@ import OrganizationListItem from './OrganizationListItem';
 
 interface OrganizationListProps {
   organizations: Organization[];
+  selectedOrganizationId: number | null;
+  onSelectOrganization: (organization: Organization) => void;
 }
 
-const OrganizationList: React.FC<OrganizationListProps> = ({ organizations }) => {
+const OrganizationList: React.FC<OrganizationListProps> = ({ organizations, selectedOrganizationId, onSelectOrganization }) => {
   if (organizations.length === 0) {
     return (
       <div className="text-center py-10 px-4 bg-slate-800 border-2 border-dashed border-slate-700 rounded-lg">
@@ -20,7 +22,12 @@ const OrganizationList: React.FC<OrganizationListProps> = ({ organizations }) =>
     <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-lg">
         <ul className="divide-y divide-slate-700">
             {organizations.map(org => (
-                <OrganizationListItem key={org.id} organization={org} />
+                <OrganizationListItem 
+                    key={org.id} 
+                    organization={org} 
+                    isSelected={org.id === selectedOrganizationId}
+                    onSelect={() => onSelectOrganization(org)}
+                />
             ))}
         </ul>
     </div>

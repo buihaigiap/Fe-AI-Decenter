@@ -1,7 +1,27 @@
-// Fix: Define AuthMode enum here to remove circular dependency.
+// FIX: Define AuthMode enum to resolve circular dependency and "module has no exported member" error.
 export enum AuthMode {
-  Login = 'LOGIN',
-  Register = 'REGISTER',
+  Login = 'login',
+  Register = 'register',
+}
+
+export enum OrganizationRole {
+  Admin = 'admin',
+  Member = 'member',
+}
+
+export interface OrganizationMember {
+  id: number;
+  organization_id: number;
+  user_id: number;
+  role: string; 
+  joined_at: string;
+  username: string;
+  email: string;
+}
+
+export interface AddMemberRequest {
+  email: string;
+  role: OrganizationRole;
 }
 
 export interface Organization {
