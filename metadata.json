@@ -1,0 +1,5 @@
+{
+  "name": "Docker Registry Auth",
+  "description": "A modern, sleek login and registration interface for a Docker Registry service, built with React and Tailwind CSS.",
+  "requestFramePermissions": []
+}
