@@ -7,9 +7,10 @@ import { ClipboardIcon } from '../icons/ClipboardIcon';
 interface RepositoryListItemProps {
   repository: Repository;
   organizationName: string;
+  onSelect: (repository: Repository) => void;
 }
 
-const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, organizationName }) => {
+const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, organizationName, onSelect }) => {
   const isPrivate = repository.visibility === 'private';
   const [copyStatus, setCopyStatus] = useState('Copy');
 
@@ -30,9 +31,9 @@ const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, org
     <div className="bg-slate-800/50 hover:bg-slate-700/50 transition-colors duration-200 border border-slate-700 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div className="flex-1">
         <div className="flex items-center space-x-3">
-            <a href={`#/repository/${repository.name}`} className="text-lg font-semibold text-blue-400 hover:underline">
+            <button onClick={() => onSelect(repository)} className="text-lg font-semibold text-blue-400 hover:underline text-left">
               {repository.name}
-            </a>
+            </button>
             <span 
               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                 isPrivate 

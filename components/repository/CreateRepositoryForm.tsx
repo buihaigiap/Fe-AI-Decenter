@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createRepository } from '../../services/api';
-import { CreateRepositoryRequest } from '../../types';
+import { CreateRepositoryRequest, Repository } from '../../types';
 import Input from '../Input';
 import Button from '../Button';
 import { GlobeIcon } from '../icons/GlobeIcon';
@@ -9,7 +9,7 @@ import { LockIcon } from '../icons/LockIcon';
 interface CreateRepositoryFormProps {
   token: string;
   organizationId: number;
-  onSuccess: () => void;
+  onSuccess: (newRepo: Repository) => void;
   onCancel: () => void;
 }
 
@@ -46,8 +46,8 @@ const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, orga
     setIsLoading(true);
     setError(null);
     try {
-      await createRepository(organizationId, formData, token);
-      onSuccess();
+      const newRepo = await createRepository(organizationId, formData, token);
+      onSuccess(newRepo);
     } catch (err) {
       setError('Failed to create repository. The name might already be taken.');
       console.error(err);
