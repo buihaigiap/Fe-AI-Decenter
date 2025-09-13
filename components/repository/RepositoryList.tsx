@@ -17,7 +17,6 @@ const RepositoryList: React.FC<RepositoryListProps> = ({ repositories, organizat
       </div>
     );
   }
-
   return (
     <div className="space-y-4">
       {repositories.map(repo => (

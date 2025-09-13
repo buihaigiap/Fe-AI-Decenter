@@ -23,11 +23,11 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
   const [viewingRepository, setViewingRepository] = useState<Repository | null>(null);
 
   const getRepositories = useCallback(async () => {
-    if (!organizationId) return;
+    if (!organizationName) return;
     try {
       setIsLoading(true);
       setError(null);
-      const repos = await fetchRepositories(organizationId, token);
+      const repos = await fetchRepositories(organizationName, token);
       setRepositories(Array.isArray(repos) ? repos : []);
     } catch (err) {
       setError('Failed to load repositories.');
@@ -36,7 +36,7 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
     } finally {
       setIsLoading(false);
     }
-  }, [organizationId, token]);
+  }, [organizationName, token]);
 
   useEffect(() => {
     setSearchTerm('');
@@ -81,7 +81,7 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
       return (
         <CreateRepositoryForm 
             token={token} 
-            organizationId={organizationId} 
+            organizationName={organizationName}
             onSuccess={handleCreationSuccess}
             onCancel={() => setShowCreateForm(false)}
         />

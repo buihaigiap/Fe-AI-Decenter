@@ -8,13 +8,20 @@ import { LockIcon } from '../icons/LockIcon';
 
 interface CreateRepositoryFormProps {
   token: string;
-  organizationId: number;
+  organizationName: string;
   onSuccess: (newRepo: Repository) => void;
   onCancel: () => void;
 }
 
-const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, organizationId, onSuccess, onCancel }) => {
-  const [formData, setFormData] = useState<CreateRepositoryRequest>({
+// Define an interface for the form's internal state for better type safety
+interface RepositoryFormState {
+  name: string;
+  description: string;
+  visibility: 'public' | 'private';
+}
+
+const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, organizationName, onSuccess, onCancel }) => {
+  const [formData, setFormData] = useState<RepositoryFormState>({
     name: '',
     description: '',
     visibility: 'private',
@@ -37,16 +44,18 @@ const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, orga
       setError('Repository name is required.');
       return;
     }
-    // Basic validation for repo name (lowercase, alphanumeric, optional separators)
-    if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(formData.name)) {
-        setError('Name must be lowercase, alphanumeric, and can contain separators (-, _, .).');
-        return;
-    }
 
     setIsLoading(true);
     setError(null);
     try {
-      const newRepo = await createRepository(organizationId, formData, token);
+      // Transform the form state into the required API payload
+      const apiPayload: CreateRepositoryRequest = {
+        name: formData.name,
+        description: formData.description || null,
+        is_public: formData.visibility === 'public',
+      };
+      
+      const newRepo = await createRepository(organizationName, apiPayload, token);
       onSuccess(newRepo);
     } catch (err) {
       setError('Failed to create repository. The name might already be taken.');
@@ -69,7 +78,6 @@ const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, orga
           placeholder="my-awesome-app"
           required
         />
-        <p className="text-xs text-slate-400 -mt-4 ml-1">Lowercase, numbers, and separators (-, _, .) allowed.</p>
 
         <Input
           id="description"

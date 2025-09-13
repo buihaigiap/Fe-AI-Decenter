@@ -43,6 +43,13 @@ export interface CreateOrganizationRequest {
   website_url?: string | null;
 }
 
+export interface UpdateOrganizationRequest {
+  display_name?: string;
+  description?: string | null;
+  avatar_url?: string | null;
+  website_url?: string | null;
+}
+
 
 export interface Repository {
   id: number;
@@ -55,5 +62,5 @@ export interface Repository {
 export interface CreateRepositoryRequest {
   name: string;
   description?: string | null;
-  visibility: 'public' | 'private';
+  is_public: boolean;
 }

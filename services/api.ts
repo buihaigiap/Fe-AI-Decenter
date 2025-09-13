@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../config';
-import { Organization, Repository, CreateOrganizationRequest, OrganizationMember, AddMemberRequest, CreateRepositoryRequest } from '../types';
+import { Organization, Repository, CreateOrganizationRequest, UpdateOrganizationRequest, OrganizationMember, AddMemberRequest, CreateRepositoryRequest } from '../types';
 
 // Interface to match the structure of the API response for organizations
 interface OrganizationsApiResponse {
@@ -69,14 +69,27 @@ export const createOrganization = (data: CreateOrganizationRequest, token: strin
   });
 };
 
-export const fetchRepositories = async (orgId: number, token: string): Promise<Repository[]> => {
-  const data = await fetchWithAuth<RepositoriesApiResponse>(`/api/v1/orgs/${orgId}/repos`, token);
+export const updateOrganization = (orgId: number, data: UpdateOrganizationRequest, token: string): Promise<Organization> => {
+  return fetchWithAuth<Organization>(`/api/v1/organizations/${orgId}`, token, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+};
+
+export const deleteOrganization = (orgId: number, token: string): Promise<void> => {
+  return fetchWithAuth<void>(`/api/v1/organizations/${orgId}`, token, {
+    method: 'DELETE',
+  });
+};
+
+export const fetchRepositories = async (namespace: string, token: string): Promise<Repository[]> => {
+  // NOTE: This endpoint for GET is not in the provided OpenAPI spec, but is inferred from other endpoints.
+  const data = await fetchWithAuth<RepositoriesApiResponse>(`/api/v1/repos/${namespace}`, token);
   return data?.repositories || [];
 };
 
-export const createRepository = (orgId: number, data: CreateRepositoryRequest, token: string): Promise<Repository> => {
-  // NOTE: This endpoint is not in the provided spec. Assuming a logical structure.
-  return fetchWithAuth<Repository>(`/api/v1/orgs/${orgId}/repos`, token, {
+export const createRepository = (namespace: string, data: CreateRepositoryRequest, token: string): Promise<Repository> => {
+  return fetchWithAuth<Repository>(`/api/v1/repos/${namespace}`, token, {
     method: 'POST',
     body: JSON.stringify(data),
   });

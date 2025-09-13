@@ -29,6 +29,11 @@ const OrganizationsManager: React.FC<OrganizationsManagerProps> = ({
     onDataChange(); 
   }
 
+  const handleDataChange = () => {
+    setSelectedOrganization(null);
+    onDataChange();
+  };
+
   const handleSelectOrganization = (org: Organization) => {
     setSelectedOrganization(org);
     setShowCreateForm(false); // Hide create form when selecting an org
@@ -71,6 +76,7 @@ const OrganizationsManager: React.FC<OrganizationsManagerProps> = ({
                 key={selectedOrganization.id} // Re-mount component on org change
                 token={token}
                 organization={selectedOrganization} 
+                onDataChange={handleDataChange}
             />
         )}
 
