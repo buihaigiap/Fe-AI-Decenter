@@ -25,8 +25,8 @@ const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
   }, [organizations, selectedOrganizationId, onOrganizationSelect]);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const orgId = parseInt(event.target.value, 10);
-    onOrganizationSelect(isNaN(orgId) ? null : orgId);
+    const orgId = Number(event.target.value);
+    onOrganizationSelect(orgId || null);
   };
   
   const value = selectedOrganizationId ?? "";

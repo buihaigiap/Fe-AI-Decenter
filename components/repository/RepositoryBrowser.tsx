@@ -10,9 +10,10 @@ import { PlusIcon } from '../icons/PlusIcon';
 interface RepositoryBrowserProps {
   token: string;
   organizationId: number;
+  organizationName: string;
 }
 
-const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizationId }) => {
+const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizationId, organizationName }) => {
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,7 +91,7 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
                 onCancel={() => setShowCreateForm(false)}
             />
         ) : (
-          <RepositoryList repositories={filteredRepositories} />
+          <RepositoryList repositories={filteredRepositories} organizationName={organizationName} />
         )}
       </main>
     </div>

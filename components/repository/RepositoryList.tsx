@@ -4,9 +4,10 @@ import RepositoryListItem from './RepositoryListItem';
 
 interface RepositoryListProps {
   repositories: Repository[];
+  organizationName: string;
 }
 
-const RepositoryList: React.FC<RepositoryListProps> = ({ repositories }) => {
+const RepositoryList: React.FC<RepositoryListProps> = ({ repositories, organizationName }) => {
   if (repositories.length === 0) {
     return (
       <div className="text-center py-10 px-4">
@@ -19,7 +20,7 @@ const RepositoryList: React.FC<RepositoryListProps> = ({ repositories }) => {
   return (
     <div className="space-y-4">
       {repositories.map(repo => (
-        <RepositoryListItem key={repo.id} repository={repo} />
+        <RepositoryListItem key={repo.id} repository={repo} organizationName={organizationName} />
       ))}
     </div>
   );

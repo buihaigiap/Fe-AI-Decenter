@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import Button from '../components/Button';
 import OrganizationSelector from '../components/organization/OrganizationSelector';
@@ -62,6 +61,8 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
     </button>
   );
 
+  const selectedOrg = organizations.find(o => o.id === selectedOrgId);
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 font-sans">
       <header className="bg-slate-800/50 border-b border-slate-700 backdrop-blur-sm sticky top-0 z-10">
@@ -100,8 +101,8 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
       </header>
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {view === 'repositories' ? (
-            selectedOrgId ? (
-              <RepositoryBrowser key={selectedOrgId} token={token} organizationId={selectedOrgId} />
+            selectedOrgId && selectedOrg ? (
+              <RepositoryBrowser key={selectedOrgId} token={token} organizationId={selectedOrgId} organizationName={selectedOrg.name} />
             ) : (
               <div className="text-center py-20 px-4">
                 <h2 className="text-2xl font-semibold text-slate-200 mb-4">Welcome to Aerugo</h2>

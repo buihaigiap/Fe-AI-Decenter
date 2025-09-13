@@ -75,6 +75,7 @@ export const fetchRepositories = async (orgId: number, token: string): Promise<R
 };
 
 export const createRepository = (orgId: number, data: CreateRepositoryRequest, token: string): Promise<Repository> => {
+  // NOTE: This endpoint is not in the provided spec. Assuming a logical structure.
   return fetchWithAuth<Repository>(`/api/v1/orgs/${orgId}/repos`, token, {
     method: 'POST',
     body: JSON.stringify(data),

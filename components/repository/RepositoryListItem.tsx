@@ -6,13 +6,14 @@ import { ClipboardIcon } from '../icons/ClipboardIcon';
 
 interface RepositoryListItemProps {
   repository: Repository;
+  organizationName: string;
 }
 
-const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository }) => {
+const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, organizationName }) => {
   const isPrivate = repository.visibility === 'private';
   const [copyStatus, setCopyStatus] = useState('Copy');
 
-  const pullCommand = `docker pull registry.example.com/org-${repository.organization_id}/${repository.name}`;
+  const pullCommand = `docker pull registry.example.com/${organizationName}/${repository.name}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(pullCommand).then(() => {
