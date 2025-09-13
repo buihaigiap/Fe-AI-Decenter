@@ -14,7 +14,9 @@ const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, org
   const isPrivate = !repository.is_public;
   const [copyStatus, setCopyStatus] = useState('Copy');
 
-  const pullCommand = `docker pull registry.example.com/${organizationName}/${repository.name}:latest`;
+  // Use the nested organization name if available, otherwise fall back to the prop.
+  const orgName = repository.organization?.name || organizationName;
+  const pullCommand = `docker pull registry.example.com/${orgName}/${repository.name}:latest`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(pullCommand).then(() => {
@@ -32,7 +34,7 @@ const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, org
       <div className="flex-1">
         <div className="flex items-center space-x-3">
             <button onClick={() => onSelect(repository)} className="text-lg font-semibold text-blue-400 hover:underline text-left">
-              {repository.name}
+              <span className="text-slate-400">{orgName} /</span> {repository.name}
             </button>
             <span 
               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${

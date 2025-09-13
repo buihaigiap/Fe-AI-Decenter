@@ -84,27 +84,34 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
       <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
         <h3 className="text-xl font-bold text-slate-50 mb-4">General Settings</h3>
         <form onSubmit={handleUpdateSubmit} className="space-y-4">
-          <Input
-            id="display_name"
-            name="display_name"
-            label="Display Name"
-            value={formData.display_name}
-            onChange={handleChange}
-            placeholder="My Awesome Team"
-            required
-          />
+          <div>
+            <Input
+              id="display_name"
+              name="display_name"
+              label="Display Name"
+              value={formData.display_name}
+              onChange={handleChange}
+              placeholder="My Awesome Team"
+              required
+            />
+            <p className="text-xs text-slate-400 mt-1 ml-1">This is the name that will be displayed publicly.</p>
+          </div>
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Organization Name (URL)</label>
             <p className="px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-md text-slate-400 sm:text-sm">{organization.name}</p>
+            <p className="text-xs text-slate-400 mt-1 ml-1">This is the unique namespace for your repositories and cannot be changed.</p>
           </div>
-          <Input
-            id="description"
-            name="description"
-            label="Description (Optional)"
-            value={formData.description || ''}
-            onChange={handleChange}
-            placeholder="A brief description of your organization."
-          />
+          <div>
+            <Input
+              id="description"
+              name="description"
+              label="Description (Optional)"
+              value={formData.description || ''}
+              onChange={handleChange}
+              placeholder="A brief description of your organization."
+            />
+            <p className="text-xs text-slate-400 mt-1 ml-1">Describe the purpose of this organization.</p>
+          </div>
 
           {updateError && <p className="text-sm text-red-500">{updateError}</p>}
           {updateSuccess && <p className="text-sm text-green-500">{updateSuccess}</p>}

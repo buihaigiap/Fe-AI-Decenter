@@ -81,7 +81,7 @@ export const deleteOrganization = (orgId: number, token: string): Promise<void> 
 };
 
 export const fetchRepositories = async (namespace: string, token: string): Promise<Repository[]> => {
-  const data = await fetchWithAuth<Repository[]>(`/api/v1/repos/repositories/${namespace}`, token);
+  const data = await fetchWithAuth<Repository[]>(`/api/v1/repos/${namespace}`, token);
   return Array.isArray(data) ? data : [];
 };
 
@@ -93,7 +93,7 @@ export const createRepository = (namespace: string, data: CreateRepositoryReques
 };
 
 export const fetchRepositoryDetails = (namespace: string, repoName: string, token: string): Promise<RepositoryDetailsResponse> => {
-  return fetchWithAuth<RepositoryDetailsResponse>(`/api/v1/repos/${namespace}/repositories/${repoName}`, token);
+  return fetchWithAuth<RepositoryDetailsResponse>(`/api/v1/repos/${namespace}/${repoName}`, token);
 };
 
 export const fetchOrganizationMembers = async (orgId: number, token: string): Promise<OrganizationMember[]> => {
