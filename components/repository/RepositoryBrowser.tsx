@@ -20,7 +20,7 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [viewingRepository, setViewingRepository] = useState<Repository | null>(null);
+  const [viewingRepositoryName, setViewingRepositoryName] = useState<string | null>(null);
 
   const getRepositories = useCallback(async () => {
     if (!organizationName) return;
@@ -41,13 +41,13 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
   useEffect(() => {
     setSearchTerm('');
     setShowCreateForm(false);
-    setViewingRepository(null);
+    setViewingRepositoryName(null);
     getRepositories();
   }, [getRepositories]);
 
   const handleCreationSuccess = (newRepo: Repository) => {
     setShowCreateForm(false);
-    setViewingRepository(newRepo);
+    setViewingRepositoryName(newRepo.name);
     getRepositories(); // Refresh the list in the background
   };
 
@@ -58,7 +58,7 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
   }, [repositories, searchTerm]);
   
   const handleBackToList = () => {
-    setViewingRepository(null);
+    setViewingRepositoryName(null);
   };
   
   const renderContent = () => {
@@ -68,10 +68,11 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
     if (error) {
       return <div className="text-center py-8 text-red-500">{error}</div>;
     }
-    if (viewingRepository) {
+    if (viewingRepositoryName) {
       return (
         <RepositoryDetail
-          repository={viewingRepository}
+          token={token}
+          repositoryName={viewingRepositoryName}
           organizationName={organizationName}
           onBack={handleBackToList}
         />
@@ -91,14 +92,14 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
       <RepositoryList 
         repositories={filteredRepositories} 
         organizationName={organizationName} 
-        onSelectRepository={(repo) => setViewingRepository(repo)}
+        onSelectRepository={(repo) => setViewingRepositoryName(repo.name)}
       />
     );
   };
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 shadow-lg">
-      {!viewingRepository && !showCreateForm && (
+      {!viewingRepositoryName && !showCreateForm && (
         <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <h2 className="text-2xl font-bold text-slate-50">Repositories</h2>
           <div className="flex items-center gap-4 w-full md:w-auto">

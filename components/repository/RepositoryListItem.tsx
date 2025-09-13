@@ -11,10 +11,10 @@ interface RepositoryListItemProps {
 }
 
 const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, organizationName, onSelect }) => {
-  const isPrivate = repository.visibility === 'private';
+  const isPrivate = !repository.is_public;
   const [copyStatus, setCopyStatus] = useState('Copy');
 
-  const pullCommand = `docker pull registry.example.com/${organizationName}/${repository.name}`;
+  const pullCommand = `docker pull registry.example.com/${organizationName}/${repository.name}:latest`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(pullCommand).then(() => {
@@ -42,7 +42,7 @@ const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, org
               }`}
             >
               {isPrivate ? <LockIcon className="w-3 h-3 mr-1.5"/> : <GlobeIcon className="w-3 h-3 mr-1.5"/> }
-              {repository.visibility}
+              {isPrivate ? 'private' : 'public'}
             </span>
         </div>
         <p className="mt-1 text-sm text-slate-400">

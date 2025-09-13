@@ -56,11 +56,32 @@ export interface Repository {
   organization_id: number;
   name: string;
   description: string | null;
-  visibility: 'public' | 'private';
+  is_public: boolean;
+  created_by: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CreateRepositoryRequest {
   name: string;
   description?: string | null;
   is_public: boolean;
+}
+
+export interface RepositoryPermission {
+  id: number;
+  repository_id: number;
+  permission: 'read' | 'write' | 'admin';
+  granted_by: number;
+  created_at: string;
+  updated_at: string;
+  user_id?: number | null;
+  organization_id?: number | null;
+}
+
+export interface RepositoryDetailsResponse {
+  repository: Repository;
+  tags: string[];
+  user_permissions: RepositoryPermission[];
+  org_permissions: RepositoryPermission[];
 }

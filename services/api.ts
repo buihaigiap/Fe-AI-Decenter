@@ -1,21 +1,19 @@
 import { API_BASE_URL } from '../config';
-import { Organization, Repository, CreateOrganizationRequest, UpdateOrganizationRequest, OrganizationMember, AddMemberRequest, CreateRepositoryRequest } from '../types';
+import { 
+    Organization, 
+    Repository, 
+    CreateOrganizationRequest, 
+    UpdateOrganizationRequest, 
+    OrganizationMember, 
+    AddMemberRequest, 
+    CreateRepositoryRequest,
+    RepositoryDetailsResponse
+} from '../types';
 
 // Interface to match the structure of the API response for organizations
 interface OrganizationsApiResponse {
   organizations: Organization[];
 }
-
-// Interface to match the structure of the API response for repositories
-interface RepositoriesApiResponse {
-  repositories: Repository[];
-}
-
-// Interface to match a potential nested structure for members API response
-interface OrganizationMembersApiResponse {
-  members: OrganizationMember[];
-}
-
 
 class ApiError extends Error {
   constructor(message: string, public status: number) {
@@ -83,9 +81,8 @@ export const deleteOrganization = (orgId: number, token: string): Promise<void> 
 };
 
 export const fetchRepositories = async (namespace: string, token: string): Promise<Repository[]> => {
-  // NOTE: This endpoint for GET is not in the provided OpenAPI spec, but is inferred from other endpoints.
-  const data = await fetchWithAuth<RepositoriesApiResponse>(`/api/v1/repos/${namespace}`, token);
-  return data?.repositories || [];
+  const data = await fetchWithAuth<Repository[]>(`/api/v1/repos/repositories/${namespace}`, token);
+  return Array.isArray(data) ? data : [];
 };
 
 export const createRepository = (namespace: string, data: CreateRepositoryRequest, token: string): Promise<Repository> => {
@@ -95,13 +92,14 @@ export const createRepository = (namespace: string, data: CreateRepositoryReques
   });
 };
 
+export const fetchRepositoryDetails = (namespace: string, repoName: string, token: string): Promise<RepositoryDetailsResponse> => {
+  return fetchWithAuth<RepositoryDetailsResponse>(`/api/v1/repos/${namespace}/repositories/${repoName}`, token);
+};
+
 export const fetchOrganizationMembers = async (orgId: number, token: string): Promise<OrganizationMember[]> => {
-  const data = await fetchWithAuth<OrganizationMembersApiResponse | OrganizationMember[]>(`/api/v1/organizations/${orgId}/members`, token);
-  // Defensively handle both direct array response and nested object response
-  if (Array.isArray(data)) {
-    return data;
-  }
-  return data?.members || [];
+  // API can return a direct array of members
+  const data = await fetchWithAuth<OrganizationMember[]>(`/api/v1/organizations/${orgId}/members`, token);
+  return Array.isArray(data) ? data : [];
 };
 
 export const addOrganizationMember = (orgId: number, data: AddMemberRequest, token: string): Promise<OrganizationMember> => {
