@@ -5,8 +5,9 @@ export enum AuthMode {
 }
 
 export enum OrganizationRole {
-  Member = 'member',
-  Admin = 'admin',
+  Owner = 'Owner',
+  Admin = 'Admin',
+  Member = 'Member',
 }
 
 export interface Organization {

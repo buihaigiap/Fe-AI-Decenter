@@ -70,8 +70,9 @@ const AddMemberForm: React.FC<AddMemberFormProps> = ({ token, orgId, onSuccess, 
                 onChange={(e) => setRole(e.target.value as OrganizationRole)}
                 className="block w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             >
-                <option value={OrganizationRole.Member}>Member</option>
+                <option value={OrganizationRole.Owner}>Owner</option>
                 <option value={OrganizationRole.Admin}>Admin</option>
+                <option value={OrganizationRole.Member}>Member</option>
             </select>
         </div>
 

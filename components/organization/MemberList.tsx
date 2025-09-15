@@ -17,10 +17,32 @@ const MemberList: React.FC<MemberListProps> = ({ members }) => {
       </div>
     );
   }
+
+  // Define the hierarchical order of roles with lowercase keys for robust sorting
+  const roleOrder: { [key: string]: number } = {
+    'owner': 1,
+    'admin': 2,
+    'member': 3,
+  };
+
+  // Sort members based on the defined role order
+  const sortedMembers = [...members].sort((a, b) => {
+    const roleA = a.role.toLowerCase();
+    const roleB = b.role.toLowerCase();
+    const orderA = roleOrder[roleA] || 99; // Fallback for any unknown roles
+    const orderB = roleOrder[roleB] || 99;
+    
+    if (orderA !== orderB) {
+        return orderA - orderB;
+    }
+    // If roles are the same, sort by username
+    return a.username.localeCompare(b.username);
+  });
+
   return (
     <div className="border border-slate-700 rounded-lg">
       <ul className="divide-y divide-slate-700">
-        {members.map(member => (
+        {sortedMembers.map(member => (
           <MemberListItem key={member.id} member={member} />
         ))}
       </ul>

@@ -15,6 +15,12 @@ interface OrganizationsApiResponse {
   organizations: Organization[];
 }
 
+// Interface for the members API response
+interface OrganizationMembersApiResponse {
+  members: OrganizationMember[];
+}
+
+
 class ApiError extends Error {
   constructor(message: string, public status: number) {
     super(message);
@@ -81,7 +87,7 @@ export const deleteOrganization = (orgId: number, token: string): Promise<void> 
 };
 
 export const fetchRepositories = async (namespace: string, token: string): Promise<Repository[]> => {
-  const data = await fetchWithAuth<Repository[]>(`/api/v1/repos/${namespace}`, token);
+  const data = await fetchWithAuth<Repository[]>(`/api/v1/repos/repositories/${namespace}`, token);
   return Array.isArray(data) ? data : [];
 };
 
@@ -93,13 +99,13 @@ export const createRepository = (namespace: string, data: CreateRepositoryReques
 };
 
 export const fetchRepositoryDetails = (namespace: string, repoName: string, token: string): Promise<RepositoryDetailsResponse> => {
-  return fetchWithAuth<RepositoryDetailsResponse>(`/api/v1/repos/${namespace}/${repoName}`, token);
+  return fetchWithAuth<RepositoryDetailsResponse>(`/api/v1/repos/${namespace}/repositories/${repoName}`, token);
 };
 
 export const fetchOrganizationMembers = async (orgId: number, token: string): Promise<OrganizationMember[]> => {
-  // API can return a direct array of members
-  const data = await fetchWithAuth<OrganizationMember[]>(`/api/v1/organizations/${orgId}/members`, token);
-  return Array.isArray(data) ? data : [];
+  // The API returns an object { members: [...] }, so we extract the array.
+  const data = await fetchWithAuth<OrganizationMembersApiResponse>(`/api/v1/organizations/${orgId}/members`, token);
+  return data?.members || [];
 };
 
 export const addOrganizationMember = (orgId: number, data: AddMemberRequest, token: string): Promise<OrganizationMember> => {
