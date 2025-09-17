@@ -40,18 +40,25 @@ const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, orga
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
+    
     if (!formData.name) {
       setError('Repository name is required.');
       return;
     }
+    
+    // Basic validation for repo name (URL-friendly)
+    if (!/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/.test(formData.name)) {
+        setError('Name must be lowercase, alphanumeric, and can contain separators (-, _, .). It cannot start or end with a separator.');
+        return;
+    }
 
     setIsLoading(true);
-    setError(null);
     try {
       // Transform the form state into the required API payload
       const apiPayload: CreateRepositoryRequest = {
         name: formData.name,
-        description: formData.description || null,
+        description: formData.description || null, // Send null if description is empty
         is_public: formData.visibility === 'public',
       };
       
@@ -69,15 +76,18 @@ const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, orga
     <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 animate-fade-in">
       <h3 className="text-xl font-bold text-slate-50 mb-6">Create New Repository</h3>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Input
-          id="name"
-          name="name"
-          label="Repository Name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="my-awesome-app"
-          required
-        />
+        <div>
+            <Input
+              id="name"
+              name="name"
+              label="Repository Name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="my-awesome-app"
+              required
+            />
+            <p className="text-xs text-slate-400 mt-2 ml-1">Lowercase, numbers, and separators (-, _, .) only.</p>
+        </div>
 
         <Input
           id="description"

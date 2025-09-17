@@ -4,6 +4,8 @@ import { fetchRepositoryDetails } from '../../services/api';
 import CommandSnippet from './CommandSnippet';
 import { ArrowLeftIcon } from '../icons/ArrowLeftIcon';
 import { ClipboardIcon } from '../icons/ClipboardIcon';
+import { CogIcon } from '../icons/CogIcon';
+import RepositorySettings from './RepositorySettings';
 
 interface RepositoryDetailProps {
   token: string;
@@ -53,6 +55,7 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repositoryNa
     const [details, setDetails] = useState<RepositoryDetailsResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<'tags' | 'settings'>('tags');
   
     useEffect(() => {
       const getDetails = async () => {
@@ -104,10 +107,9 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repositoryNa
     const { repository, tags } = details;
     const repositoryPath = `${REGISTRY_HOST}/${organizationName}/${repository.name}`;
 
-
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 animate-fade-in">
-      <header className="mb-8">
+      <header className="mb-6">
         <button onClick={onBack} className="flex items-center text-sm text-blue-400 hover:text-blue-300 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1 -ml-1">
           <ArrowLeftIcon className="w-4 h-4 mr-2" />
           Back to repositories
@@ -116,49 +118,91 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repositoryNa
         <p className="text-slate-400 mt-1">{repository.description || 'No description provided.'}</p>
       </header>
       
-      <main className="space-y-10">
-        <div>
-          <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
-            Tags
-          </h3>
-          {tags && tags.length > 0 ? (
-            <div className="border border-slate-700 rounded-lg">
-                <ul className="divide-y divide-slate-700">
-                {tags.map(tag => (
-                    <li key={tag} className="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <span className="font-mono text-slate-300 text-md">{repository.name}:{tag}</span>
-                    <InlineCommandSnippet command={`docker pull ${repositoryPath}:${tag}`} />
-                    </li>
-                ))}
-                </ul>
+       <div className="border-b border-slate-700 mb-6">
+          <nav className="flex space-x-4" aria-label="Tabs">
+            <TabButton 
+                label="Tags" 
+                isActive={activeTab === 'tags'} 
+                onClick={() => setActiveTab('tags')} 
+            />
+            <TabButton 
+                label="Settings" 
+                isActive={activeTab === 'settings'} 
+                onClick={() => setActiveTab('settings')} 
+            />
+          </nav>
+      </div>
+
+      <main>
+        {activeTab === 'tags' && (
+             <div className="space-y-10">
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
+                    Tags
+                  </h3>
+                  {tags && tags.length > 0 ? (
+                    <div className="border border-slate-700 rounded-lg">
+                        <ul className="divide-y divide-slate-700">
+                        {tags.map(tag => (
+                            <li key={tag} className="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <span className="font-mono text-slate-300 text-md">{repository.name}:{tag}</span>
+                            <InlineCommandSnippet command={`docker pull ${repositoryPath}:${tag}`} />
+                            </li>
+                        ))}
+                        </ul>
+                    </div>
+                  ) : (
+                    <p className="text-slate-400 text-sm">No tags found for this repository.</p>
+                  )}
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
+                    Push an image
+                  </h3>
+                  <div className="space-y-6">
+                    <div>
+                        <h4 className="text-md font-medium text-slate-300 mb-2">1. Log in to the registry</h4>
+                        <CommandSnippet command={`docker login ${REGISTRY_HOST}`} />
+                    </div>
+                    <div>
+                        <h4 className="text-md font-medium text-slate-300 mb-2">2. Tag your local image</h4>
+                        <CommandSnippet command={`docker tag my-local-image:latest ${repositoryPath}:new-tag`} />
+                    </div>
+                    <div>
+                        <h4 className="text-md font-medium text-slate-300 mb-2">3. Push the image</h4>
+                         <CommandSnippet command={`docker push ${repositoryPath}:new-tag`} />
+                    </div>
+                  </div>
+                </div>
             </div>
-          ) : (
-            <p className="text-slate-400 text-sm">No tags found for this repository.</p>
-          )}
-        </div>
-        
-        <div>
-          <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
-            Push an image
-          </h3>
-          <div className="space-y-6">
-            <div>
-                <h4 className="text-md font-medium text-slate-300 mb-2">1. Log in to the registry</h4>
-                <CommandSnippet command={`docker login ${REGISTRY_HOST}`} />
-            </div>
-            <div>
-                <h4 className="text-md font-medium text-slate-300 mb-2">2. Tag your local image</h4>
-                <CommandSnippet command={`docker tag my-local-image:latest ${repositoryPath}:new-tag`} />
-            </div>
-            <div>
-                <h4 className="text-md font-medium text-slate-300 mb-2">3. Push the image</h4>
-                 <CommandSnippet command={`docker push ${repositoryPath}:new-tag`} />
-            </div>
-          </div>
-        </div>
+        )}
+        {activeTab === 'settings' && (
+            <RepositorySettings 
+                token={token}
+                organizationName={organizationName}
+                repository={repository}
+                onRepositoryDeleted={onBack}
+            />
+        )}
       </main>
     </div>
   );
 };
+
+// Internal tab button component for styling
+const TabButton: React.FC<{label: string, isActive: boolean, onClick: () => void}> = ({ label, isActive, onClick }) => (
+    <button
+      onClick={onClick}
+      className={`flex items-center px-3 py-3 font-medium text-sm border-b-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800 rounded-t-md ${
+        isActive
+          ? 'border-blue-500 text-blue-400'
+          : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
+      }`}
+    >
+        {label}
+    </button>
+);
+
 
 export default RepositoryDetail;

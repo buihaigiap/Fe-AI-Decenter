@@ -31,7 +31,7 @@ const AddMemberForm: React.FC<AddMemberFormProps> = ({ token, orgId, onSuccess, 
       await addOrganizationMember(orgId, data, token);
       onSuccess();
     } catch (err: any) {
-        if (err.status === 404) {
+        if (err.status === 400) {
             setError('User with that email not found.');
         } else if (err.status === 409) {
             setError('User is already a member of this organization.');

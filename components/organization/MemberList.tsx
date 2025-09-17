@@ -1,13 +1,18 @@
 import React from 'react';
-import { OrganizationMember } from '../../types';
+import { OrganizationMember, User } from '../../types';
 import MemberListItem from './MemberListItem';
 import { UsersIcon } from '../icons/UsersIcon';
 
 interface MemberListProps {
   members: OrganizationMember[];
+  currentUser: User;
+  currentUserRole?: string;
+  orgId: number;
+  token: string;
+  onDataChange: () => void;
 }
 
-const MemberList: React.FC<MemberListProps> = ({ members }) => {
+const MemberList: React.FC<MemberListProps> = ({ members, currentUser, currentUserRole, orgId, token, onDataChange }) => {
   if (members.length === 0) {
     return (
       <div className="text-center py-10 px-4 border-2 border-dashed border-slate-700 rounded-lg">
@@ -39,11 +44,22 @@ const MemberList: React.FC<MemberListProps> = ({ members }) => {
     return a.username.localeCompare(b.username);
   });
 
+  const ownerCount = members.filter(m => m.role.toLowerCase() === 'owner').length;
+
   return (
     <div className="border border-slate-700 rounded-lg">
       <ul className="divide-y divide-slate-700">
         {sortedMembers.map(member => (
-          <MemberListItem key={member.id} member={member} />
+          <MemberListItem 
+            key={member.id} 
+            member={member} 
+            isLastOwner={ownerCount === 1 && member.role.toLowerCase() === 'owner'}
+            currentUser={currentUser}
+            currentUserRole={currentUserRole}
+            orgId={orgId}
+            token={token}
+            onDataChange={onDataChange}
+          />
         ))}
       </ul>
     </div>

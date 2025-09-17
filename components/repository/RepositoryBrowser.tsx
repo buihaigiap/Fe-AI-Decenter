@@ -10,24 +10,22 @@ import { PlusIcon } from '../icons/PlusIcon';
 
 interface RepositoryBrowserProps {
   token: string;
-  organizationId: number;
-  organizationName: string;
+  organizationName?: string;
 }
 
-const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizationId, organizationName }) => {
+const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizationName }) => {
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [viewingRepositoryName, setViewingRepositoryName] = useState<string | null>(null);
+  const [viewingRepository, setViewingRepository] = useState<Repository | null>(null);
 
   const getRepositories = useCallback(async () => {
-    if (!organizationName) return;
     try {
       setIsLoading(true);
       setError(null);
-      const repos = await fetchRepositories(organizationName, token);
+      const repos = await fetchRepositories(token);
       setRepositories(Array.isArray(repos) ? repos : []);
     } catch (err) {
       setError('Failed to load repositories.');
@@ -36,29 +34,33 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
     } finally {
       setIsLoading(false);
     }
-  }, [organizationName, token]);
+  }, [token]);
 
   useEffect(() => {
     setSearchTerm('');
     setShowCreateForm(false);
-    setViewingRepositoryName(null);
+    setViewingRepository(null);
     getRepositories();
   }, [getRepositories]);
 
   const handleCreationSuccess = (newRepo: Repository) => {
     setShowCreateForm(false);
-    setViewingRepositoryName(newRepo.name);
+    setViewingRepository(newRepo);
     getRepositories(); // Refresh the list in the background
   };
 
   const filteredRepositories = useMemo(() => {
-    return repositories.filter(repo =>
-      repo.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [repositories, searchTerm]);
+    const reposForOrg = organizationName 
+        ? repositories.filter(repo => repo.organization?.name === organizationName)
+        : repositories;
+
+    return reposForOrg.filter(repo =>
+        repo.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+  }, [repositories, organizationName, searchTerm]);
   
   const handleBackToList = () => {
-    setViewingRepositoryName(null);
+    setViewingRepository(null);
   };
   
   const renderContent = () => {
@@ -68,17 +70,20 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
     if (error) {
       return <div className="text-center py-8 text-red-500">{error}</div>;
     }
-    if (viewingRepositoryName) {
+
+    const orgNameForDetail = organizationName || viewingRepository?.organization?.name;
+
+    if (viewingRepository && orgNameForDetail) {
       return (
         <RepositoryDetail
           token={token}
-          repositoryName={viewingRepositoryName}
-          organizationName={organizationName}
+          repositoryName={viewingRepository.name}
+          organizationName={orgNameForDetail}
           onBack={handleBackToList}
         />
       );
     }
-    if (showCreateForm) {
+    if (showCreateForm && organizationName) { // Can only create if we know the org
       return (
         <CreateRepositoryForm 
             token={token} 
@@ -92,14 +97,14 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
       <RepositoryList 
         repositories={filteredRepositories} 
         organizationName={organizationName} 
-        onSelectRepository={(repo) => setViewingRepositoryName(repo.name)}
+        onSelectRepository={(repo) => setViewingRepository(repo)}
       />
     );
   };
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 shadow-lg">
-      {!viewingRepositoryName && !showCreateForm && (
+      {!viewingRepository && !showCreateForm && (
         <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <h2 className="text-2xl font-bold text-slate-50">Repositories</h2>
           <div className="flex items-center gap-4 w-full md:w-auto">
@@ -115,7 +120,13 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
                 className="block w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
-            <Button onClick={() => setShowCreateForm(true)} fullWidth={false} className="whitespace-nowrap flex-shrink-0">
+            <Button 
+                onClick={() => setShowCreateForm(true)} 
+                fullWidth={false} 
+                className="whitespace-nowrap flex-shrink-0"
+                disabled={!organizationName}
+                title={!organizationName ? "Select an organization to create a repository" : ""}
+            >
                 <PlusIcon className="w-5 h-5 -ml-1 mr-2" />
                 Create Repository
             </Button>

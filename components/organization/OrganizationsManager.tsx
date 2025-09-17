@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Organization } from '../../types';
+import { Organization, User } from '../../types';
 import OrganizationList from './OrganizationList';
 import CreateOrganizationForm from './CreateOrganizationForm';
 import Button from '../Button';
@@ -8,6 +8,7 @@ import OrganizationDetail from './OrganizationDetail';
 
 interface OrganizationsManagerProps {
   token: string;
+  currentUser: User;
   organizations: Organization[];
   isLoading: boolean;
   error: string | null;
@@ -16,6 +17,7 @@ interface OrganizationsManagerProps {
 
 const OrganizationsManager: React.FC<OrganizationsManagerProps> = ({
   token,
+  currentUser,
   organizations,
   isLoading,
   error,
@@ -75,6 +77,7 @@ const OrganizationsManager: React.FC<OrganizationsManagerProps> = ({
             <OrganizationDetail 
                 key={selectedOrganization.id} // Re-mount component on org change
                 token={token}
+                currentUser={currentUser}
                 organization={selectedOrganization} 
                 onDataChange={handleDataChange}
             />

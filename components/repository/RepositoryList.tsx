@@ -4,7 +4,7 @@ import RepositoryListItem from './RepositoryListItem';
 
 interface RepositoryListProps {
   repositories: Repository[];
-  organizationName: string;
+  organizationName?: string;
   onSelectRepository: (repository: Repository) => void;
 }
 

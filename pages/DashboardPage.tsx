@@ -3,18 +3,19 @@ import Button from '../components/Button';
 import OrganizationSelector from '../components/organization/OrganizationSelector';
 import RepositoryBrowser from '../components/repository/RepositoryBrowser';
 import OrganizationsManager from '../components/organization/OrganizationsManager';
-import { Organization } from '../types';
+import { Organization, User } from '../types';
 import { fetchOrganizations } from '../services/api';
 import { AerugoIcon } from '../components/icons/DockerIcon';
 
 interface DashboardPageProps {
   token: string;
+  currentUser: User;
   onLogout: () => void;
 }
 
 type View = 'repositories' | 'organizations';
 
-const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
+const DashboardPage: React.FC<DashboardPageProps> = ({ token, currentUser, onLogout }) => {
   const [selectedOrgId, setSelectedOrgId] = useState<number | null>(null);
   const [view, setView] = useState<View>('repositories');
   
@@ -27,14 +28,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
       setIsLoadingOrgs(true);
       setOrgsError(null);
       const orgs = await fetchOrganizations(token);
-      const validOrgs = Array.isArray(orgs) ? orgs : [];
-      setOrganizations(validOrgs);
-      
-      if (validOrgs.length > 0 && (!selectedOrgId || !validOrgs.some(o => o.id === selectedOrgId))) {
-        setSelectedOrgId(validOrgs[0].id);
-      } else if (validOrgs.length === 0) {
-        setSelectedOrgId(null);
-      }
+      setOrganizations(Array.isArray(orgs) ? orgs : []);
     } catch (err) {
       setOrgsError('Failed to load organizations.');
       setOrganizations([]);
@@ -42,11 +36,21 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
     } finally {
       setIsLoadingOrgs(false);
     }
-  }, [token, selectedOrgId]);
+  }, [token]);
 
   useEffect(() => {
     getOrganizations();
-  }, [token]);
+  }, [getOrganizations]);
+
+  useEffect(() => {
+    // This effect handles maintaining a valid selection if the list of orgs changes.
+    // For example, if the currently selected organization is deleted.
+    if (selectedOrgId && !organizations.some(o => o.id === selectedOrgId)) {
+      // Fallback to the first organization in the list, or to "All" if no organizations are left.
+      setSelectedOrgId(organizations.length > 0 ? organizations[0].id : null);
+    }
+  }, [organizations, selectedOrgId]);
+
 
   const NavLink: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
@@ -92,6 +96,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
                     selectedOrganizationId={selectedOrgId}
                   />
                )}
+               <p className="text-sm text-slate-300 hidden sm:block">Welcome, {currentUser.username}</p>
                <Button onClick={onLogout} variant="danger" fullWidth={false}>
                 Logout
               </Button>
@@ -101,27 +106,11 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ token, onLogout }) => {
       </header>
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {view === 'repositories' ? (
-            selectedOrgId && selectedOrg ? (
-              <RepositoryBrowser key={selectedOrgId} token={token} organizationId={selectedOrgId} organizationName={selectedOrg.name} />
-            ) : (
-              <div className="text-center py-20 px-4">
-                <h2 className="text-2xl font-semibold text-slate-200 mb-4">Welcome to Aerugo</h2>
-                <p className="text-slate-400 max-w-md mx-auto">
-                  {isLoadingOrgs ? 'Loading organizations...' : 
-                  <>
-                    It looks like you don't have any organizations. Please select one from the dropdown, or {' '}
-                    <button onClick={() => setView('organizations')} className="font-semibold text-blue-500 hover:text-blue-400 focus:outline-none rounded">
-                      create one
-                    </button>
-                    {' '} to get started.
-                  </>
-                  }
-                </p>
-              </div>
-            )
+            <RepositoryBrowser key={selectedOrgId ?? 'all'} token={token} organizationName={selectedOrg?.name} />
         ) : (
           <OrganizationsManager 
             token={token}
+            currentUser={currentUser}
             organizations={organizations}
             isLoading={isLoadingOrgs}
             error={orgsError}

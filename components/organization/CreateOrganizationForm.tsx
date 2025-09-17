@@ -15,6 +15,8 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ token, 
     name: '',
     display_name: '',
     description: '',
+    avatar_url: '',
+    website_url: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +41,12 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ token, 
     setIsLoading(true);
     setError(null);
     try {
-      await createOrganization(formData, token);
+      const payload: CreateOrganizationRequest = {
+        ...formData,
+        avatar_url: formData.avatar_url || undefined,
+        website_url: formData.website_url || undefined,
+      };
+      await createOrganization(payload, token);
       onSuccess();
     } catch (err) {
       setError('Failed to create organization. Please try again.');
@@ -81,6 +88,24 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ token, 
           value={formData.description || ''}
           onChange={handleChange}
           placeholder="A brief description of your organization."
+        />
+        <Input
+          id="website_url"
+          name="website_url"
+          label="Website URL (Optional)"
+          type="url"
+          value={formData.website_url || ''}
+          onChange={handleChange}
+          placeholder="https://example.com"
+        />
+        <Input
+          id="avatar_url"
+          name="avatar_url"
+          label="Avatar URL (Optional)"
+          type="url"
+          value={formData.avatar_url || ''}
+          onChange={handleChange}
+          placeholder="https://example.com/logo.png"
         />
 
         {error && <p className="text-sm text-red-500">{error}</p>}

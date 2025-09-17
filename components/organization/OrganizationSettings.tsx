@@ -22,6 +22,8 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
   const [formData, setFormData] = useState<UpdateOrganizationRequest>({
     display_name: organization.display_name,
     description: organization.description || '',
+    avatar_url: organization.avatar_url || '',
+    website_url: organization.website_url || '',
   });
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateError, setUpdateError] = useState<string | null>(null);
@@ -48,7 +50,12 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
     setUpdateError(null);
     setUpdateSuccess(null);
     try {
-      await updateOrganization(organization.id, formData, token);
+      const payload: UpdateOrganizationRequest = {
+          ...formData,
+          avatar_url: formData.avatar_url || undefined,
+          website_url: formData.website_url || undefined,
+      };
+      await updateOrganization(organization.id, payload, token);
       setUpdateSuccess('Organization updated successfully!');
       onOrganizationUpdated();
       setTimeout(() => setUpdateSuccess(null), 3000);
@@ -94,12 +101,10 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
               placeholder="My Awesome Team"
               required
             />
-            <p className="text-xs text-slate-400 mt-1 ml-1">This is the name that will be displayed publicly.</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Organization Name (URL)</label>
             <p className="px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-md text-slate-400 sm:text-sm">{organization.name}</p>
-            <p className="text-xs text-slate-400 mt-1 ml-1">This is the unique namespace for your repositories and cannot be changed.</p>
           </div>
           <div>
             <Input
@@ -110,7 +115,28 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
               onChange={handleChange}
               placeholder="A brief description of your organization."
             />
-            <p className="text-xs text-slate-400 mt-1 ml-1">Describe the purpose of this organization.</p>
+          </div>
+           <div>
+            <Input
+              id="website_url"
+              name="website_url"
+              label="Website URL (Optional)"
+              type="url"
+              value={formData.website_url || ''}
+              onChange={handleChange}
+              placeholder="https://example.com"
+            />
+          </div>
+          <div>
+            <Input
+              id="avatar_url"
+              name="avatar_url"
+              label="Avatar URL (Optional)"
+              type="url"
+              value={formData.avatar_url || ''}
+              onChange={handleChange}
+              placeholder="https://example.com/logo.png"
+            />
           </div>
 
           {updateError && <p className="text-sm text-red-500">{updateError}</p>}

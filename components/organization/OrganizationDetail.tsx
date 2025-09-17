@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Organization, OrganizationMember } from '../../types';
+import { Organization, OrganizationMember, User } from '../../types';
 import { fetchOrganizationMembers } from '../../services/api';
 import MemberList from './MemberList';
 import Button from '../Button';
@@ -11,13 +11,14 @@ import { CogIcon } from '../icons/CogIcon';
 
 interface OrganizationDetailProps {
   token: string;
+  currentUser: User;
   organization: Organization;
   onDataChange: () => void;
 }
 
 type Tab = 'members' | 'settings';
 
-const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, organization, onDataChange }) => {
+const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentUser, organization, onDataChange }) => {
   const [activeTab, setActiveTab] = useState<Tab>('members');
 
   return (
@@ -46,7 +47,7 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, organiza
 
       <div className="p-6">
         {activeTab === 'members' && (
-            <MembersView token={token} organization={organization} />
+            <MembersView token={token} organization={organization} currentUser={currentUser}/>
         )}
         {activeTab === 'settings' && (
             <OrganizationSettings 
@@ -77,7 +78,7 @@ const TabButton: React.FC<{icon: React.ReactNode, label: string, isActive: boole
 );
 
 // Extracted Members view logic into its own component for cleanliness
-const MembersView: React.FC<{token: string, organization: Organization}> = ({ token, organization }) => {
+const MembersView: React.FC<{token: string, organization: Organization, currentUser: User}> = ({ token, organization, currentUser }) => {
     const [members, setMembers] = useState<OrganizationMember[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -106,11 +107,13 @@ const MembersView: React.FC<{token: string, organization: Organization}> = ({ to
         getMembers(); // Refresh member list
     }
 
+    const currentUserRole = members.find(m => m.user_id === currentUser.id)?.role.toLowerCase();
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold text-slate-50">Members</h3>
-                {!showAddForm && (
+                {!showAddForm && (currentUserRole === 'owner' || currentUserRole === 'admin') && (
                     <Button onClick={() => setShowAddForm(true)} fullWidth={false}>
                         <PlusIcon className="w-5 h-5 -ml-1 mr-2" />
                         Add Member
@@ -130,7 +133,14 @@ const MembersView: React.FC<{token: string, organization: Organization}> = ({ to
                 ) : error ? (
                 <div className="text-center py-8 text-red-500">{error}</div>
                 ) : (
-                <MemberList members={members} />
+                <MemberList 
+                    members={members}
+                    currentUser={currentUser}
+                    currentUserRole={currentUserRole}
+                    orgId={organization.id}
+                    token={token}
+                    onDataChange={getMembers}
+                 />
             )}
         </div>
     );

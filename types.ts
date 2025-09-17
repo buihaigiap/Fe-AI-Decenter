@@ -10,27 +10,39 @@ export enum OrganizationRole {
   Member = 'Member',
 }
 
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+}
+
 export interface Organization {
   id: number;
   name: string;
   display_name: string;
   description: string | null;
   avatar_url: string | null;
+  website_url: string | null;
 }
 
 export interface CreateOrganizationRequest {
   name: string;
   display_name: string;
   description: string;
+  avatar_url?: string;
+  website_url?: string;
 }
 
 export interface UpdateOrganizationRequest {
   display_name: string;
   description: string;
+  avatar_url?: string;
+  website_url?: string;
 }
 
 export interface OrganizationMember {
-  id: number;
+  id: number; // This is the membership ID
+  user_id: number; // This is the user's ID
   username: string;
   email: string;
   role: string;
@@ -52,7 +64,7 @@ export interface Repository {
 }
 
 export interface CreateRepositoryRequest {
-  name: string;
+  name:string;
   description: string | null;
   is_public: boolean;
 }

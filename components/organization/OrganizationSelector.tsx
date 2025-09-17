@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Organization } from '../../types';
 
 interface OrganizationSelectorProps {
@@ -17,16 +17,12 @@ const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
   onOrganizationSelect 
 }) => {
 
-  useEffect(() => {
-    // If there's no selection but there are organizations available, select the first one.
-    if (selectedOrganizationId === null && organizations.length > 0) {
-      onOrganizationSelect(organizations[0].id);
-    }
-  }, [organizations, selectedOrganizationId, onOrganizationSelect]);
-
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const orgId = Number(event.target.value);
-    onOrganizationSelect(orgId || null);
+    const value = event.target.value;
+    // When "All Organizations" is selected, the value is an empty string.
+    // `Number('')` is 0, so we check for this case to pass `null`.
+    const orgId = value ? Number(value) : null;
+    onOrganizationSelect(orgId);
   };
   
   const value = selectedOrganizationId ?? "";
@@ -63,11 +59,14 @@ const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
       {organizations.length === 0 ? (
         <option value="">No organizations found</option>
       ) : (
-        organizations.map(org => (
-          <option key={org.id} value={org.id}>
-            {org.display_name}
-          </option>
-        ))
+        <>
+          <option value="">All Organizations</option>
+          {organizations.map(org => (
+            <option key={org.id} value={org.id}>
+              {org.display_name}
+            </option>
+          ))}
+        </>
       )}
     </select>
   );

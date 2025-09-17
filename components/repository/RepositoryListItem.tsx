@@ -6,7 +6,7 @@ import { ClipboardIcon } from '../icons/ClipboardIcon';
 
 interface RepositoryListItemProps {
   repository: Repository;
-  organizationName: string;
+  organizationName?: string;
   onSelect: (repository: Repository) => void;
 }
 

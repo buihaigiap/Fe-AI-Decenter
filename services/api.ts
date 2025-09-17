@@ -7,7 +7,9 @@ import {
     OrganizationMember, 
     AddMemberRequest, 
     CreateRepositoryRequest,
-    RepositoryDetailsResponse
+    RepositoryDetailsResponse,
+    User,
+    OrganizationRole
 } from '../types';
 
 // Interface to match the structure of the API response for organizations
@@ -18,6 +20,11 @@ interface OrganizationsApiResponse {
 // Interface for the members API response
 interface OrganizationMembersApiResponse {
   members: OrganizationMember[];
+}
+
+// Interface for repositories API response
+interface RepositoriesApiResponse {
+    repositories: Repository[];
 }
 
 
@@ -35,7 +42,7 @@ async function fetchWithAuth<T>(
 ): Promise<T> {
   const headers = new Headers(options.headers || {});
   headers.set('Authorization', `Bearer ${token}`);
-  if (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH') {
+  if (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH' || options.method === 'DELETE') {
     headers.set('Content-Type', 'application/json');
   }
 
@@ -58,6 +65,9 @@ async function fetchWithAuth<T>(
   return response.json() as Promise<T>;
 }
 
+export const fetchCurrentUser = (token: string): Promise<User> => {
+    return fetchWithAuth<User>('/api/v1/auth/me', token);
+};
 
 export const fetchOrganizations = async (token: string): Promise<Organization[]> => {
   const data = await fetchWithAuth<OrganizationsApiResponse>('/api/v1/organizations', token);
@@ -86,9 +96,9 @@ export const deleteOrganization = (orgId: number, token: string): Promise<void> 
   });
 };
 
-export const fetchRepositories = async (namespace: string, token: string): Promise<Repository[]> => {
-  const data = await fetchWithAuth<Repository[]>(`/api/v1/repos/repositories/${namespace}`, token);
-  return Array.isArray(data) ? data : [];
+export const fetchRepositories = async (token: string): Promise<Repository[]> => {
+  const data = await fetchWithAuth<RepositoriesApiResponse>(`/api/v1/repos/repositories`, token);
+  return data?.repositories || [];
 };
 
 export const createRepository = (namespace: string, data: CreateRepositoryRequest, token: string): Promise<Repository> => {
@@ -99,7 +109,13 @@ export const createRepository = (namespace: string, data: CreateRepositoryReques
 };
 
 export const fetchRepositoryDetails = (namespace: string, repoName: string, token: string): Promise<RepositoryDetailsResponse> => {
-  return fetchWithAuth<RepositoryDetailsResponse>(`/api/v1/repos/${namespace}/repositories/${repoName}`, token);
+  return fetchWithAuth<RepositoryDetailsResponse>(`/api/v1/repos/${namespace}/${repoName}`, token);
+};
+
+export const deleteRepository = (namespace: string, repoName: string, token: string): Promise<void> => {
+    return fetchWithAuth<void>(`/api/v1/repos/${namespace}/${repoName}`, token, {
+        method: 'DELETE',
+    });
 };
 
 export const fetchOrganizationMembers = async (orgId: number, token: string): Promise<OrganizationMember[]> => {
@@ -113,4 +129,17 @@ export const addOrganizationMember = (orgId: number, data: AddMemberRequest, tok
     method: 'POST',
     body: JSON.stringify(data),
   });
+};
+
+export const updateMemberRole = (orgId: number, memberId: number, role: OrganizationRole, token: string): Promise<void> => {
+    return fetchWithAuth<void>(`/api/v1/organizations/${orgId}/members/${memberId}`, token, {
+        method: 'PUT',
+        body: JSON.stringify({ role }),
+    });
+};
+
+export const deleteMember = (orgId: number, memberId: number, token: string): Promise<void> => {
+    return fetchWithAuth<void>(`/api/v1/organizations/${orgId}/members/${memberId}`, token, {
+        method: 'DELETE',
+    });
 };
