@@ -21,7 +21,6 @@ interface OrganizationDetailsApiResponse {
   organization: Organization;
 }
 
-// Interface for the members API response
 interface OrganizationMembersApiResponse {
   members: OrganizationMember[];
 }

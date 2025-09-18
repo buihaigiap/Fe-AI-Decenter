@@ -5,6 +5,7 @@ import AuthPage from './pages/AuthPage';
 import DocsPage from './pages/DocsPage';
 import RepositoriesPage from './pages/RepositoriesPage';
 import OrganizationsPage from './pages/OrganizationsPage';
+import ProfilePage from './pages/ProfilePage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import { User } from './types';
 import { fetchCurrentUser } from './services/api';
@@ -94,6 +95,7 @@ const App: React.FC = () => {
         >
           <Route path="/repositories" element={<RepositoriesPage token={token} />} />
           <Route path="/organizations" element={<OrganizationsPage token={token} currentUser={currentUser} />} />
+          <Route path="/profile" element={<ProfilePage currentUser={currentUser!} />} />
           {/* FIX: The DocsPage component does not accept a 'token' prop. Removed it to fix the type error. */}
           <Route path="/docs" element= {<DocsPage />} />
         </Route>
