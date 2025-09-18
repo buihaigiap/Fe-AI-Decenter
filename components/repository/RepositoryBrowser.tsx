@@ -77,7 +77,7 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
       return (
         <RepositoryDetail
           token={token}
-          repositoryName={viewingRepository.name}
+          repository={viewingRepository}
           organizationName={orgNameForDetail}
           onBack={handleBackToList}
         />

@@ -7,7 +7,6 @@ import {
     OrganizationMember, 
     AddMemberRequest, 
     CreateRepositoryRequest,
-    RepositoryDetailsResponse,
     User,
     OrganizationRole
 } from '../types';
@@ -15,6 +14,11 @@ import {
 // Interface to match the structure of the API response for organizations
 interface OrganizationsApiResponse {
   organizations: Organization[];
+}
+
+// Interface for a single organization API response
+interface OrganizationDetailsApiResponse {
+  organization: Organization;
 }
 
 // Interface for the members API response
@@ -76,6 +80,11 @@ export const fetchOrganizations = async (token: string): Promise<Organization[]>
   return data?.organizations || [];
 };
 
+export const fetchOrganizationDetails = async (orgId: number, token: string): Promise<Organization> => {
+    const data = await fetchWithAuth<OrganizationDetailsApiResponse>(`/api/v1/organizations/${orgId}`, token);
+    return data.organization;
+};
+
 export const createOrganization = (data: CreateOrganizationRequest, token: string): Promise<Organization> => {
   return fetchWithAuth<Organization>('/api/v1/organizations', token, {
     method: 'POST',
@@ -106,10 +115,6 @@ export const createRepository = (namespace: string, data: CreateRepositoryReques
     method: 'POST',
     body: JSON.stringify(data),
   });
-};
-
-export const fetchRepositoryDetails = (namespace: string, repoName: string, token: string): Promise<RepositoryDetailsResponse> => {
-  return fetchWithAuth<RepositoryDetailsResponse>(`/api/v1/repos/${namespace}/${repoName}`, token);
 };
 
 export const deleteRepository = (namespace: string, repoName: string, token: string): Promise<void> => {

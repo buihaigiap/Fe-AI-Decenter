@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { RepositoryDetailsResponse } from '../../types';
-import { fetchRepositoryDetails } from '../../services/api';
+import React, { useState } from 'react';
+import { Repository } from '../../types';
 import CommandSnippet from './CommandSnippet';
 import { ArrowLeftIcon } from '../icons/ArrowLeftIcon';
 import { ClipboardIcon } from '../icons/ClipboardIcon';
-import { CogIcon } from '../icons/CogIcon';
 import RepositorySettings from './RepositorySettings';
 
 interface RepositoryDetailProps {
   token: string;
-  repositoryName: string;
+  repository: Repository;
   organizationName: string;
   onBack: () => void;
 }
@@ -51,60 +49,9 @@ const InlineCommandSnippet: React.FC<{ command: string }> = ({ command }) => {
   };
 
 
-const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repositoryName, organizationName, onBack }) => {
-    const [details, setDetails] = useState<RepositoryDetailsResponse | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<'tags' | 'settings'>('tags');
+const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, organizationName, onBack }) => {
+    const [activeTab, setActiveTab] = useState<'instructions' | 'settings'>('instructions');
   
-    useEffect(() => {
-      const getDetails = async () => {
-        try {
-          setIsLoading(true);
-          setError(null);
-          const data = await fetchRepositoryDetails(organizationName, repositoryName, token);
-          setDetails(data);
-        } catch (err) {
-          setError('Failed to load repository details.');
-          console.error(err);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      getDetails();
-    }, [organizationName, repositoryName, token]);
-  
-    if (isLoading) {
-      return (
-        <div className="text-center py-20 animate-fade-in">
-          <p className="text-slate-400">Loading details...</p>
-        </div>
-      );
-    }
-  
-    if (error) {
-      return (
-        <div className="text-center py-20 animate-fade-in">
-          <p className="text-red-500">{error}</p>
-          <button onClick={onBack} className="mt-4 text-sm text-blue-400 hover:underline">
-            Back to list
-          </button>
-        </div>
-      );
-    }
-  
-    if (!details) {
-      return (
-        <div className="text-center py-20 animate-fade-in">
-          <p className="text-slate-400">Repository details not found.</p>
-           <button onClick={onBack} className="mt-4 text-sm text-blue-400 hover:underline">
-            Back to list
-          </button>
-        </div>
-      );
-    }
-  
-    const { repository, tags } = details;
     const repositoryPath = `${REGISTRY_HOST}/${organizationName}/${repository.name}`;
 
   return (
@@ -121,9 +68,9 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repositoryNa
        <div className="border-b border-slate-700 mb-6">
           <nav className="flex space-x-4" aria-label="Tabs">
             <TabButton 
-                label="Tags" 
-                isActive={activeTab === 'tags'} 
-                onClick={() => setActiveTab('tags')} 
+                label="Instructions" 
+                isActive={activeTab === 'instructions'} 
+                onClick={() => setActiveTab('instructions')} 
             />
             <TabButton 
                 label="Settings" 
@@ -134,28 +81,8 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repositoryNa
       </div>
 
       <main>
-        {activeTab === 'tags' && (
+        {activeTab === 'instructions' && (
              <div className="space-y-10">
-                <div>
-                  <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
-                    Tags
-                  </h3>
-                  {tags && tags.length > 0 ? (
-                    <div className="border border-slate-700 rounded-lg">
-                        <ul className="divide-y divide-slate-700">
-                        {tags.map(tag => (
-                            <li key={tag} className="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                            <span className="font-mono text-slate-300 text-md">{repository.name}:{tag}</span>
-                            <InlineCommandSnippet command={`docker pull ${repositoryPath}:${tag}`} />
-                            </li>
-                        ))}
-                        </ul>
-                    </div>
-                  ) : (
-                    <p className="text-slate-400 text-sm">No tags found for this repository.</p>
-                  )}
-                </div>
-                
                 <div>
                   <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
                     Push an image

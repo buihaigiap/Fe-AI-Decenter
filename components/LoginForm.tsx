@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Input from './Input';
 import Button from './Button';
 import { API_BASE_URL } from '../config';
@@ -12,6 +13,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,6 +38,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
       if (response.ok) {
         const data = await response.json();
         onLoginSuccess(data.token);
+        navigate('/repositories', { replace: true });
       } else if (response.status === 401) {
         setError('Invalid email or password.');
       } else {

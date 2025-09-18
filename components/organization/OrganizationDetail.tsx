@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Organization, OrganizationMember, User } from '../../types';
-import { fetchOrganizationMembers } from '../../services/api';
+import { fetchOrganizationMembers, fetchOrganizationDetails } from '../../services/api';
 import MemberList from './MemberList';
 import Button from '../Button';
 import { PlusIcon } from '../icons/PlusIcon';
@@ -20,12 +20,38 @@ type Tab = 'members' | 'settings';
 
 const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentUser, organization, onDataChange }) => {
   const [activeTab, setActiveTab] = useState<Tab>('members');
+  const [detailedOrg, setDetailedOrg] = useState<Organization>(organization);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const getDetails = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+        const data = await fetchOrganizationDetails(organization.id, token);
+        setDetailedOrg(data);
+    } catch (err) {
+        setError('Failed to load up-to-date organization details.');
+        console.error(err);
+    } finally {
+        setIsLoading(false);
+    }
+  }, [organization.id, token]);
+
+  useEffect(() => {
+    getDetails();
+  }, [getDetails]);
+
+  const handleSettingsChange = () => {
+      getDetails(); // Re-fetch my own details
+      onDataChange(); // Tell parent to re-fetch the list
+  }
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-lg">
       <header className="p-6 border-b border-slate-700">
-        <h2 className="text-2xl font-bold text-slate-50">{organization.display_name}</h2>
-        <p className="text-slate-400">@{organization.name}</p>
+        <h2 className="text-2xl font-bold text-slate-50">{detailedOrg.display_name}</h2>
+        <p className="text-slate-400">@{detailedOrg.name}</p>
       </header>
 
       <div className="border-b border-slate-700">
@@ -46,16 +72,24 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
       </div>
 
       <div className="p-6">
-        {activeTab === 'members' && (
-            <MembersView token={token} organization={organization} currentUser={currentUser}/>
-        )}
-        {activeTab === 'settings' && (
-            <OrganizationSettings 
-                token={token} 
-                organization={organization}
-                onOrganizationUpdated={onDataChange}
-                onOrganizationDeleted={onDataChange}
-            />
+        {isLoading ? (
+            <div className="text-center py-8 text-slate-400">Loading details...</div>
+        ) : error ? (
+            <div className="text-center py-8 text-red-500">{error}</div>
+        ) : (
+          <>
+            {activeTab === 'members' && (
+                <MembersView token={token} organization={detailedOrg} currentUser={currentUser}/>
+            )}
+            {activeTab === 'settings' && (
+                <OrganizationSettings 
+                    token={token} 
+                    organization={detailedOrg}
+                    onOrganizationUpdated={handleSettingsChange}
+                    onOrganizationDeleted={onDataChange}
+                />
+            )}
+          </>
         )}
       </div>
     </div>

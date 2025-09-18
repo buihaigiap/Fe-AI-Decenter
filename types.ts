@@ -23,6 +23,8 @@ export interface Organization {
   description: string | null;
   avatar_url: string | null;
   website_url: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface CreateOrganizationRequest {
@@ -67,9 +69,4 @@ export interface CreateRepositoryRequest {
   name:string;
   description: string | null;
   is_public: boolean;
-}
-
-export interface RepositoryDetailsResponse {
-  repository: Repository;
-  tags: string[];
 }
