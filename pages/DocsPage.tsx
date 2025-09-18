@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import CodeBlock from '../components/docs/CodeBlock';
 
 const DocsPage: React.FC = () => {
@@ -62,7 +63,7 @@ const DocsPage: React.FC = () => {
 
                             <h3 className="text-2xl font-semibold text-slate-100 !mt-8">Creating an Organization</h3>
                             <ol className="list-decimal list-inside space-y-3 pl-5">
-                                <li>Navigate to the <a href="#/organizations" className="font-medium text-indigo-400 hover:text-indigo-300">Organizations</a> page from the main navigation.</li>
+                                <li>Navigate to the <Link to="/organizations" className="font-medium text-indigo-400 hover:text-indigo-300">Organizations</Link> page from the main navigation.</li>
                                 <li>Click the "Create New" button.</li>
                                 <li>
                                     Fill in the form:
@@ -99,7 +100,7 @@ const DocsPage: React.FC = () => {
 
                             <h3 className="text-2xl font-semibold text-slate-100 !mt-8">Creating a Repository</h3>
                             <ol className="list-decimal list-inside space-y-3 pl-5">
-                                <li>Navigate to the <a href="#/repositories" className="font-medium text-indigo-400 hover:text-indigo-300">Repositories</a> page.</li>
+                                <li>Navigate to the <Link to="/repositories" className="font-medium text-indigo-400 hover:text-indigo-300">Repositories</Link> page.</li>
                                 <li>From the dropdown menu in the top-right, select the organization you want to create the repository in.</li>
                                 <li>Click the "Create Repository" button.</li>
                                 <li><strong className="font-semibold text-slate-100">Name</strong> your repository. This name will be part of the image URL.</li>
