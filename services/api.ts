@@ -8,7 +8,10 @@ import {
     AddMemberRequest, 
     CreateRepositoryRequest,
     User,
-    OrganizationRole
+    OrganizationRole,
+    ChangePasswordRequest,
+    ForgotPasswordRequest,
+    ResetPasswordRequest
 } from '../types';
 
 // Interface to match the structure of the API response for organizations
@@ -68,14 +71,73 @@ async function fetchWithAuth<T>(
   return response.json() as Promise<T>;
 }
 
+// Placeholder for public fetch calls (no auth token needed)
+async function fetchPublic<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const headers = new Headers(options.headers || {});
+   if (options.method === 'POST' || options.method === 'PUT') {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
+
+  if (!response.ok) {
+     const errorText = await response.text().catch(() => 'Failed to read error response');
+    console.error(`API Error: ${response.status} ${response.statusText}`, errorText);
+    throw new ApiError(`Request failed with status ${response.status}`, response.status);
+  }
+
+  if (response.status === 204) {
+    return null as T;
+  }
+  
+  return response.json() as Promise<T>;
+}
+
+
 export const fetchCurrentUser = (token: string): Promise<User> => {
     return fetchWithAuth<User>('/api/v1/auth/me', token);
 };
 
+export const changePassword = (data: ChangePasswordRequest, token: string): Promise<void> => {
+    return fetchWithAuth<void>('/api/v1/auth/change-password', token, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+    });
+};
+
+// Placeholder for requesting a password reset email
+export const forgotPassword = (data: ForgotPasswordRequest): Promise<void> => {
+    // This should eventually be a real API call to a corrected backend
+    console.log('Simulating sending password reset for', data.email);
+    return new Promise(resolve => setTimeout(resolve, 1000));
+    // Example of real implementation:
+    // return fetchPublic<void>('/api/v1/auth/request-password-reset', {
+    //     method: 'POST',
+    //     body: JSON.stringify(data),
+    // });
+};
+
+// Placeholder for resetting the password with a token
+export const resetPassword = (data: ResetPasswordRequest): Promise<void> => {
+    // This should eventually be a real API call to a corrected backend
+    console.log('Simulating resetting password with token', data.token);
+    return new Promise(resolve => setTimeout(resolve, 1000));
+    // Example of real implementation:
+    // return fetchPublic<void>('/api/v1/auth/reset-password', {
+    //     method: 'POST',
+    //     body: JSON.stringify(data),
+    // });
+};
+
+
 export const fetchOrganizations = async (token: string): Promise<Organization[]> => {
   const data = await fetchWithAuth<OrganizationsApiResponse>('/api/v1/organizations', token);
-  // The API returns an object { organizations: [...] }, so we extract the array.
-  // Provide a fallback to an empty array in case the response is malformed.
   return data?.organizations || [];
 };
 
@@ -107,6 +169,11 @@ export const deleteOrganization = (orgId: number, token: string): Promise<void> 
 export const fetchRepositories = async (token: string): Promise<Repository[]> => {
   const data = await fetchWithAuth<RepositoriesApiResponse>(`/api/v1/repos/repositories`, token);
   return data?.repositories || [];
+};
+
+export const fetchRepositoriesByNamespace = async (namespace: string, token: string): Promise<Repository[]> => {
+    const data = await fetchWithAuth<Repository[]>(`/api/v1/repos/repositories/${namespace}`, token);
+    return data || [];
 };
 
 export const createRepository = (namespace: string, data: CreateRepositoryRequest, token: string): Promise<Repository> => {

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { fetchRepositories } from '../../services/api';
+import React, { useState, useEffect, useMemo } from 'react';
+import { fetchRepositories, fetchRepositoriesByNamespace } from '../../services/api';
 import { Repository } from '../../types';
 import RepositoryList from './RepositoryList';
 import CreateRepositoryForm from './CreateRepositoryForm';
@@ -14,58 +14,79 @@ interface RepositoryBrowserProps {
 }
 
 const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizationName }) => {
-  const [repositories, setRepositories] = useState<Repository[]>([]);
+  // State for the repositories shown in the "My Repositories" section.
+  // This is context-dependent (all repos vs. repos in a specific org).
+  const [contextRepositories, setContextRepositories] = useState<Repository[]>([]);
+  
+  // State for ALL public repositories, used for the "Community Repositories" section.
+  // This is only populated when viewing "All Organizations".
+  const [allPublicRepositories, setAllPublicRepositories] = useState<Repository[]>([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [viewingRepository, setViewingRepository] = useState<Repository | null>(null);
 
-  const getRepositories = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const repos = await fetchRepositories(token);
-      setRepositories(Array.isArray(repos) ? repos : []);
-    } catch (err) {
-      setError('Failed to load repositories.');
-      setRepositories([]);
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token]);
-
   useEffect(() => {
+    // Reset views when the organization context changes
     setSearchTerm('');
     setShowCreateForm(false);
     setViewingRepository(null);
+
+    const getRepositories = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        if (organizationName) {
+          // A specific organization is selected. Fetch ONLY its repositories.
+          const orgRepos = await fetchRepositoriesByNamespace(organizationName, token);
+          setContextRepositories(Array.isArray(orgRepos) ? orgRepos : []);
+          // Community repos are not shown in this view, so clear the list.
+          setAllPublicRepositories([]); 
+        } else {
+          // "All Organizations" is selected. Fetch everything to show both "My Repos" and "Community Repos".
+          const allRepos = await fetchRepositories(token);
+          const reposArray = Array.isArray(allRepos) ? allRepos : [];
+          
+          setContextRepositories(reposArray);
+          setAllPublicRepositories(reposArray.filter(r => r.is_public));
+        }
+      } catch (err) {
+        setError('Failed to load repositories.');
+        setContextRepositories([]);
+        setAllPublicRepositories([]);
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     getRepositories();
-  }, [getRepositories, organizationName]);
+  }, [token, organizationName]);
 
   const handleCreationSuccess = (newRepo: Repository) => {
     setShowCreateForm(false);
     setViewingRepository(newRepo);
-    getRepositories(); // Refresh the list in the background
+    // Manually add the new repo to the state to avoid a full refetch
+    setContextRepositories(prev => [newRepo, ...prev.filter(r => r.id !== newRepo.id)]);
+    // Only update community list if it's visible (i.e., in "All Orgs" view)
+    if (newRepo.is_public && !organizationName) {
+        setAllPublicRepositories(prev => [newRepo, ...prev.filter(r => r.id !== newRepo.id)]);
+    }
   };
 
   const { myRepositories, communityRepositories } = useMemo(() => {
-    // Filter by organization for "My Repositories"
-    const reposForOrg = organizationName
-      ? repositories.filter(repo => repo.organization?.name === organizationName)
-      : repositories;
-
-    const myFiltered = reposForOrg.filter(repo =>
+    const myFiltered = contextRepositories.filter(repo =>
       repo.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Filter for public repositories for "Community"
-    const communityFiltered = repositories.filter(repo =>
-      repo.is_public && repo.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const communityFiltered = allPublicRepositories.filter(repo =>
+      repo.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return { myRepositories: myFiltered, communityRepositories: communityFiltered };
-  }, [repositories, organizationName, searchTerm]);
+  }, [contextRepositories, allPublicRepositories, searchTerm]);
   
   const handleBackToList = () => {
     setViewingRepository(null);
@@ -115,17 +136,19 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
           />
         </div>
 
-        <div>
-           <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
-            Community Repositories
-          </h3>
-          <RepositoryList 
-            repositories={communityRepositories} 
-            // Pass organizationName so pull commands are correct if a repo from the selected org appears here
-            organizationName={organizationName} 
-            onSelectRepository={(repo) => setViewingRepository(repo)}
-          />
-        </div>
+        {/* Only show Community Repositories if no specific organization is selected */}
+        {!organizationName && (
+          <div>
+            <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
+              Community Repositories
+            </h3>
+            <RepositoryList 
+              repositories={communityRepositories} 
+              organizationName={undefined} 
+              onSelectRepository={(repo) => setViewingRepository(repo)}
+            />
+          </div>
+        )}
       </div>
     );
   };

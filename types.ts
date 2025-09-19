@@ -16,6 +16,22 @@ export interface User {
   email: string;
 }
 
+export interface ChangePasswordRequest {
+  current_password: string;
+  new_password: string;
+  confirm_password: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  new_password: string;
+  confirm_password: string;
+}
+
 export interface Organization {
   id: number;
   name: string;
@@ -60,9 +76,11 @@ export interface Repository {
   name: string;
   description: string | null;
   is_public: boolean;
-  organization?: {
-    name: string;
-  };
+  organization: Organization;
+  organization_id: number;
+  created_at: string;
+  updated_at: string;
+  created_by: number | null;
 }
 
 export interface CreateRepositoryRequest {

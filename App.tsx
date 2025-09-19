@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
@@ -9,6 +8,8 @@ import ProfilePage from './pages/ProfilePage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import { User } from './types';
 import { fetchCurrentUser } from './services/api';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 const App: React.FC = () => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
@@ -82,6 +83,9 @@ const App: React.FC = () => {
           } 
         />
         <Route path="/docs" element={<DocsPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+
 
         {/* Protected Routes */}
         <Route 
@@ -95,7 +99,7 @@ const App: React.FC = () => {
         >
           <Route path="/repositories" element={<RepositoriesPage token={token} />} />
           <Route path="/organizations" element={<OrganizationsPage token={token} currentUser={currentUser} />} />
-          <Route path="/profile" element={<ProfilePage currentUser={currentUser!} />} />
+          <Route path="/profile" element={<ProfilePage currentUser={currentUser!} token={token!} />} />
           {/* FIX: The DocsPage component does not accept a 'token' prop. Removed it to fix the type error. */}
           <Route path="/docs" element= {<DocsPage />} />
         </Route>

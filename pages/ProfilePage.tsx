@@ -1,13 +1,69 @@
 
-import React from 'react';
-import { User } from '../types';
+import React, { useState } from 'react';
+import { User, ChangePasswordRequest } from '../types';
+import { changePassword } from '../services/api';
 import { UserCircleIcon } from '../components/icons/UserCircleIcon';
+import Input from '../components/Input';
+import Button from '../components/Button';
 
 interface ProfilePageProps {
   currentUser: User;
+  token: string;
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
+const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, token }) => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setError('Please fill in all fields.');
+      return;
+    }
+    if (newPassword.length < 8) {
+      setError('New password must be at least 8 characters long.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError('New passwords do not match.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const payload: ChangePasswordRequest = {
+        current_password: currentPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+      };
+      await changePassword(payload, token);
+      setSuccess('Password updated successfully!');
+      // Clear fields on success
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      if (err.status === 401) {
+        setError('Incorrect current password.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
   return (
     <div className="space-y-8 animate-fade-in">
       <header>
@@ -53,8 +109,43 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
       </div>
 
        <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-slate-100">Security</h3>
-            <p className="text-slate-400 mt-2">Changing your password is not yet supported through the UI.</p>
+            <h3 className="text-xl font-semibold text-slate-100">Change Password</h3>
+            <form onSubmit={handleSubmit} className="mt-4 space-y-4 max-w-lg">
+                <Input
+                    id="currentPassword"
+                    type="password"
+                    label="Current Password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    disabled={isLoading}
+                    autoComplete="current-password"
+                />
+                <Input
+                    id="newPassword"
+                    type="password"
+                    label="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    disabled={isLoading}
+                    autoComplete="new-password"
+                />
+                <Input
+                    id="confirmPassword"
+                    type="password"
+                    label="Confirm New Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={isLoading}
+                    autoComplete="new-password"
+                />
+                {error && <p className="text-sm text-red-500">{error}</p>}
+                {success && <p className="text-sm text-green-500">{success}</p>}
+                 <div className="flex justify-end pt-2">
+                    <Button type="submit" isLoading={isLoading} fullWidth={false}>
+                        Update Password
+                    </Button>
+                </div>
+            </form>
       </div>
 
     </div>

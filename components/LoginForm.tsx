@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Input from './Input';
 import Button from './Button';
 import { API_BASE_URL } from '../config';
@@ -64,16 +64,26 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
         disabled={isLoading}
         autoComplete="email"
       />
-      <Input
-        id="login-password"
-        type="password"
-        label="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="••••••••"
-        disabled={isLoading}
-        autoComplete="current-password"
-      />
+      <div>
+        <Input
+            id="login-password"
+            type="password"
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            disabled={isLoading}
+            autoComplete="current-password"
+        />
+        <div className="text-right mt-2">
+            <Link 
+                to="/forgot-password" 
+                className="text-sm font-medium text-indigo-400 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800 rounded"
+            >
+                Forgot your password?
+            </Link>
+        </div>
+      </div>
       {error && <p className="text-sm text-red-500">{error}</p>}
       <Button type="submit" isLoading={isLoading}>
         Sign In
