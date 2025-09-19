@@ -1,5 +1,6 @@
 
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import { AuthMode } from '../types';
@@ -56,6 +57,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
                 Introduction
                            
               </button>
+              <Link
+                to="/docs"
+                className="font-semibold text-indigo-400 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-2 py-1 transition-colors"
+              >
+                Docs
+              </Link>
             <button
                 onClick={() => {
                   setAuthMode(AuthMode.Login);
@@ -198,6 +205,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
       <footer className="bg-transparent py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-500">
           <p>&copy; {new Date().getFullYear()} Aerugo Registry. All rights reserved.</p>
+          <div className="mt-2">
+             <Link to="/docs#tos" className="text-sm text-slate-400 hover:text-indigo-400 transition-colors">
+                Terms of Service
+             </Link>
+          </div>
         </div>
       </footer>
     </div>

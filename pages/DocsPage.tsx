@@ -1,5 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+
+import React, { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import CodeBlock from '../components/docs/CodeBlock';
 
 const DocsPage: React.FC = () => {
@@ -8,9 +9,29 @@ const DocsPage: React.FC = () => {
         { href: '#organizations', label: 'Managing Organizations' },
         { href: '#repositories', label: 'Managing Repositories' },
         { href: '#docker-usage', label: 'Using Docker' },
+        { href: '#tos', label: 'Terms of Service' },
     ];
 
     const REGISTRY_HOST = 'registry.example.com'; // Placeholder, matches other components
+
+    const location = useLocation();
+
+    useEffect(() => {
+        // Handle scrolling to the correct section when the hash in the URL changes.
+        // This is needed for links from other pages (e.g., footer) to work correctly.
+        if (location.hash) {
+            const id = location.hash.substring(1);
+            setTimeout(() => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }, 100); // Small delay to ensure the page has rendered
+        }
+    }, [location.hash]);
 
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
         e.preventDefault();
@@ -21,6 +42,8 @@ const DocsPage: React.FC = () => {
                 behavior: 'smooth',
                 block: 'start'
             });
+            // Update the URL hash without reloading the page
+            window.history.pushState(null, '', targetId);
         }
     };
 
@@ -54,6 +77,14 @@ const DocsPage: React.FC = () => {
                         <p className="mt-4 text-xl text-slate-300 leading-relaxed">
                             Welcome to the Aerugo Registry! This guide will walk you through managing your container images using this web interface. Here you can create organizations for your teams, manage your repositories, and control access for your members.
                         </p>
+                         <div className="mt-8">
+                            <Link
+                                to="/repositories"
+                                className="inline-block px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-md shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+                            >
+                                Get Started
+                            </Link>
+                        </div>
                     </section>
 
                     <section id="organizations" className="scroll-mt-20">
@@ -136,6 +167,43 @@ const DocsPage: React.FC = () => {
                             <h3 className="text-2xl font-semibold text-slate-100 !mt-8">4. Pull the Image</h3>
                             <p>To pull the image on another machine (or after removing it locally), use the same full path.</p>
                             <CodeBlock code={`docker pull ${REGISTRY_HOST}/my-awesome-team/my-app:v1.0`} language="bash" />
+                        </div>
+                    </section>
+
+                    <section id="tos" className="scroll-mt-20">
+                        <h2 className="text-3xl font-bold text-slate-100 border-b border-slate-700 pb-3">Terms of Service</h2>
+                        <div className="mt-6 space-y-6 text-slate-300 leading-relaxed">
+                            <p>Last Updated: {new Date().toLocaleDateString()}</p>
+                            
+                            <h3 className="text-2xl font-semibold text-slate-100 !mt-8">1. Acceptance of Terms</h3>
+                            <p>By accessing or using the Aerugo Registry service ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of the terms, then you may not access the Service.</p>
+
+                            <h3 className="text-2xl font-semibold text-slate-100 !mt-8">2. User Accounts</h3>
+                            <p>You are responsible for safeguarding the password that you use to access the Service and for any activities or actions under your password. You agree not to disclose your password to any third party. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.</p>
+
+                            <h3 className="text-2xl font-semibold text-slate-100 !mt-8">3. User Content</h3>
+                            <p>You retain full ownership of any container images, data, or other content you upload to the Service ("Content"). By uploading Content, you grant us a worldwide, non-exclusive, royalty-free license to host, store, and distribute your Content solely for the purpose of providing and operating the Service. You are solely responsible for your Content and the consequences of storing and distributing it.</p>
+                            <p>You represent and warrant that you have all necessary rights to your Content and that your Content does not infringe upon any third-party rights, contain any malware, or violate any applicable laws.</p>
+
+                            <h3 className="text-2xl font-semibold text-slate-100 !mt-8">4. Acceptable Use</h3>
+                            <p>You agree not to use the Service for any purpose that is illegal or prohibited by these Terms. You agree not to:</p>
+                             <ul className="list-disc list-inside space-y-2 pl-5">
+                                <li>Upload or distribute any Content that is unlawful, harmful, or infringes on the intellectual property rights of others.</li>
+                                <li>Engage in any activity that interferes with or disrupts the Service (or the servers and networks which are connected to the Service).</li>
+                                <li>Attempt to gain unauthorized access to any part of the Service, other accounts, or computer systems.</li>
+                            </ul>
+
+                            <h3 className="text-2xl font-semibold text-slate-100 !mt-8">5. Termination</h3>
+                            <p>We may terminate or suspend your access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms. Upon termination, your right to use the Service will immediately cease. We reserve the right to delete your account and all associated Content upon termination.</p>
+
+                            <h3 className="text-2xl font-semibold text-slate-100 !mt-8">6. Disclaimer of Warranties</h3>
+                            <p>The Service is provided on an "AS IS" and "AS AVAILABLE" basis. We make no warranties, expressed or implied, regarding the reliability, security, or availability of the Service.</p>
+
+                            <h3 className="text-2xl font-semibold text-slate-100 !mt-8">7. Limitation of Liability</h3>
+                            <p>In no event shall Aerugo Registry, nor its directors, employees, partners, or agents, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.</p>
+
+                            <h3 className="text-2xl font-semibold text-slate-100 !mt-8">8. Changes to Terms</h3>
+                            <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will provide notice of any changes by posting the new Terms on this page. Your continued use of the Service after any such changes constitutes your acceptance of the new Terms.</p>
                         </div>
                     </section>
                 </div>
