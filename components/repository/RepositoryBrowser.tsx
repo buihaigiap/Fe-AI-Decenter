@@ -41,7 +41,7 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
     setShowCreateForm(false);
     setViewingRepository(null);
     getRepositories();
-  }, [getRepositories]);
+  }, [getRepositories, organizationName]);
 
   const handleCreationSuccess = (newRepo: Repository) => {
     setShowCreateForm(false);
@@ -49,14 +49,22 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
     getRepositories(); // Refresh the list in the background
   };
 
-  const filteredRepositories = useMemo(() => {
-    const reposForOrg = organizationName 
-        ? repositories.filter(repo => repo.organization?.name === organizationName)
-        : repositories;
+  const { myRepositories, communityRepositories } = useMemo(() => {
+    // Filter by organization for "My Repositories"
+    const reposForOrg = organizationName
+      ? repositories.filter(repo => repo.organization?.name === organizationName)
+      : repositories;
 
-    return reposForOrg.filter(repo =>
-        repo.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+    const myFiltered = reposForOrg.filter(repo =>
+      repo.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Filter for public repositories for "Community"
+    const communityFiltered = repositories.filter(repo =>
+      repo.is_public && repo.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return { myRepositories: myFiltered, communityRepositories: communityFiltered };
   }, [repositories, organizationName, searchTerm]);
   
   const handleBackToList = () => {
@@ -94,11 +102,31 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
       );
     }
     return (
-      <RepositoryList 
-        repositories={filteredRepositories} 
-        organizationName={organizationName} 
-        onSelectRepository={(repo) => setViewingRepository(repo)}
-      />
+      <div className="space-y-8">
+        <div>
+          <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
+            My Repositories
+            {organizationName && <span className="text-base font-normal text-slate-400"> in {organizationName}</span>}
+          </h3>
+          <RepositoryList 
+            repositories={myRepositories} 
+            organizationName={organizationName} 
+            onSelectRepository={(repo) => setViewingRepository(repo)}
+          />
+        </div>
+
+        <div>
+           <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
+            Community Repositories
+          </h3>
+          <RepositoryList 
+            repositories={communityRepositories} 
+            // Pass organizationName so pull commands are correct if a repo from the selected org appears here
+            organizationName={organizationName} 
+            onSelectRepository={(repo) => setViewingRepository(repo)}
+          />
+        </div>
+      </div>
     );
   };
 

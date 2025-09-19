@@ -70,3 +70,21 @@ export interface CreateRepositoryRequest {
   description: string | null;
   is_public: boolean;
 }
+
+export interface ImageTag {
+  name: string;
+  digest: string;
+  osArch: string;
+  size: string;
+  pushedAt: string;
+}
+
+export interface Webhook {
+  id: number;
+  url: string;
+  events: string[];
+  lastDelivery?: {
+    status: 'success' | 'failed';
+    timestamp: string;
+  };
+}
