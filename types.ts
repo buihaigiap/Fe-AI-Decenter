@@ -71,12 +71,34 @@ export interface CreateRepositoryRequest {
   is_public: boolean;
 }
 
+export interface ImageLayer {
+  digest: string;
+  size: string;
+}
+
+export interface ImageHistoryItem {
+  command: string;
+  details: string;
+}
+
+export interface ImageConfig {
+  created: string;
+  dockerVersion: string;
+  osArch: string;
+  labels: Record<string, string>;
+}
+
+
 export interface ImageTag {
   name: string;
   digest: string;
   osArch: string;
   size: string;
   pushedAt: string;
+  // Detailed information for the tag detail view
+  config: ImageConfig;
+  layers: ImageLayer[];
+  history: ImageHistoryItem[];
 }
 
 export interface Webhook {
