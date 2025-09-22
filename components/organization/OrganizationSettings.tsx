@@ -9,13 +9,15 @@ import { TrashIcon } from '../icons/TrashIcon';
 interface OrganizationSettingsProps {
   token: string;
   organization: Organization;
+  currentUserRole?: string;
   onOrganizationUpdated: () => void;
   onOrganizationDeleted: () => void;
 }
 
 const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({ 
     token, 
-    organization, 
+    organization,
+    currentUserRole, 
     onOrganizationUpdated,
     onOrganizationDeleted
 }) => {
@@ -86,6 +88,8 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
     }
   };
 
+  const canDelete = currentUserRole === 'owner';
+
   return (
     <div className="space-y-12">
       <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
@@ -153,10 +157,23 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
       <div className="bg-slate-800/50 border border-red-700/50 rounded-lg p-6">
           <h3 className="text-xl font-bold text-red-400 mb-2">Danger Zone</h3>
           <p className="text-slate-400 mb-4">Deleting an organization is permanent and cannot be undone. This will also delete all associated repositories and images.</p>
-          <Button variant="danger" onClick={() => setIsDeleteModalOpen(true)} fullWidth={false}>
-            <TrashIcon className="w-5 h-5 mr-2 -ml-1" />
-            Delete this organization
-          </Button>
+          <div className="flex flex-col items-start gap-2">
+            <Button 
+                variant="danger" 
+                onClick={() => setIsDeleteModalOpen(true)} 
+                fullWidth={false}
+                disabled={!canDelete}
+                title={canDelete ? "" : "Only organization owners can perform this action."}
+            >
+                <TrashIcon className="w-5 h-5 mr-2 -ml-1" />
+                Delete this organization
+            </Button>
+            {!canDelete && (
+                <p className="text-sm text-yellow-400">
+                    You must be an Owner to delete this organization.
+                </p>
+            )}
+          </div>
       </div>
       
       <Modal 

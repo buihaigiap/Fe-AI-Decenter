@@ -24,6 +24,11 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // State for members is now managed here instead of in MembersView
+  const [members, setMembers] = useState<OrganizationMember[]>([]);
+  const [isLoadingMembers, setIsLoadingMembers] = useState(true);
+  const [errorMembers, setErrorMembers] = useState<string | null>(null);
+
   const getDetails = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -38,14 +43,37 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
     }
   }, [organization.id, token]);
 
+  const getMembers = useCallback(async () => {
+    setIsLoadingMembers(true);
+    setErrorMembers(null);
+    try {
+      const memberList = await fetchOrganizationMembers(organization.id, token);
+      setMembers(memberList);
+    } catch (err) {
+      setErrorMembers('Failed to load members.');
+      console.error(err);
+    } finally {
+      setIsLoadingMembers(false);
+    }
+  }, [organization.id, token]);
+
+
   useEffect(() => {
     getDetails();
-  }, [getDetails]);
+    getMembers();
+  }, [getDetails, getMembers]);
 
   const handleSettingsChange = () => {
       getDetails(); // Re-fetch my own details
       onDataChange(); // Tell parent to re-fetch the list
   }
+  
+  const handleMembersChanged = () => {
+    getMembers(); // Only re-fetch members when a member is added/removed/updated
+  }
+
+  // Calculate the current user's role here to pass it to child components
+  const currentUserRole = members.find(m => m.user_id === currentUser.id)?.role.toLowerCase();
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-lg">
@@ -79,12 +107,22 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
         ) : (
           <>
             {activeTab === 'members' && (
-                <MembersView token={token} organization={detailedOrg} currentUser={currentUser}/>
+                <MembersView 
+                    token={token} 
+                    organization={detailedOrg} 
+                    currentUser={currentUser}
+                    members={members}
+                    isLoading={isLoadingMembers}
+                    error={errorMembers}
+                    currentUserRole={currentUserRole}
+                    onDataChange={handleMembersChanged}
+                />
             )}
             {activeTab === 'settings' && (
                 <OrganizationSettings 
                     token={token} 
                     organization={detailedOrg}
+                    currentUserRole={currentUserRole}
                     onOrganizationUpdated={handleSettingsChange}
                     onOrganizationDeleted={onDataChange}
                 />
@@ -111,37 +149,23 @@ const TabButton: React.FC<{icon: React.ReactNode, label: string, isActive: boole
     </button>
 );
 
-// Extracted Members view logic into its own component for cleanliness
-const MembersView: React.FC<{token: string, organization: Organization, currentUser: User}> = ({ token, organization, currentUser }) => {
-    const [members, setMembers] = useState<OrganizationMember[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+// MembersView is now a simpler component that receives its data via props
+const MembersView: React.FC<{
+    token: string, 
+    organization: Organization, 
+    currentUser: User,
+    members: OrganizationMember[],
+    isLoading: boolean,
+    error: string | null,
+    currentUserRole?: string,
+    onDataChange: () => void,
+}> = ({ token, organization, currentUser, members, isLoading, error, currentUserRole, onDataChange }) => {
     const [showAddForm, setShowAddForm] = useState(false);
-
-    const getMembers = useCallback(async () => {
-        try {
-        setIsLoading(true);
-        setError(null);
-        const memberList = await fetchOrganizationMembers(organization.id, token);
-        setMembers(memberList);
-        } catch (err) {
-        setError('Failed to load members.');
-        console.error(err);
-        } finally {
-        setIsLoading(false);
-        }
-    }, [organization.id, token]);
-
-    useEffect(() => {
-        getMembers();
-    }, [getMembers]);
 
     const handleSuccess = () => {
         setShowAddForm(false);
-        getMembers(); // Refresh member list
+        onDataChange(); // Refresh member list by calling the passed-in handler
     }
-
-    const currentUserRole = members.find(m => m.user_id === currentUser.id)?.role.toLowerCase();
 
     return (
         <div className="space-y-6">
@@ -173,7 +197,7 @@ const MembersView: React.FC<{token: string, organization: Organization, currentU
                     currentUserRole={currentUserRole}
                     orgId={organization.id}
                     token={token}
-                    onDataChange={getMembers}
+                    onDataChange={onDataChange}
                  />
             )}
         </div>
