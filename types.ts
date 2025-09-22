@@ -128,3 +128,20 @@ export interface Webhook {
     timestamp: string;
   };
 }
+
+export interface UserPermission {
+  user_id: number;
+  permission: string;
+}
+
+export interface OrgPermission {
+  organization_id: number;
+  permission: string;
+}
+
+export interface RepositoryDetailsResponse {
+  repository: Repository;
+  tags: ImageTag[];
+  user_permissions: UserPermission[];
+  org_permissions: OrgPermission[];
+}

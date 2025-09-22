@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Repository } from '../../types';
+import React, { useState, useEffect } from 'react';
+import { Repository, ImageTag } from '../../types';
 import CommandSnippet from './CommandSnippet';
 import { ArrowLeftIcon } from '../icons/ArrowLeftIcon';
 import RepositorySettings from './RepositorySettings';
@@ -11,6 +11,7 @@ import { ChartBarIcon } from '../icons/ChartBarIcon';
 import { RssIcon } from '../icons/RssIcon';
 import { CogIcon } from '../icons/CogIcon';
 import { CodeBracketIcon } from '../icons/CodeBracketIcon';
+import { fetchRepositoryDetails } from '../../services/api';
 
 interface RepositoryDetailProps {
   token: string;
@@ -23,8 +24,32 @@ const REGISTRY_HOST = 'registry.example.com'; // Placeholder for your registry's
 
 const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, organizationName, onBack }) => {
     const [activeTab, setActiveTab] = useState<'tags' | 'usage' | 'webhooks' | 'instructions' | 'settings'>('tags');
+    
+    const [detailedRepo, setDetailedRepo] = useState<Repository>(repository);
+    const [tags, setTags] = useState<ImageTag[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const getDetails = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const response = await fetchRepositoryDetails(organizationName, repository.name, token);
+                setDetailedRepo(response.repository);
+                setTags(response.tags || []);
+            } catch (err) {
+                console.error("Failed to fetch repository details", err);
+                setError('Failed to load repository details.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        getDetails();
+    }, [token, organizationName, repository.name]);
   
-    const repositoryPath = `${REGISTRY_HOST}/${organizationName}/${repository.name}`;
+    const repositoryPath = `${REGISTRY_HOST}/${organizationName}/${detailedRepo.name}`;
 
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 animate-fade-in">
@@ -33,8 +58,8 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, 
           <ArrowLeftIcon className="w-4 h-4 mr-2" />
           Back to repositories
         </button>
-        <h2 className="text-3xl font-bold text-slate-50">{repository.name}</h2>
-        <p className="text-slate-400 mt-1">{repository.description || 'No description provided.'}</p>
+        <h2 className="text-3xl font-bold text-slate-50">{detailedRepo.name}</h2>
+        <p className="text-slate-400 mt-1">{detailedRepo.description || 'No description provided.'}</p>
       </header>
       
        <div className="border-b border-slate-700 mb-6">
@@ -74,7 +99,12 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, 
 
       <main>
         {activeTab === 'tags' && (
-            <RepositoryTags repositoryPath={repositoryPath} />
+            <RepositoryTags 
+                repositoryPath={repositoryPath}
+                tags={tags}
+                isLoading={isLoading}
+                error={error}
+            />
         )}
         {activeTab === 'usage' && (
             <RepositoryUsage />
@@ -109,7 +139,7 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, 
             <RepositorySettings 
                 token={token}
                 organizationName={organizationName}
-                repository={repository}
+                repository={detailedRepo}
                 onRepositoryDeleted={onBack}
             />
         )}

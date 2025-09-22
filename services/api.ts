@@ -11,7 +11,8 @@ import {
     OrganizationRole,
     ChangePasswordRequest,
     ForgotPasswordRequest,
-    ResetPasswordRequest
+    ResetPasswordRequest,
+    RepositoryDetailsResponse
 } from '../types';
 
 // Interface to match the structure of the API response for organizations
@@ -113,11 +114,11 @@ export const changePassword = (data: ChangePasswordRequest, token: string): Prom
 
 // Placeholder for requesting a password reset email
 export const forgotPassword = (data: ForgotPasswordRequest): Promise<void> => {
-    // This should eventually be a real API call to a corrected backend
-    console.log('Simulating sending password reset for', data.email);
+    // This should eventually be a real API call. The backend for this is not yet implemented.
+    console.log('Simulating sending password reset email to', data.email);
     return new Promise(resolve => setTimeout(resolve, 1000));
     // Example of real implementation:
-    // return fetchPublic<void>('/api/v1/auth/request-password-reset', {
+    // return fetchPublic<void>('/api/v1/auth/forgot-password', {
     //     method: 'POST',
     //     body: JSON.stringify(data),
     // });
@@ -125,7 +126,7 @@ export const forgotPassword = (data: ForgotPasswordRequest): Promise<void> => {
 
 // Placeholder for resetting the password with a token
 export const resetPassword = (data: ResetPasswordRequest): Promise<void> => {
-    // This should eventually be a real API call to a corrected backend
+    // This should eventually be a real API call. The backend for this is not yet implemented.
     console.log('Simulating resetting password with token', data.token);
     return new Promise(resolve => setTimeout(resolve, 1000));
     // Example of real implementation:
@@ -174,6 +175,10 @@ export const fetchRepositories = async (token: string): Promise<Repository[]> =>
 export const fetchRepositoriesByNamespace = async (namespace: string, token: string): Promise<Repository[]> => {
     const data = await fetchWithAuth<Repository[]>(`/api/v1/repos/repositories/${namespace}`, token);
     return data || [];
+};
+
+export const fetchRepositoryDetails = (namespace: string, repo_name: string, token: string): Promise<RepositoryDetailsResponse> => {
+    return fetchWithAuth<RepositoryDetailsResponse>(`/api/v1/repos/${namespace}/repositories/${repo_name}`, token);
 };
 
 export const createRepository = (namespace: string, data: CreateRepositoryRequest, token: string): Promise<Repository> => {
