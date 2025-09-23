@@ -52,7 +52,7 @@ const RepositoryTags: React.FC<RepositoryTagsProps> = ({ repositoryPath, tags, i
     }
 
     return (
-        <div className="overflow-x-auto animate-fade-in">
+        <div className="overflow-x-auto animate-fade-in-up">
             <div className="border border-slate-700 rounded-lg">
                 <table className="min-w-full divide-y divide-slate-700">
                     <thead className="bg-slate-800/50">
@@ -106,7 +106,7 @@ const TagListItem: React.FC<TagListItemProps> = ({ tag, repositoryPath, onSelect
     return (
         <tr className="hover:bg-slate-700/50 transition-colors duration-150">
             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button onClick={onSelectTag} className="text-blue-400 hover:underline focus:outline-none">
+                <button onClick={onSelectTag} className="text-indigo-400 hover:underline focus:outline-none">
                     {tag.name}
                 </button>
             </td>

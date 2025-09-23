@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { User, ChangePasswordRequest } from '../types';
 import { changePassword } from '../services/api';
@@ -65,7 +66,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, token }) => {
 
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in-up">
       <header>
         <h1 className="text-3xl font-bold text-slate-50">My Profile</h1>
         <p className="text-slate-400 mt-1">View and manage your account details.</p>

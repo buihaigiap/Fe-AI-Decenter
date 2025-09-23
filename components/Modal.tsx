@@ -24,13 +24,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4"
+      className="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4 backdrop-blur-sm"
       aria-modal="true"
       role="dialog"
       onClick={onClose}
     >
       <div
-        className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl w-full max-w-md animate-fade-in"
+        className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl w-full max-w-md animate-fade-in-scale-up"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">

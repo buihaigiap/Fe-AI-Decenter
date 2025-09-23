@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Organization } from '../../types';
 import { AerugoIcon } from '../icons/DockerIcon';
@@ -10,9 +11,9 @@ interface OrganizationListItemProps {
 }
 
 const OrganizationListItem: React.FC<OrganizationListItemProps> = ({ organization, isSelected, onSelect }) => {
-  const baseClasses = "w-full text-left p-4 sm:p-6 transition-colors duration-200 focus:outline-none";
-  const selectedClasses = "bg-blue-900/50";
-  const hoverClasses = "hover:bg-slate-700/50";
+  const baseClasses = "w-full text-left p-4 sm:p-6 transition-all duration-200 ease-in-out focus:outline-none transform";
+  const selectedClasses = "bg-indigo-900/50 scale-[1.02]";
+  const hoverClasses = "hover:bg-slate-700/50 hover:scale-[1.02]";
   
   return (
     <li>

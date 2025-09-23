@@ -15,10 +15,10 @@ const Button: React.FC<ButtonProps> = ({
     className,
     ...props 
 }) => {
-  const baseClasses = "flex justify-center items-center px-4 py-2.5 border border-transparent rounded-md font-semibold text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-75 disabled:cursor-not-allowed transition-colors duration-200";
+  const baseClasses = "flex justify-center items-center px-4 py-2.5 border border-transparent rounded-md font-semibold text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-75 disabled:cursor-not-allowed transition-all duration-200 ease-in-out transform active:scale-[0.98]";
   
   const variantClasses = {
-    primary: "bg-blue-600 hover:bg-blue-700 focus:ring-offset-slate-800 focus:ring-blue-500",
+    primary: "bg-indigo-600 hover:bg-indigo-700 focus:ring-offset-slate-800 focus:ring-indigo-500",
     danger: "bg-red-600 hover:bg-red-700 focus:ring-offset-slate-800 focus:ring-red-500",
   };
   
@@ -34,7 +34,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       {...props}
-      disabled={isLoading}
+      disabled={isLoading || props.disabled}
       className={finalClassName}
     >
       {isLoading ? (
@@ -42,7 +42,7 @@ const Button: React.FC<ButtonProps> = ({
           className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
-          viewBox="0 0 24 24"
+          viewBox="0 0 24"
         >
           <circle
             className="opacity-25"

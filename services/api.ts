@@ -1,3 +1,4 @@
+
 import { API_BASE_URL } from '../config';
 import { 
     Organization, 
@@ -11,7 +12,7 @@ import {
     OrganizationRole,
     ChangePasswordRequest,
     ForgotPasswordRequest,
-    ResetPasswordRequest,
+    VerifyOtpRequest,
     RepositoryDetailsResponse
 } from '../types';
 
@@ -112,30 +113,19 @@ export const changePassword = (data: ChangePasswordRequest, token: string): Prom
     });
 };
 
-// Placeholder for requesting a password reset email
 export const forgotPassword = (data: ForgotPasswordRequest): Promise<void> => {
-    // This should eventually be a real API call. The backend for this is not yet implemented.
-    console.log('Simulating sending password reset email to', data.email);
-    return new Promise(resolve => setTimeout(resolve, 1000));
-    // Example of real implementation:
-    // return fetchPublic<void>('/api/v1/auth/forgot-password', {
-    //     method: 'POST',
-    //     body: JSON.stringify(data),
-    // });
+    return fetchPublic<void>('/api/v1/auth/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    });
 };
 
-// Placeholder for resetting the password with a token
-export const resetPassword = (data: ResetPasswordRequest): Promise<void> => {
-    // This should eventually be a real API call. The backend for this is not yet implemented.
-    console.log('Simulating resetting password with token', data.token);
-    return new Promise(resolve => setTimeout(resolve, 1000));
-    // Example of real implementation:
-    // return fetchPublic<void>('/api/v1/auth/reset-password', {
-    //     method: 'POST',
-    //     body: JSON.stringify(data),
-    // });
+export const verifyOtpAndResetPassword = (data: VerifyOtpRequest): Promise<void> => {
+    return fetchPublic<void>('/api/v1/auth/verify-otp', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    });
 };
-
 
 export const fetchOrganizations = async (token: string): Promise<Organization[]> => {
   const data = await fetchWithAuth<OrganizationsApiResponse>('/api/v1/organizations', token);

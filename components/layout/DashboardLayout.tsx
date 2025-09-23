@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, Link } from 'react-router-dom';
 import { User } from '../../types';
@@ -42,7 +43,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ currentUser, onLogout
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-8">
               <div className="flex items-center space-x-3">
-                <AerugoIcon className="h-7 w-7 text-blue-500" />
+                <AerugoIcon className="h-7 w-7 text-indigo-500" />
                 <h1 className="text-xl font-bold text-slate-50">Aerugo Registry</h1>
               </div>
               <div className="flex items-center space-x-4">
@@ -61,7 +62,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ currentUser, onLogout
               <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  className="flex items-center space-x-2 text-sm text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-blue-500 rounded-full"
+                  className="flex items-center space-x-2 text-sm text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-indigo-500 rounded-full"
                   aria-haspopup="true"
                   aria-expanded={isProfileMenuOpen}
                 >
@@ -70,7 +71,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ currentUser, onLogout
                 </button>
 
                 {isProfileMenuOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-slate-700 ring-1 ring-black ring-opacity-5 z-20 animate-fade-in">
+                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-slate-700 ring-1 ring-black ring-opacity-5 z-20 animate-fade-in-scale-up">
                     <Link
                       to="/profile"
                       onClick={() => setIsProfileMenuOpen(false)}

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
@@ -9,7 +10,7 @@ import DashboardLayout from './components/layout/DashboardLayout';
 import { User } from './types';
 import { fetchCurrentUser } from './services/api';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
+import VerifyOtpPage from './pages/VerifyOtpPage';
 
 const App: React.FC = () => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
@@ -84,7 +85,7 @@ const App: React.FC = () => {
         />
         <Route path="/docs" element={<DocsPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        <Route path="/verify-otp" element={<VerifyOtpPage />} />
 
 
         {/* Protected Routes */}

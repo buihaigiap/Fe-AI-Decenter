@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Webhook } from '../../types';
 import Button from '../Button';
@@ -5,26 +6,7 @@ import Input from '../Input';
 import { PlusIcon } from '../icons/PlusIcon';
 import { RssIcon } from '../icons/RssIcon';
 
-const mockWebhooks: Webhook[] = [
-    {
-        id: 1,
-        url: 'https://ci.example.com/hooks/aerugo',
-        events: ['on_push'],
-        lastDelivery: {
-            status: 'success',
-            timestamp: '2 hours ago',
-        }
-    },
-    {
-        id: 2,
-        url: 'https://notifications.example.com/slack',
-        events: ['on_push', 'on_delete'],
-        lastDelivery: {
-            status: 'failed',
-            timestamp: '1 day ago',
-        }
-    }
-];
+const mockWebhooks: Webhook[] = [];
 
 const RepositoryWebhooks: React.FC = () => {
     const [showAddForm, setShowAddForm] = useState(false);

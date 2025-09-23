@@ -73,7 +73,7 @@ const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, orga
   };
 
   return (
-    <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 animate-fade-in">
+    <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 animate-fade-in-up">
       <h3 className="text-xl font-bold text-slate-50 mb-6">Create New Repository</h3>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -148,7 +148,7 @@ interface VisibilityOptionProps {
 
 const VisibilityOption: React.FC<VisibilityOptionProps> = ({ id, icon, label, description, isSelected, onSelect }) => {
     return (
-         <label htmlFor={id} className={`relative flex items-start p-4 border rounded-lg cursor-pointer transition-colors duration-200 ${isSelected ? 'bg-blue-900/50 border-blue-500' : 'bg-slate-700/80 border-slate-600 hover:border-slate-500'}`}>
+         <label htmlFor={id} className={`relative flex items-start p-4 border rounded-lg cursor-pointer transition-colors duration-200 ${isSelected ? 'bg-indigo-900/50 border-indigo-500' : 'bg-slate-700/80 border-slate-600 hover:border-slate-500'}`}>
             <input type="radio" id={id} name="visibility" checked={isSelected} onChange={onSelect} className="hidden" />
             {icon}
             <div className="flex-1">

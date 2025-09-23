@@ -44,7 +44,7 @@ const RepositorySettings: React.FC<RepositorySettingsProps> = ({
   };
 
   return (
-    <div className="space-y-12 animate-fade-in">
+    <div className="space-y-12 animate-fade-in-up">
       <div className="bg-slate-800/50 border border-red-700/50 rounded-lg p-6">
           <h3 className="text-xl font-bold text-red-400 mb-2">Danger Zone</h3>
           <p className="text-slate-400 mb-4">Deleting a repository is permanent and cannot be undone. This will delete all associated tags and images.</p>

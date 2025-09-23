@@ -53,7 +53,7 @@ const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
     <select
       value={value}
       onChange={handleChange}
-      className="block w-full max-w-xs px-4 py-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+      className="block w-full max-w-xs px-4 py-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
       aria-label="Select an organization"
     >
       {organizations.length === 0 ? (

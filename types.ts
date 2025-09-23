@@ -1,3 +1,4 @@
+
 // Fix: Replaced incorrect file content with proper type definitions.
 export enum AuthMode {
   Login = 'login',
@@ -26,8 +27,9 @@ export interface ForgotPasswordRequest {
   email: string;
 }
 
-export interface ResetPasswordRequest {
-  token: string;
+export interface VerifyOtpRequest {
+  email: string;
+  otp_code: string;
   new_password: string;
   confirm_password: string;
 }
@@ -119,15 +121,6 @@ export interface ImageTag {
   history: ImageHistoryItem[];
 }
 
-export interface Webhook {
-  id: number;
-  url: string;
-  events: string[];
-  lastDelivery?: {
-    status: 'success' | 'failed';
-    timestamp: string;
-  };
-}
 
 export interface UserPermission {
   user_id: number;
@@ -144,4 +137,14 @@ export interface RepositoryDetailsResponse {
   tags: ImageTag[];
   user_permissions: UserPermission[];
   org_permissions: OrgPermission[];
+}
+
+// FIX: Added missing Webhook type to fix compilation error in RepositoryWebhooks.tsx
+export interface Webhook {
+  id: number;
+  url: string;
+  lastDelivery?: {
+      status: 'success' | 'failed';
+      timestamp: string;
+  };
 }

@@ -138,9 +138,9 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
 const TabButton: React.FC<{icon: React.ReactNode, label: string, isActive: boolean, onClick: () => void}> = ({ icon, label, isActive, onClick }) => (
     <button
       onClick={onClick}
-      className={`flex items-center px-3 py-3 font-medium text-sm border-b-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800 rounded-t-md ${
+      className={`flex items-center px-3 py-3 font-medium text-sm border-b-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800 rounded-t-md ${
         isActive
-          ? 'border-blue-500 text-blue-400'
+          ? 'border-indigo-500 text-indigo-400'
           : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
       }`}
     >

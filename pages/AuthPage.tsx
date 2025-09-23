@@ -1,4 +1,5 @@
 
+
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
@@ -241,7 +242,7 @@ interface FeatureCardProps {
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) => (
-    <div className="flex flex-col items-center text-center p-6 bg-slate-800/70 backdrop-blur-sm rounded-lg border border-slate-700/80">
+    <div className="flex flex-col items-center text-center p-6 bg-slate-800/70 backdrop-blur-sm rounded-lg border border-slate-700/80 transition-all duration-300 ease-in-out transform hover:-translate-y-2 hover:shadow-xl hover:shadow-indigo-950/50">
         <div className="flex items-center justify-center h-16 w-16 rounded-full bg-slate-700/80 mb-4">
             {icon}
         </div>

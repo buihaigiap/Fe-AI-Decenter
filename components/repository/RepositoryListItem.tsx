@@ -30,10 +30,10 @@ const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, org
   };
 
   return (
-    <div className="bg-slate-800/50 hover:bg-slate-700/50 transition-colors duration-200 border border-slate-700 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="bg-slate-800/50 hover:bg-slate-700/50 transition-all duration-200 ease-in-out hover:shadow-2xl hover:shadow-slate-950/50 border border-slate-700 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div className="flex-1">
         <div className="flex items-center space-x-3">
-            <button onClick={() => onSelect(repository)} className="text-lg font-semibold text-blue-400 hover:underline text-left">
+            <button onClick={() => onSelect(repository)} className="text-lg font-semibold text-indigo-400 hover:underline text-left">
               <span className="text-slate-400">{orgName} /</span> {repository.name}
             </button>
             <span 

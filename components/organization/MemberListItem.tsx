@@ -81,7 +81,7 @@ const MemberListItem: React.FC<MemberListItemProps> = ({ member, isLastOwner, cu
               value={member.role.toLowerCase()}
               onChange={handleRoleChange}
               disabled={isUpdating || isLastOwner}
-              className="block w-full px-3 py-1 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:opacity-70"
+              className="block w-full px-3 py-1 bg-slate-700 border border-slate-600 rounded-md text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:opacity-70"
             >
               <option value="owner" disabled={currentUserRole !== 'owner'}>Owner</option>
               <option value="admin">Admin</option>

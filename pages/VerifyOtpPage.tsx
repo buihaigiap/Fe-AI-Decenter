@@ -1,13 +1,19 @@
+
 import React, { useState, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AerugoIcon } from '../components/icons/DockerIcon';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import { verifyOtpAndResetPassword } from '../services/api';
 
-const ResetPasswordPage: React.FC = () => {
-    const { token } = useParams<{ token: string }>();
+const VerifyOtpPage: React.FC = () => {
+    const location = useLocation();
     const navigate = useNavigate();
+    
+    // Email is passed from the previous page
+    const email = location.state?.email;
 
+    const [otpCode, setOtpCode] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -15,17 +21,17 @@ const ResetPasswordPage: React.FC = () => {
     const [isSuccess, setIsSuccess] = useState(false);
 
     useEffect(() => {
-        if (!token) {
-            setError("Invalid or missing reset token. Please request a new password reset link.");
+        if (!email) {
+            // If the user lands here directly without an email, redirect them back
+            navigate('/forgot-password');
         }
-    }, [token]);
-
+    }, [email, navigate]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
 
-        if (!newPassword || !confirmPassword) {
+        if (!otpCode || !newPassword || !confirmPassword) {
             setError('Please fill in all fields.');
             return;
         }
@@ -37,17 +43,39 @@ const ResetPasswordPage: React.FC = () => {
             setError('Passwords do not match.');
             return;
         }
-        if (!token) {
-            setError("Cannot reset password without a valid token.");
+        if (!/^\d{6}$/.test(otpCode)) {
+            setError('Please enter a valid 6-digit OTP code.');
             return;
         }
 
         setIsLoading(true);
-        // FIX: The 'resetPassword' function call has been removed as it does not exist in the API service.
-        // This form is now non-functional because this password reset method is not supported.
-        setError("Failed to reset password. The link may have expired or this feature is not available.");
-        setIsLoading(false);
+        try {
+            await verifyOtpAndResetPassword({
+                email,
+                otp_code: otpCode,
+                new_password: newPassword,
+                confirm_password: confirmPassword,
+            });
+            setIsSuccess(true);
+            setTimeout(() => {
+                navigate('/'); // Redirect to login on success
+            }, 3000);
+        } catch (err: any) {
+            if (err.status === 400) {
+                 setError("Invalid or expired OTP. Please try again.");
+            } else {
+                setError("An error occurred. Please try again later.");
+            }
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
     };
+
+    if (!email) {
+        // Render nothing while redirecting
+        return null;
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900 text-slate-100 font-sans flex items-center justify-center p-4">
@@ -69,12 +97,23 @@ const ResetPasswordPage: React.FC = () => {
                     ) : (
                         <>
                             <h2 className="text-2xl font-bold text-center text-slate-50 mb-2">
-                                Reset Your Password
+                                Check Your Email
                             </h2>
                             <p className="text-center text-slate-400 mb-8">
-                                Enter your new password below.
+                                We've sent a 6-digit code to <strong className="font-medium text-slate-200">{email}</strong>. Enter it below to reset your password.
                             </p>
                             <form onSubmit={handleSubmit} className="space-y-6">
+                                 <Input
+                                    id="otp-code"
+                                    type="text"
+                                    label="6-Digit Code"
+                                    value={otpCode}
+                                    onChange={(e) => setOtpCode(e.target.value)}
+                                    placeholder="123456"
+                                    disabled={isLoading}
+                                    autoComplete="one-time-code"
+                                    maxLength={6}
+                                />
                                 <Input
                                     id="new-password"
                                     type="password"
@@ -82,7 +121,7 @@ const ResetPasswordPage: React.FC = () => {
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
                                     placeholder="••••••••"
-                                    disabled={isLoading || !token}
+                                    disabled={isLoading}
                                     autoComplete="new-password"
                                 />
                                 <Input
@@ -92,12 +131,12 @@ const ResetPasswordPage: React.FC = () => {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     placeholder="••••••••"
-                                    disabled={isLoading || !token}
+                                    disabled={isLoading}
                                     autoComplete="new-password"
                                 />
                                 {error && <p className="text-sm text-red-500">{error}</p>}
-                                <Button type="submit" isLoading={isLoading} disabled={isLoading || !token}>
-                                    Set New Password
+                                <Button type="submit" isLoading={isLoading}>
+                                    Reset Password
                                 </Button>
                             </form>
                         </>
@@ -108,4 +147,4 @@ const ResetPasswordPage: React.FC = () => {
     );
 };
 
-export default ResetPasswordPage;
+export default VerifyOtpPage;
