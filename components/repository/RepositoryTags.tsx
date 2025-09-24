@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { ImageTag } from '../../types';
 import { ClipboardIcon } from '../icons/ClipboardIcon';
 import { TagIcon } from '../icons/TagIcon';
-import RepositoryTagDetail from './RepositoryTagDetail';
 
 interface RepositoryTagsProps {
     repositoryPath: string;
@@ -12,17 +11,8 @@ interface RepositoryTagsProps {
 }
 
 const RepositoryTags: React.FC<RepositoryTagsProps> = ({ repositoryPath, tags, isLoading, error }) => {
-    const [selectedTag, setSelectedTag] = useState<ImageTag | null>(null);
-
-    if (selectedTag) {
-        return (
-            <RepositoryTagDetail 
-                tag={selectedTag}
-                repositoryPath={repositoryPath}
-                onBack={() => setSelectedTag(null)}
-            />
-        );
-    }
+    // NOTE: The tag detail view has been temporarily disabled as the API does not yet provide detailed tag information.
+    // The state and logic for 'selectedTag' have been removed.
 
     if (isLoading) {
         return (
@@ -41,7 +31,7 @@ const RepositoryTags: React.FC<RepositoryTagsProps> = ({ repositoryPath, tags, i
         );
     }
     
-    if (tags.length === 0) {
+    if (!tags || tags.length === 0) {
         return (
             <div className="text-center py-10 px-4 border-2 border-dashed border-slate-700 rounded-lg">
                 <TagIcon className="mx-auto h-12 w-12 text-slate-500" />
@@ -71,7 +61,6 @@ const RepositoryTags: React.FC<RepositoryTagsProps> = ({ repositoryPath, tags, i
                                 key={tag.name} 
                                 tag={tag} 
                                 repositoryPath={repositoryPath}
-                                onSelectTag={() => setSelectedTag(tag)}
                             />
                         ))}
                     </tbody>
@@ -84,15 +73,14 @@ const RepositoryTags: React.FC<RepositoryTagsProps> = ({ repositoryPath, tags, i
 interface TagListItemProps {
     tag: ImageTag;
     repositoryPath: string;
-    onSelectTag: () => void;
 }
 
-const TagListItem: React.FC<TagListItemProps> = ({ tag, repositoryPath, onSelectTag }) => {
+const TagListItem: React.FC<TagListItemProps> = ({ tag, repositoryPath }) => {
     const [copyStatus, setCopyStatus] = useState('Copy');
     const pullCommand = `docker pull ${repositoryPath}:${tag.name}`;
 
     const handleCopy = (e: React.MouseEvent) => {
-        e.stopPropagation(); // Prevent triggering onSelectTag
+        e.stopPropagation();
         navigator.clipboard.writeText(pullCommand).then(() => {
         setCopyStatus('Copied!');
         setTimeout(() => setCopyStatus('Copy'), 2000);
@@ -105,10 +93,9 @@ const TagListItem: React.FC<TagListItemProps> = ({ tag, repositoryPath, onSelect
 
     return (
         <tr className="hover:bg-slate-700/50 transition-colors duration-150">
-            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button onClick={onSelectTag} className="text-indigo-400 hover:underline focus:outline-none">
-                    {tag.name}
-                </button>
+            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-100">
+                {/* Changed from a button to plain text to disable navigation */}
+                {tag.name}
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 font-mono" title={tag.digest}>
                 {tag.digest.substring(0, 19)}...

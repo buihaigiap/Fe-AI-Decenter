@@ -1,4 +1,3 @@
-
 // Fix: Replaced incorrect file content with proper type definitions.
 export enum AuthMode {
   Login = 'login',
@@ -15,6 +14,13 @@ export interface User {
   id: number;
   username: string;
   email: string;
+}
+
+// FIX: Replaced LoginRequest and RegisterRequest with a single AuthRequest type for consistency as requested by the user.
+export interface AuthRequest {
+  username?: string;
+  email: string;
+  password: string;
 }
 
 export interface ChangePasswordRequest {
@@ -89,6 +95,12 @@ export interface CreateRepositoryRequest {
   name:string;
   description: string | null;
   is_public: boolean;
+}
+
+export interface UpdateRepositoryRequest {
+    name: string;
+    description: string | null;
+    is_public: boolean;
 }
 
 export interface ImageLayer {

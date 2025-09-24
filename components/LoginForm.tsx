@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Input from './Input';
 import Button from './Button';
-import { API_BASE_URL } from '../config';
+import { loginUser } from '../services/api';
 
 interface LoginFormProps {
   onLoginSuccess: (token: string) => void;
@@ -27,25 +27,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        onLoginSuccess(data.token);
-        navigate('/repositories', { replace: true });
-      } else if (response.status === 401) {
+      const data = await loginUser({ email, password });
+      onLoginSuccess(data.token);
+      navigate('/repositories', { replace: true });
+    } catch (err: any) {
+      if (err.status === 401) {
         setError('Invalid email or password.');
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
-    } catch (err) {
-      setError('Failed to connect to the server. Please check your network.');
       console.error(err);
     } finally {
       setIsLoading(false);

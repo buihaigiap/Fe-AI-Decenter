@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Repository, ImageTag } from '../../types';
 import CommandSnippet from './CommandSnippet';
 import { ArrowLeftIcon } from '../icons/ArrowLeftIcon';
@@ -16,7 +16,7 @@ interface RepositoryDetailProps {
   onBack: () => void;
 }
 
-const REGISTRY_HOST = 'registry.example.com'; // Placeholder for your registry's hostname
+const REGISTRY_HOST = 'registry.example.com';
 
 const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, organizationName, onBack }) => {
     const [activeTab, setActiveTab] = useState<'tags' | 'instructions' | 'settings'>('tags');
@@ -26,24 +26,26 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const getDetails = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const response = await fetchRepositoryDetails(organizationName, repository.name, token);
-                setDetailedRepo(response.repository);
-                setTags(response.tags || []);
-            } catch (err) {
-                console.error("Failed to fetch repository details", err);
-                setError('Failed to load repository details.');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        getDetails();
+    const getDetails = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            // Use the original repository name for fetching, as it's the identifier
+            const response = await fetchRepositoryDetails(organizationName, repository.name, token);
+            setDetailedRepo(response.repository);
+            setTags(response.tags || []);
+        } catch (err) {
+            console.error("Failed to fetch repository details", err);
+            setError('Failed to load repository details.');
+        } finally {
+            setIsLoading(false);
+        }
     }, [token, organizationName, repository.name]);
+
+
+    useEffect(() => {
+        getDetails();
+    }, [getDetails]);
   
     const repositoryPath = `${REGISTRY_HOST}/${organizationName}/${detailedRepo.name}`;
 
@@ -119,6 +121,7 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, 
                 organizationName={organizationName}
                 repository={detailedRepo}
                 onRepositoryDeleted={onBack}
+                onRepositoryUpdated={getDetails}
             />
         )}
       </main>
