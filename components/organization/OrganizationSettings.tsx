@@ -24,7 +24,6 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
   const [formData, setFormData] = useState<UpdateOrganizationRequest>({
     display_name: organization.display_name,
     description: organization.description || '',
-    avatar_url: organization.avatar_url || '',
     website_url: organization.website_url || '',
   });
   const [isUpdating, setIsUpdating] = useState(false);
@@ -54,7 +53,6 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
     try {
       const payload: UpdateOrganizationRequest = {
           ...formData,
-          avatar_url: formData.avatar_url || undefined,
           website_url: formData.website_url || undefined,
       };
       await updateOrganization(organization.id, payload, token);
@@ -129,17 +127,6 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
               value={formData.website_url || ''}
               onChange={handleChange}
               placeholder="https://example.com"
-            />
-          </div>
-          <div>
-            <Input
-              id="avatar_url"
-              name="avatar_url"
-              label="Avatar URL (Optional)"
-              type="url"
-              value={formData.avatar_url || ''}
-              onChange={handleChange}
-              placeholder="https://example.com/logo.png"
             />
           </div>
 

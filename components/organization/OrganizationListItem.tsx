@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Organization } from '../../types';
 import { AerugoIcon } from '../icons/DockerIcon';
@@ -24,13 +25,9 @@ const OrganizationListItem: React.FC<OrganizationListItemProps> = ({ organizatio
         >
             <div className="flex items-center space-x-3">
                 <div className="flex-shrink-0">
-                    {organization.avatar_url ? (
-                        <img className="h-8 w-8 rounded-full object-cover border-2 border-slate-600/50" src={organization.avatar_url} alt={`${organization.display_name} avatar`} />
-                    ) : (
-                        <span className="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
-                            <AerugoIcon className="h-5 w-5 text-slate-400" />
-                        </span>
-                    )}
+                    <span className="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
+                        <AerugoIcon className="h-5 w-5 text-slate-400" />
+                    </span>
                 </div>
                 <div className="flex-1 text-left min-w-0">
                     <p className={`text-sm font-semibold truncate ${isSelected ? 'text-slate-50' : 'text-slate-200'}`}>{organization.display_name}</p>

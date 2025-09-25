@@ -1,5 +1,3 @@
-
-
 import React, { useRef, ChangeEvent, KeyboardEvent, ClipboardEvent, useEffect } from 'react';
 
 interface OtpInputProps {
@@ -82,7 +80,6 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 6, value, onChange, disabl
           <input
             key={index}
             id={`otp-input-${index}`}
-            // FIX: The callback ref function was implicitly returning a value, which is not allowed. Changed to a block body to ensure a void return type.
             ref={(el) => { inputsRef.current[index] = el; }}
             type="text"
             inputMode="numeric"

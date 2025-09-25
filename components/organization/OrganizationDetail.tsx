@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Organization, OrganizationMember, User } from '../../types';
 import { fetchOrganizationMembers, fetchOrganizationDetails } from '../../services/api';
@@ -79,13 +80,9 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
     <div className="bg-slate-800/70 border border-slate-700/80 rounded-xl shadow-2xl shadow-slate-950/50">
       <header className="p-6 border-b border-slate-700/80 flex items-center space-x-5">
         <div className="flex-shrink-0">
-            {detailedOrg.avatar_url ? (
-                <img className="h-16 w-16 rounded-full object-cover border-2 border-slate-600/50" src={detailedOrg.avatar_url} alt={`${detailedOrg.display_name} avatar`} />
-            ) : (
-                <span className="h-16 w-16 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
-                    <AerugoIcon className="h-9 w-9 text-slate-400" />
-                </span>
-            )}
+            <span className="h-16 w-16 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
+                <AerugoIcon className="h-9 w-9 text-slate-400" />
+            </span>
         </div>
         <div className="flex-1">
             <h2 className="text-2xl font-bold text-slate-50">{detailedOrg.display_name}</h2>

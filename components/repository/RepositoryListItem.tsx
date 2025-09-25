@@ -15,9 +15,8 @@ const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, org
   const isPrivate = !repository.is_public;
   const [copyStatus, setCopyStatus] = useState('Copy');
 
-  const displayOrgName = repository.organization?.display_name || organization?.display_name || repository.organization?.name || organization?.name;
-  const pullCommandOrgName = repository.organization?.name || organization?.name;
-  const pullCommand = `docker pull registry.example.com/${pullCommandOrgName}/${repository.name}:latest`;
+  const orgName = repository.organization?.name || organization?.name;
+  const pullCommand = `docker pull aerugo.io/${orgName}/${repository.name}:latest`;
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click when copying
@@ -43,7 +42,7 @@ const RepositoryListItem: React.FC<RepositoryListItemProps> = ({ repository, org
                     <ServerStackIcon className="w-5 h-5 text-indigo-400" />
                 </div>
                 <button className="text-lg font-semibold text-slate-50 hover:text-indigo-400 transition-colors text-left truncate">
-                  <span className="text-slate-400">{displayOrgName} /</span> {repository.name}
+                  <span className="text-slate-400">{orgName} /</span> {repository.name}
                 </button>
             </div>
             <span 

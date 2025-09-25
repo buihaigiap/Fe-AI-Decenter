@@ -1,4 +1,5 @@
 
+
 // FIX: Imported useState to resolve 'Cannot find name' error.
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -80,7 +81,7 @@ const AuthPage: React.FC = () => {
                 Introduction
               </button>
               <Link
-                to="/docs"
+                to="/docs-public"
                 className="font-semibold text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-3 py-2 transition-colors"
               >
                 Docs
@@ -267,7 +268,7 @@ const AuthPage: React.FC = () => {
                     <h3 className="font-semibold text-slate-100 tracking-wider uppercase">Resources</h3>
                     <ul className="mt-4 space-y-3">
                         <li>
-                            <Link to="/docs" className="text-slate-400 hover:text-indigo-300 transition-colors">
+                            <Link to="/docs-public" className="text-slate-400 hover:text-indigo-300 transition-colors">
                                 Docs
                             </Link>
                         </li>
@@ -287,7 +288,7 @@ const AuthPage: React.FC = () => {
                     <h3 className="font-semibold text-slate-100 tracking-wider uppercase">Legal</h3>
                     <ul className="mt-4 space-y-3">
                         <li>
-                            <Link to="/docs#tos" className="text-slate-400 hover:text-indigo-300 transition-colors">
+                            <Link to="/docs-public#tos" className="text-slate-400 hover:text-indigo-300 transition-colors">
                                 Terms of Service
                             </Link>
                         </li>

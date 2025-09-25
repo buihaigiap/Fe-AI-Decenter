@@ -82,7 +82,7 @@ const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, orga
             <div>
                 <h3 className="text-xl font-bold text-slate-50">Create New Repository</h3>
                 <p className="text-slate-400 text-sm mt-1">
-                  Repositories are namespaces for your images within the <strong className="text-slate-300 font-semibold">{organization.display_name}</strong> organization.
+                  Repositories are namespaces for your images within the <strong className="text-slate-300 font-semibold">{organization.name}</strong> organization.
                 </p>
             </div>
         </div>

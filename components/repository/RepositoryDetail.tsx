@@ -14,7 +14,7 @@ interface RepositoryDetailProps {
   onBack: () => void;
 }
 
-const REGISTRY_HOST = 'registry.example.com';
+const REGISTRY_HOST = 'aerugo.io';
 
 const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, organizationName, onBack }) => {
     const [activeTab, setActiveTab] = useState<'instructions' | 'settings'>('instructions');
@@ -84,7 +84,7 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, 
                     <div className="space-y-10">
                         <div>
                         <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
-                            Push an image
+                            Basic Usage
                         </h3>
                         <div className="space-y-6">
                             <div>
@@ -98,6 +98,14 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, 
                             <div>
                                 <h4 className="text-md font-medium text-slate-300 mb-2">3. Push the image</h4>
                                 <CommandSnippet command={`docker push ${repositoryPath}:new-tag`} />
+                            </div>
+                            <div>
+                                <h4 className="text-md font-medium text-slate-300 mb-2">4. Pull the image</h4>
+                                <CommandSnippet command={`docker pull ${repositoryPath}:new-tag`} />
+                            </div>
+                             <div>
+                                <h4 className="text-md font-medium text-slate-300 mb-2">5. Run the container</h4>
+                                <CommandSnippet command={`docker run --rm ${repositoryPath}:new-tag`} />
                             </div>
                         </div>
                         </div>

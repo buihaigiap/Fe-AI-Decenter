@@ -34,7 +34,7 @@ export interface ForgotPasswordRequest {
 }
 
 export interface VerifyOtpRequest {
-  email: string;
+  email:string;
   otp_code: string;
   new_password: string;
   confirm_password: string;
@@ -45,7 +45,6 @@ export interface Organization {
   name: string;
   display_name: string;
   description: string | null;
-  avatar_url: string | null;
   website_url: string | null;
   created_at?: string;
   updated_at?: string;
@@ -55,14 +54,12 @@ export interface CreateOrganizationRequest {
   name: string;
   display_name: string;
   description: string;
-  avatar_url?: string;
   website_url?: string;
 }
 
 export interface UpdateOrganizationRequest {
   display_name: string;
   description: string;
-  avatar_url?: string;
   website_url?: string;
 }
 

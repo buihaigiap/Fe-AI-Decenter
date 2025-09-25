@@ -102,8 +102,9 @@ const App: React.FC = () => {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-otp" element={<VerifyOtpPage />} />
 
-        {/* Public Docs Page */}
-        <Route path="/docs" element= {<DocsPage />} />
+        {/* Public Docs Page - For unauthenticated users */}
+        <Route path="/docs-public" element= {<DocsPage />} />
+
 
         {/* Protected Routes */}
         <Route 
@@ -118,6 +119,7 @@ const App: React.FC = () => {
           <Route path="/repositories" element={<RepositoriesPage token={token!} />} />
           <Route path="/organizations" element={<OrganizationsPage token={token!} currentUser={currentUser!} />} />
           <Route path="/profile" element={<ProfilePage currentUser={currentUser!} token={token!} />} />
+          <Route path="/docs" element={<DocsPage />} />
         </Route>
 
         {/* Fallback route */}

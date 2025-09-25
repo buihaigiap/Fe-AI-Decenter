@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CodeBlock from '../components/docs/CodeBlock';
@@ -98,7 +97,7 @@ const DocsPage: React.FC = () => {
         navigate(`#${id}`, { replace: true });
     };
 
-    const REGISTRY_HOST = 'registry.example.com';
+    const REGISTRY_HOST = 'aerugo.io';
     const currentStyle = sectionStyles[activeSection] || sectionStyles.introduction;
     
     return (
@@ -228,21 +227,27 @@ const DocsPage: React.FC = () => {
                             <section id="docker-usage" className="scroll-mt-24">
                                 <h2>Using Docker</h2>
                                 <p>To push and pull images, you'll use the Docker command-line tool.</p>
+                                
                                 <h3>1. Log In to the Registry</h3>
-                                <p>First, log in with your Aerugo account credentials. This only needs to be run once per machine.</p>
+                                <p>First, log in to the Aerugo registry using your account credentials. The interactive method is recommended for security.</p>
                                 <CodeBlock code={`docker login ${REGISTRY_HOST}`} language="bash" />
+                                <p>You will be prompted for your username and password.</p>
+                                <p>For automated environments, you can use a non-interactive login. Be aware of the security implications of exposing your password in your command history.</p>
+                                <CodeBlock code={`docker login -u your-username -p your-password ${REGISTRY_HOST}`} language="bash" />
 
-                                <h3>2. Tag Your Image</h3>
-                                <p>Before pushing, tag your local image with the full registry path: <code>{REGISTRY_HOST}/[org-name]/[repo-name]:[tag]</code>.</p>
+                                <h3>2. Push an Image</h3>
+                                <p>To push an image, you first need to tag it with the full registry path: <code>{`${REGISTRY_HOST}/[organization-name]/[repository-name]:[tag]`}</code>. Remember to use the URL-friendly organization name (e.g., "my-awesome-team"), not the display name.</p>
                                 <CodeBlock code={`docker tag my-local-image:latest ${REGISTRY_HOST}/my-awesome-team/my-app:v1.0`} language="bash" />
-
-                                <h3>3. Push the Image</h3>
-                                <p>Now, push the tagged image to the registry.</p>
+                                <p>After tagging, push the image to the registry.</p>
                                 <CodeBlock code={`docker push ${REGISTRY_HOST}/my-awesome-team/my-app:v1.0`} language="bash" />
                                 
-                                <h3>4. Pull the Image</h3>
-                                <p>To pull the image on another machine, use the same full path.</p>
+                                <h3>3. Pull an Image</h3>
+                                <p>To pull the image on another machine, use the <code>docker pull</code> command with the same full path.</p>
                                 <CodeBlock code={`docker pull ${REGISTRY_HOST}/my-awesome-team/my-app:v1.0`} language="bash" />
+
+                                <h3>4. Run a Container</h3>
+                                <p>After pulling the image, you can run it as a container. The <code>--rm</code> flag is useful for automatically removing the container when it exits.</p>
+                                <CodeBlock code={`docker run --rm ${REGISTRY_HOST}/my-awesome-team/my-app:v1.0`} language="bash" />
                             </section>
 
                             <hr />
@@ -302,6 +307,13 @@ const DocsPage: React.FC = () => {
                     font-weight: 600;
                     color: #e2e8f0;
                     margin-top: 2rem;
+                }
+                .prose-custom h4 {
+                    font-size: 1.1rem;
+                    line-height: 1.5rem;
+                    font-weight: 600;
+                    color: #e2e8f0;
+                    margin-top: 1.5rem;
                 }
                 .prose-custom p,
                 .prose-custom li {

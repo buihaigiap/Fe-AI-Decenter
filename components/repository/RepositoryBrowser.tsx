@@ -128,7 +128,7 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
         <div>
           <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-3 mb-6">
             My Repositories
-            {organization && <span className="text-base font-normal text-slate-400"> in {organization.display_name}</span>}
+            {organization && <span className="text-base font-normal text-slate-400"> in {organization.name}</span>}
           </h3>
           <RepositoryList 
             repositories={myRepositories} 

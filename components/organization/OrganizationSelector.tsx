@@ -63,7 +63,7 @@ const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
           <option value="">All Organizations</option>
           {organizations.map(org => (
             <option key={org.id} value={org.id}>
-              {org.display_name}
+              {org.name}
             </option>
           ))}
         </>
