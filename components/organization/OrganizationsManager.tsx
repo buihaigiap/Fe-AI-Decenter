@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+// FIX: Create the OrganizationsManager component, which was missing. This component orchestrates the display of the organization list, details, and creation form.
+import React, { useState, useEffect } from 'react';
 import { Organization, User } from '../../types';
 import OrganizationList from './OrganizationList';
+import OrganizationDetail from './OrganizationDetail';
 import CreateOrganizationForm from './CreateOrganizationForm';
 import Button from '../Button';
 import { PlusIcon } from '../icons/PlusIcon';
-import OrganizationDetail from './OrganizationDetail';
 import { BriefcaseIcon } from '../icons/BriefcaseIcon';
 
 interface OrganizationsManagerProps {
@@ -24,91 +25,105 @@ const OrganizationsManager: React.FC<OrganizationsManagerProps> = ({
   error,
   onDataChange,
 }) => {
-  const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+
+  // Effect to select the first organization by default if one exists and none is selected.
+  // Also deselect if the selected one is no longer in the list.
+  useEffect(() => {
+    if (organizations.length > 0 && !showCreateForm) {
+      if (selectedOrganization) {
+        // If selected org is no longer in the list, select the first one
+        if (!organizations.find(o => o.id === selectedOrganization.id)) {
+          setSelectedOrganization(organizations[0]);
+        }
+      } else {
+        // If no org is selected, select the first one
+        setSelectedOrganization(organizations[0]);
+      }
+    } else if (organizations.length === 0) {
+      // If there are no orgs, ensure nothing is selected
+      setSelectedOrganization(null);
+    }
+  }, [organizations, selectedOrganization, showCreateForm]);
+  
+  const handleSelectOrganization = (org: Organization) => {
+    setSelectedOrganization(org);
+    setShowCreateForm(false);
+  };
+
+  const handleShowCreateForm = () => {
+    setSelectedOrganization(null);
+    setShowCreateForm(true);
+  };
   
   const handleCreationSuccess = () => {
     setShowCreateForm(false);
-    onDataChange(); 
-  }
-
-  const handleDataChange = () => {
-    setSelectedOrganization(null);
-    onDataChange();
+    onDataChange(); // This will trigger a refetch in the parent page
+  };
+  
+  const handleCancelCreate = () => {
+    setShowCreateForm(false);
+    // If there are organizations, select the first one after cancelling
+    if (organizations.length > 0) {
+        setSelectedOrganization(organizations[0]);
+    }
   };
 
-  const handleSelectOrganization = (org: Organization) => {
-    setSelectedOrganization(org);
-    setShowCreateForm(false); // Hide create form when selecting an org
+  const renderContent = () => {
+    if (showCreateForm) {
+      return (
+        <CreateOrganizationForm
+          token={token}
+          onSuccess={handleCreationSuccess}
+          onCancel={handleCancelCreate}
+        />
+      );
+    }
+    if (selectedOrganization) {
+      return (
+        <OrganizationDetail
+          key={selectedOrganization.id} // Re-mount when org changes
+          token={token}
+          currentUser={currentUser}
+          organization={selectedOrganization}
+          onDataChange={onDataChange}
+        />
+      );
+    }
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-center bg-slate-800/50 border border-slate-700/80 rounded-xl p-8">
+        <BriefcaseIcon className="h-20 w-20 text-slate-600 mb-4" />
+        <h3 className="text-xl font-bold text-slate-300">Select an Organization</h3>
+        <p className="text-slate-400 mt-2 max-w-sm">
+          Select an organization from the list to view its details, or create a new one to get started.
+        </p>
+      </div>
+    );
   };
-
-  // This will help animate the right column when its content changes
-  const rightColumnKey = showCreateForm ? 'create' : selectedOrganization?.id ?? 'placeholder';
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      {/* Left Column - List of Orgs */}
-      <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-slate-100">Your Organizations</h2>
-          {!showCreateForm && (
-              <Button onClick={() => { setShowCreateForm(true); setSelectedOrganization(null); }} fullWidth={false} className="whitespace-nowrap flex-shrink-0">
-                  <PlusIcon className="w-5 h-5 -ml-1 mr-2" />
-                  Create New
-              </Button>
-          )}
-        </div>
-
-        {isLoading && <div className="text-center py-8 text-slate-400">Loading organizations...</div>}
-        {error && <div className="text-center py-8 text-red-500">{error}</div>}
-        {!isLoading && !error && (
-            <OrganizationList 
-                organizations={organizations} 
-                onSelectOrganization={handleSelectOrganization}
-                selectedOrganizationId={selectedOrganization?.id ?? null}
-            />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-1 space-y-4">
+        <Button onClick={handleShowCreateForm} fullWidth={true}>
+            <PlusIcon className="w-5 h-5 -ml-1 mr-2" />
+            Create New Organization
+        </Button>
+        {isLoading ? (
+          <p className="text-slate-400 text-center py-4">Loading organizations...</p>
+        ) : error ? (
+          <p className="text-red-500 text-center py-4">{error}</p>
+        ) : (
+          <OrganizationList
+            organizations={organizations}
+            selectedOrganizationId={selectedOrganization?.id || null}
+            onSelectOrganization={handleSelectOrganization}
+          />
         )}
       </div>
 
-      {/* Right Column - Details / Create Form / Placeholder */}
-      <div className="lg:col-span-8">
-        <div key={rightColumnKey} className="animate-fade-in-up">
-            {showCreateForm && (
-                <CreateOrganizationForm 
-                    token={token} 
-                    onSuccess={handleCreationSuccess}
-                    onCancel={() => setShowCreateForm(false)}
-                />
-            )}
-
-            {!showCreateForm && selectedOrganization && (
-                <OrganizationDetail 
-                    key={selectedOrganization.id} // Re-mount component on org change
-                    token={token}
-                    currentUser={currentUser}
-                    organization={selectedOrganization} 
-                    onDataChange={handleDataChange}
-                />
-            )}
-
-            {!showCreateForm && !selectedOrganization && (
-                 <div className="relative h-full flex items-center justify-center bg-slate-900/30 border border-slate-700/80 rounded-2xl overflow-hidden min-h-[400px] lg:min-h-[60vh]">
-                    {/* Background Effects */}
-                    <div className="absolute inset-0 z-0 animate-bg-grid-flow opacity-20" style={{ backgroundImage: `linear-gradient(rgba(203, 213, 225, 0.08) 1px, transparent 1px), linear-gradient(to right, rgba(203, 213, 225, 0.08) 1px, transparent 1px)`, backgroundSize: '2rem 2rem' }} />
-                    <div className="absolute inset-0 z-0 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30" />
-                    <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0%,transparent_40%)]" />
-
-                    {/* Content */}
-                    <div className="relative z-10 text-center p-8 flex flex-col items-center">
-                        <div className="p-5 bg-slate-800/50 rounded-full border border-slate-700 shadow-lg">
-                            <BriefcaseIcon className="w-16 h-16 text-indigo-400 animate-subtle-pulse" />
-                        </div>
-                        <h3 className="text-xl font-semibold text-slate-100 mt-6">Manage Your Organization</h3>
-                        <p className="text-slate-400 mt-2 max-w-sm">Select an organization from the list to view its details, or create a new one to get started.</p>
-                    </div>
-                </div>
-            )}
-        </div>
+      <div className="lg:col-span-2">
+        {renderContent()}
       </div>
     </div>
   );

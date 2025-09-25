@@ -113,11 +113,11 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
         />
       );
     }
-    if (showCreateForm && organizationName) { // Can only create if we know the org
+    if (showCreateForm && organization) { // Can only create if we know the org
       return (
         <CreateRepositoryForm 
             token={token} 
-            organizationName={organizationName}
+            organization={organization}
             onSuccess={handleCreationSuccess}
             onCancel={() => setShowCreateForm(false)}
         />
@@ -175,8 +175,8 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
                 onClick={() => setShowCreateForm(true)} 
                 fullWidth={false} 
                 className="whitespace-nowrap flex-shrink-0"
-                disabled={!organizationName}
-                title={!organizationName ? "Select an organization to create a repository" : ""}
+                disabled={!organization}
+                title={!organization ? "Select an organization to create a repository" : ""}
             >
                 <PlusIcon className="w-5 h-5 -ml-1 mr-2" />
                 Create Repository

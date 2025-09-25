@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createRepository } from '../../services/api';
-import { CreateRepositoryRequest, Repository } from '../../types';
+import { CreateRepositoryRequest, Repository, Organization } from '../../types';
 import Input from '../Input';
 import Button from '../Button';
 import { GlobeIcon } from '../icons/GlobeIcon';
@@ -9,7 +9,7 @@ import { ServerStackIcon } from '../icons/ServerStackIcon';
 
 interface CreateRepositoryFormProps {
   token: string;
-  organizationName: string;
+  organization: Organization;
   onSuccess: (newRepo: Repository) => void;
   onCancel: () => void;
 }
@@ -21,7 +21,7 @@ interface RepositoryFormState {
   visibility: 'public' | 'private';
 }
 
-const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, organizationName, onSuccess, onCancel }) => {
+const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, organization, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState<RepositoryFormState>({
     name: '',
     description: '',
@@ -63,7 +63,7 @@ const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, orga
         is_public: formData.visibility === 'public',
       };
       
-      const newRepo = await createRepository(organizationName, apiPayload, token);
+      const newRepo = await createRepository(organization.name, apiPayload, token);
       onSuccess(newRepo);
     } catch (err) {
       setError('Failed to create repository. The name might already be taken.');
@@ -81,30 +81,24 @@ const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, orga
             </div>
             <div>
                 <h3 className="text-xl font-bold text-slate-50">Create New Repository</h3>
-                <p className="text-slate-400 text-sm mt-1">Repositories are namespaces for your container images.</p>
+                <p className="text-slate-400 text-sm mt-1">
+                  Repositories are namespaces for your images within the <strong className="text-slate-300 font-semibold">{organization.display_name}</strong> organization.
+                </p>
             </div>
         </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-            <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
-                Repository Name
-            </label>
-            <div className="flex items-center">
-                <span className="inline-flex items-center px-3 h-11 bg-slate-700 border border-r-0 border-slate-600 rounded-l-md text-slate-400 sm:text-sm">
-                    {organizationName} /
-                </span>
-                <input
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="my-awesome-app"
-                    required
-                    autoFocus
-                    className="block w-full h-11 px-4 bg-slate-700 border border-slate-600 rounded-r-md text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out focus:shadow-[0_0_15px_rgba(99,102,241,0.5)]"
-                />
-            </div>
+            <Input
+              id="name"
+              name="name"
+              label="Repository Name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="my-awesome-app"
+              required
+              autoFocus
+            />
             <p className="text-xs text-slate-400 mt-2 ml-1">Lowercase, numbers, and separators (-, _, .) only.</p>
         </div>
 
@@ -122,17 +116,17 @@ const CreateRepositoryForm: React.FC<CreateRepositoryFormProps> = ({ token, orga
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <VisibilityOption
                     id="visibility-public"
-                    icon={<GlobeIcon className="w-5 h-5 mb-2"/>}
+                    icon={<GlobeIcon className="w-5 h-5 mr-3 text-green-400"/>}
                     label="Public"
-                    description="Anyone can see and pull this repository."
+                    description="Anyone can see this repository."
                     isSelected={formData.visibility === 'public'}
                     onSelect={() => handleVisibilityChange('public')}
                 />
                 <VisibilityOption
                     id="visibility-private"
-                    icon={<LockIcon className="w-5 h-5 mb-2"/>}
+                    icon={<LockIcon className="w-5 h-5 mr-3 text-yellow-400"/>}
                     label="Private"
-                    description="You choose who can see and pull this repository."
+                    description="You choose who can see this repository."
                     isSelected={formData.visibility === 'private'}
                     onSelect={() => handleVisibilityChange('private')}
                 />
@@ -173,19 +167,13 @@ interface VisibilityOptionProps {
 
 const VisibilityOption: React.FC<VisibilityOptionProps> = ({ id, icon, label, description, isSelected, onSelect }) => {
     return (
-         <label 
-            htmlFor={id} 
-            className={`relative flex flex-col text-center p-4 border rounded-lg cursor-pointer transition-all duration-200 
-                ${isSelected 
-                    ? 'bg-indigo-900/50 border-indigo-500 scale-105 shadow-lg' 
-                    : 'bg-slate-700/80 border-slate-600 hover:border-slate-500'
-                }`
-            }
-        >
-            <input type="radio" id={id} name="visibility" checked={isSelected} onChange={onSelect} className="hidden" />
-            <div className={`mx-auto ${isSelected ? 'text-indigo-300' : 'text-slate-400'}`}>{icon}</div>
-            <span className="block text-md font-semibold text-slate-100">{label}</span>
-            <span className="block text-xs text-slate-400 mt-1">{description}</span>
+         <label htmlFor={id} className={`relative flex items-start p-4 border rounded-lg cursor-pointer transition-colors duration-200 ${isSelected ? 'bg-indigo-900/50 border-indigo-500' : 'bg-slate-700/80 border-slate-600 hover:border-slate-500'}`}>
+            <input type="radio" id={id} name="visibility-create" checked={isSelected} onChange={onSelect} className="hidden" />
+            {icon}
+            <div className="flex-1">
+                <span className="block text-md font-semibold text-slate-100">{label}</span>
+                <span className="block text-sm text-slate-400">{description}</span>
+            </div>
         </label>
     );
 }
