@@ -1,11 +1,9 @@
+
 import React, { useEffect, useState, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CodeBlock from '../components/docs/CodeBlock';
 import { AerugoIcon } from '../components/icons/DockerIcon';
 import ArchitectureDiagram from '../components/docs/ArchitectureDiagram';
-import { GithubIcon } from '../components/icons/GithubIcon';
-import { TwitterIcon } from '../components/icons/TwitterIcon';
-import { DiscordIcon } from '../components/icons/DiscordIcon';
 import { InformationCircleIcon } from '../components/icons/InformationCircleIcon';
 import { ChipIcon } from '../components/icons/ChipIcon';
 import { BriefcaseIcon } from '../components/icons/BriefcaseIcon';
@@ -34,9 +32,11 @@ const sectionStyles: { [key: string]: { bg: string; accent: string; icon: string
 
 const DocsPage: React.FC = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [activeSection, setActiveSection] = useState(navItems[0].id);
+    const isInitialMount = useRef(true);
 
-    // Effect for observing sections and updating active state
+    // Effect for observing sections during manual scroll and updating active state
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -46,7 +46,7 @@ const DocsPage: React.FC = () => {
                     }
                 });
             },
-            { rootMargin: '-30% 0px -70% 0px', threshold: 0 } // Adjust rootMargin to activate when section is near top
+            { rootMargin: '-30% 0px -70% 0px', threshold: 0 }
         );
 
         navItems.forEach((item) => {
@@ -66,22 +66,37 @@ const DocsPage: React.FC = () => {
         };
     }, []);
 
-    // Effect for initial scroll based on hash
+    // Effect for handling scrolling when the URL hash changes (from clicks or direct links)
     useEffect(() => {
         const hash = location.hash.substring(1);
         if (hash) {
-            setActiveSection(hash);
             const element = document.getElementById(hash);
             if (element) {
+                const headerOffset = 80; // height of sticky header
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                
+                // Use 'auto' for the initial page load, 'smooth' for subsequent navigations
+                const behavior = isInitialMount.current ? 'auto' : 'smooth';
+
                 setTimeout(() => {
-                    const headerOffset = 80; // height of sticky header
-                    const elementPosition = element.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                    window.scrollTo({ top: offsetPosition, behavior: 'auto' });
+                     window.scrollTo({
+                        top: offsetPosition,
+                        behavior,
+                    });
+                    isInitialMount.current = false;
                 }, 100);
             }
         }
     }, [location.hash]);
+
+    const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+        e.preventDefault();
+        // Set active section immediately for responsive UI feedback
+        setActiveSection(id);
+        // Update the URL hash, which triggers the useEffect above to handle scrolling
+        navigate(`#${id}`, { replace: true });
+    };
 
     const REGISTRY_HOST = 'registry.example.com';
     const currentStyle = sectionStyles[activeSection] || sectionStyles.introduction;
@@ -124,6 +139,7 @@ const DocsPage: React.FC = () => {
                                             <li key={item.id}>
                                                 <a
                                                     href={`#${item.id}`}
+                                                    onClick={(e) => handleNavClick(e, item.id)}
                                                     className={`flex items-center gap-x-3 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 border-l-4 ${
                                                         isActive
                                                         ? `${sectionStyles[item.id]?.accent || 'border-indigo-400'} bg-white/5 text-slate-50`
@@ -251,29 +267,7 @@ const DocsPage: React.FC = () => {
                     </div>
                 </div>
             </main>
-
-            <footer className="relative bg-slate-900/70 border-t border-slate-800/50 mt-16">
-                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                     <div className="mt-8 pt-8 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center text-sm text-slate-500">
-                        <p>&copy; {new Date().getFullYear()} Aerugo Registry. All rights reserved.</p>
-                        <div className="flex items-center space-x-6 mt-4 sm:mt-0">
-                            <a href="#" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="GitHub">
-                                <GithubIcon className="w-6 h-6" />
-                            </a>
-                            <a href="#" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="Twitter">
-                                <TwitterIcon className="w-6 h-6" />
-                            </a>
-                            <a href="#" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="Discord">
-                                <DiscordIcon className="w-6 h-6" />
-                            </a>
-                        </div>
-                    </div>
-                 </div>
-            </footer>
              <style>{`
-                html {
-                    scroll-behavior: smooth;
-                }
                 .prose-custom h1 {
                     font-size: 2rem;
                     line-height: 2.5rem;
