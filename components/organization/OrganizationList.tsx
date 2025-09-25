@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Organization } from '../../types';
 import OrganizationListItem from './OrganizationListItem';
@@ -22,7 +21,7 @@ const OrganizationList: React.FC<OrganizationListProps> = ({ organizations, sele
   }
 
   return (
-    <ul className="space-y-1">
+    <ul className="space-y-0.5">
       {organizations.map(org => (
         <OrganizationListItem
           key={org.id}

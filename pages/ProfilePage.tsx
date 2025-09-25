@@ -43,7 +43,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, token }) => {
         <main className="lg:col-span-2">
           <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-lg h-full">
             <div className="border-b border-slate-700">
-              <nav className="flex space-x-2 p-2" aria-label="Tabs">
+              <nav className="flex space-x-1 p-2" aria-label="Tabs">
                 <TabButton
                   icon={<IdentificationIcon className="w-5 h-5 mr-2" />}
                   label="Account Details"

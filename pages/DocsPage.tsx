@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CodeBlock from '../components/docs/CodeBlock';
@@ -154,7 +153,7 @@ const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
                         <div className={`p-4 border border-slate-700/80 rounded-xl bg-gradient-to-br transition-colors duration-500 ${currentStyle.bg}`}>
                             <h3 className="text-sm font-semibold tracking-wider text-slate-300 uppercase mb-3 px-2">On this page</h3>
                             <nav>
-                                <ul className="space-y-1">
+                                <ul className="space-y-0.5">
                                     {navItems.map(item => {
                                         const isActive = activeSection === item.id;
                                         return (
