@@ -33,7 +33,7 @@ const AuthCard: React.FC<AuthCardProps> = ({ title, subtitle, children }) => {
             ref={cardRef}
             className="relative bg-slate-800/60 backdrop-blur-lg border border-slate-700/80 rounded-xl shadow-2xl shadow-indigo-950/50 animate-fade-in-up p-px overflow-hidden"
         >
-            <div className="auth-card-border" style={{ '--border-angle': '0deg' } as React.CSSProperties} />
+            <div className="auth-card-animated-border" />
             <div className="relative w-full h-full bg-slate-800/95 rounded-xl p-8">
                 <div className="absolute inset-0 auth-card-spotlight" />
                 <div className="relative z-10">

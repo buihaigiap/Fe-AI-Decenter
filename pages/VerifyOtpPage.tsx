@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AerugoIcon } from '../components/icons/DockerIcon';
@@ -6,6 +7,7 @@ import Button from '../components/Button';
 import { verifyOtpAndResetPassword } from '../services/api';
 import AnimatedParticleBackground from '../components/AnimatedParticleBackground';
 import AuthCard from '../components/AuthCard';
+import OtpInput from '../components/OtpInput';
 
 const VerifyOtpPage: React.FC = () => {
     const location = useLocation();
@@ -37,14 +39,14 @@ const VerifyOtpPage: React.FC = () => {
             return;
         }
         if (newPassword.length < 8) {
-            setError('Password must be at least 8 characters long.');
+            setError('New password must be at least 8 characters long.');
             return;
         }
         if (newPassword !== confirmPassword) {
             setError('Passwords do not match.');
             return;
         }
-        if (!/^\d{6}$/.test(otpCode)) {
+        if (otpCode.length !== 6) {
             setError('Please enter a valid 6-digit OTP code.');
             return;
         }
@@ -100,16 +102,10 @@ const VerifyOtpPage: React.FC = () => {
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-6">
-                                <Input
-                                id="otp-code"
-                                type="text"
-                                label="6-Digit Code"
+                            <OtpInput
                                 value={otpCode}
-                                onChange={(e) => setOtpCode(e.target.value)}
-                                placeholder="123456"
+                                onChange={setOtpCode}
                                 disabled={isLoading}
-                                autoComplete="one-time-code"
-                                maxLength={6}
                             />
                             <Input
                                 id="new-password"

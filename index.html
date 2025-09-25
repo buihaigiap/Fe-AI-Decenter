@@ -227,18 +227,17 @@
     }
 
     /* Auth Card Styles */
-    @keyframes border-spin {
-      100% {
-        transform: rotate(-360deg);
-      }
+    @keyframes border-pan {
+      from { background-position: 0% center; }
+      to { background-position: 200% center; }
     }
-    .auth-card-border {
+    .auth-card-animated-border {
         position: absolute;
         inset: 0;
         border-radius: 0.8rem; /* slightly larger than card */
-        background: conic-gradient(from var(--border-angle), #1e293b, #4338ca, #6366f1, #4338ca, #1e293b);
-        animation: border-spin 6s linear infinite;
-        opacity: 0.4;
+        background: linear-gradient(115deg, transparent, #4f46e5, #a855f7, #4f46e5, transparent);
+        background-size: 250% auto;
+        animation: border-pan 8s linear infinite;
     }
 
     .auth-card-spotlight {
