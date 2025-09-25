@@ -248,7 +248,7 @@ const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
 
                             <section id="docker-usage" className={sectionScrollMarginClass}>
                                 <h2>Using Docker</h2>
-                                <p>To push and pull images, you'll use the Docker command-line tool.</p>
+                                <p>To push and pull images, you'll use the Docker command-line tool. For more details, check out the official GitHub repository: <a href="https://github.com/AI-Decenter/Aerugo" target="_blank" rel="noopener noreferrer">https://github.com/AI-Decenter/Aerugo</a></p>
                                 
                                 <h3>1. Log In to the Registry</h3>
                                 <p>First, log in to the Aerugo registry using your account credentials. The interactive method is recommended for security.</p>

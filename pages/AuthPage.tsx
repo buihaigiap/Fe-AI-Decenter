@@ -15,6 +15,7 @@ import { GithubIcon } from '../components/icons/GithubIcon';
 import { TwitterIcon } from '../components/icons/TwitterIcon';
 import { DiscordIcon } from '../components/icons/DiscordIcon';
 import AnimatedParticleBackground from '../components/AnimatedParticleBackground';
+import { ChipIcon } from '../components/icons/ChipIcon';
 
 const AuthPage: React.FC = () => {
   const introductionSectionRef = useRef<HTMLDivElement>(null);
@@ -106,6 +107,17 @@ const AuthPage: React.FC = () => {
           <p className="mt-6 max-w-2xl mx-auto text-lg text-slate-400">
             Streamline your development workflow with a private, scalable, and easy-to-use registry for all your container images.
           </p>
+          <div className="mt-10">
+            <a
+              href="https://decenter.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-8 py-4 font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-sky-400/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-sky-500 animate-subtle-pulse"
+            >
+              <ChipIcon className="w-6 h-6 mr-3" />
+              <span>Explore Decenter AI</span>
+            </a>
+          </div>
         </div>
       </main>
 
@@ -273,7 +285,7 @@ const AuthPage: React.FC = () => {
                             </Link>
                         </li>
                         <li>
-                            <a href="#" className="text-slate-400 hover:text-indigo-300 transition-colors">
+                            <a href="https://github.com/AI-Decenter/Aerugo" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-indigo-300 transition-colors">
                                 GitHub
                             </a>
                         </li>
@@ -303,7 +315,7 @@ const AuthPage: React.FC = () => {
             <div className="mt-16 pt-8 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center text-sm text-slate-500">
                 <p>&copy; {new Date().getFullYear()} Aerugo Registry. All rights reserved.</p>
                 <div className="flex items-center space-x-6 mt-4 sm:mt-0">
-                    <a href="#" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="GitHub">
+                    <a href="https://github.com/AI-Decenter/Aerugo" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="GitHub">
                         <GithubIcon className="w-6 h-6" />
                     </a>
                     <a href="#" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="Twitter">

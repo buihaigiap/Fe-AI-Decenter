@@ -116,7 +116,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ currentUser, onLogout
                     </div>
                 </div>
                 <div className="flex items-center space-x-6">
-                    <a href="#" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="GitHub">
+                    <a href="https://github.com/AI-Decenter/Aerugo" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="GitHub">
                         <GithubIcon className="w-5 h-5" />
                     </a>
                     <a href="#" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="Twitter">
