@@ -119,7 +119,7 @@ const App: React.FC = () => {
           <Route path="/repositories" element={<RepositoriesPage token={token!} />} />
           <Route path="/organizations" element={<OrganizationsPage token={token!} currentUser={currentUser!} />} />
           <Route path="/profile" element={<ProfilePage currentUser={currentUser!} token={token!} />} />
-          <Route path="/docs" element={<DocsPage />} />
+          <Route path="/docs" element={<DocsPage isEmbedded={true} />} />
         </Route>
 
         {/* Fallback route */}

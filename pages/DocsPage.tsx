@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CodeBlock from '../components/docs/CodeBlock';
@@ -28,12 +29,23 @@ const sectionStyles: { [key: string]: { bg: string; accent: string; icon: string
     tos: { bg: 'from-slate-800/80 to-purple-900/40', accent: 'border-purple-400', icon: 'text-purple-400' },
 };
 
+interface DocsPageProps {
+    /**
+     * When true, the component renders without its own header and page-level layout,
+     * making it suitable for embedding within another layout like the dashboard.
+     * @default false
+     */
+    isEmbedded?: boolean;
+}
 
-const DocsPage: React.FC = () => {
+
+const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [activeSection, setActiveSection] = useState(navItems[0].id);
     const isInitialMount = useRef(true);
+
+    const headerHeight = isEmbedded ? 80 : 80; // dashboard header + padding vs standalone header
 
     // Effect for observing sections during manual scroll and updating active state
     useEffect(() => {
@@ -71,11 +83,9 @@ const DocsPage: React.FC = () => {
         if (hash) {
             const element = document.getElementById(hash);
             if (element) {
-                const headerOffset = 80; // height of sticky header
                 const elementPosition = element.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
                 
-                // Use 'auto' for the initial page load, 'smooth' for subsequent navigations
                 const behavior = isInitialMount.current ? 'auto' : 'smooth';
 
                 setTimeout(() => {
@@ -87,47 +97,60 @@ const DocsPage: React.FC = () => {
                 }, 100);
             }
         }
-    }, [location.hash]);
+    }, [location.hash, headerHeight]);
 
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
         e.preventDefault();
-        // Set active section immediately for responsive UI feedback
         setActiveSection(id);
-        // Update the URL hash, which triggers the useEffect above to handle scrolling
         navigate(`#${id}`, { replace: true });
     };
 
     const REGISTRY_HOST = 'aerugo.io';
     const currentStyle = sectionStyles[activeSection] || sectionStyles.introduction;
+
+    const wrapperClass = isEmbedded
+        ? "text-slate-200 font-sans"
+        : "min-h-screen bg-slate-900 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30 text-slate-200 font-sans";
+    
+    const MainWrapper = isEmbedded ? 'div' : 'main';
+    const mainWrapperProps = isEmbedded ? {} : { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" };
+
+    const headerTopPadding = isEmbedded ? "pt-0" : "pt-16";
+    const titleClass = isEmbedded ? "text-3xl font-bold" : "text-4xl sm:text-5xl font-extrabold";
+    const subTitleMargin = isEmbedded ? "mt-1" : "mt-4";
+    const sidebarTopClass = isEmbedded ? "lg:top-20" : "lg:top-24";
+    const sectionScrollMarginClass = isEmbedded ? "scroll-mt-20" : "scroll-mt-24";
     
     return (
-        <div className="min-h-screen bg-slate-900 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30 text-slate-200 font-sans">
-            <header className="py-4 px-4 sm:px-6 lg:px-8 bg-slate-900/80 backdrop-blur-lg sticky top-0 z-40 border-b border-slate-800">
-                <nav className="flex items-center justify-between max-w-7xl mx-auto">
-                    <Link to="/" className="flex items-center space-x-3 group">
-                        <AerugoIcon className="w-8 h-8 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
-                        <span className="text-xl font-bold text-slate-50">Aerugo Registry</span>
-                    </Link>
-                    <div className="flex items-center gap-x-2 sm:gap-x-4">
-                        <Link to="/login" className="font-semibold text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-3 py-2 transition-colors">
-                            Sign In
+        <div className={wrapperClass}>
+            {!isEmbedded && (
+                <header className="py-4 px-4 sm:px-6 lg:px-8 bg-slate-900/80 backdrop-blur-lg sticky top-0 z-40 border-b border-slate-800">
+                    <nav className="flex items-center justify-between max-w-7xl mx-auto">
+                        <Link to="/" className="flex items-center space-x-3 group">
+                            <AerugoIcon className="w-8 h-8 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
+                            <span className="text-xl font-bold text-slate-50">Aerugo Registry</span>
                         </Link>
-                        <Link to="/register" className="font-semibold bg-indigo-600 hover:bg-indigo-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-4 py-2 transition-colors">
-                            Sign Up
-                        </Link>
-                    </div>
-                </nav>
-            </header>
+                        <div className="flex items-center gap-x-2 sm:gap-x-4">
+                            <Link to="/login" className="font-semibold text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-3 py-2 transition-colors">
+                                Sign In
+                            </Link>
+                            <Link to="/register" className="font-semibold bg-indigo-600 hover:bg-indigo-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-4 py-2 transition-colors">
+                                Sign Up
+                            </Link>
+                        </div>
+                    </nav>
+                </header>
+            )}
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center pt-16 pb-12 border-b border-slate-800">
-                    <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-slate-100 to-indigo-300 text-transparent bg-clip-text">Documentation</h1>
-                    <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-400">Everything you need to know to get started with Aerugo Registry.</p>
+            <MainWrapper {...mainWrapperProps}>
+                <div className={`text-center ${headerTopPadding} pb-12 border-b border-slate-800`}>
+                    <h1 className={`${titleClass} tracking-tight bg-gradient-to-r from-slate-100 to-indigo-300 text-transparent bg-clip-text`}>Documentation</h1>
+                    <p className={`${subTitleMargin} max-w-2xl mx-auto text-lg text-slate-400`}>Everything you need to know to get started with Aerugo Registry.</p>
                 </div>
             
                 <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 py-12">
                     {/* Sidebar */}
-                    <aside className="lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24 self-start z-30">
+                    <aside className={`lg:w-64 lg:flex-shrink-0 lg:sticky ${sidebarTopClass} self-start z-30`}>
                         <div className={`p-4 border border-slate-700/80 rounded-xl bg-gradient-to-br transition-colors duration-500 ${currentStyle.bg}`}>
                             <h3 className="text-sm font-semibold tracking-wider text-slate-300 uppercase mb-3 px-2">On this page</h3>
                             <nav>
@@ -161,7 +184,7 @@ const DocsPage: React.FC = () => {
                     {/* Main content */}
                     <div className="flex-1 min-w-0">
                         <div className="prose-custom space-y-12">
-                            <section id="introduction" className="scroll-mt-24">
+                            <section id="introduction" className={sectionScrollMarginClass}>
                                 <h1>Introduction</h1>
                                 <p>
                                     Welcome to the Aerugo Registry! This guide will walk you through managing your container images using this web interface. Here you can create organizations for your teams, manage your repositories, and control access for your members.
@@ -173,7 +196,7 @@ const DocsPage: React.FC = () => {
 
                             <hr />
 
-                            <section id="architecture" className="scroll-mt-24">
+                            <section id="architecture" className={sectionScrollMarginClass}>
                                 <h2>System Architecture</h2>
                                 <p>
                                     Aerugo is designed as a distributed, highly available system. It consists of stateless application nodes written in Rust that connect to a set of robust backend services. This architecture ensures scalability and resilience.
@@ -183,7 +206,7 @@ const DocsPage: React.FC = () => {
 
                             <hr />
 
-                            <section id="organizations" className="scroll-mt-24">
+                            <section id="organizations" className={sectionScrollMarginClass}>
                                 <h2>Managing Organizations</h2>
                                 <p>An organization acts as a workspace for your team. It contains repositories and members. You can create multiple organizations to separate projects or teams.</p>
                                 <h3>Creating an Organization</h3>
@@ -210,7 +233,7 @@ const DocsPage: React.FC = () => {
 
                             <hr />
 
-                            <section id="repositories" className="scroll-mt-24">
+                            <section id="repositories" className={sectionScrollMarginClass}>
                                 <h2>Managing Repositories</h2>
                                 <p>A repository is a collection of related container images, identified by different tags (e.g., <code>:latest</code>, <code>:v1.0</code>).</p>
                                 <h3>Creating a Repository</h3>
@@ -224,7 +247,7 @@ const DocsPage: React.FC = () => {
 
                             <hr />
 
-                            <section id="docker-usage" className="scroll-mt-24">
+                            <section id="docker-usage" className={sectionScrollMarginClass}>
                                 <h2>Using Docker</h2>
                                 <p>To push and pull images, you'll use the Docker command-line tool.</p>
                                 
@@ -252,7 +275,7 @@ const DocsPage: React.FC = () => {
 
                             <hr />
 
-                            <section id="tos" className="scroll-mt-24">
+                            <section id="tos" className={sectionScrollMarginClass}>
                                 <h2>Terms of Service</h2>
                                 <p>Last Updated: {new Date().toLocaleDateString()}</p>
                                 
@@ -271,7 +294,7 @@ const DocsPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </main>
+            </MainWrapper>
              <style>{`
                 .prose-custom h1 {
                     font-size: 2rem;

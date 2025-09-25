@@ -45,7 +45,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ currentUser, onLogout
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center space-x-4 lg:space-x-8">
-              <Link to="/repositories" className="flex items-center space-x-3 flex-shrink-0">
+              <Link to="/" className="flex items-center space-x-3 flex-shrink-0">
                 <AerugoIcon className="h-7 w-7 text-indigo-500" />
                 <h1 className="text-xl font-bold text-slate-50 hidden md:block">Aerugo Registry</h1>
               </Link>
