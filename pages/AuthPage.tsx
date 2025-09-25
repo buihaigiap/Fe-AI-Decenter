@@ -1,7 +1,5 @@
 
 
-
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AerugoIcon } from '../components/icons/DockerIcon';
@@ -12,6 +10,9 @@ import { ServerStackIcon } from '../components/icons/ServerStackIcon';
 import { UsersIcon } from '../components/icons/UsersIcon';
 import { CloudIcon } from '../components/icons/CloudIcon';
 import { RocketLaunchIcon } from '../components/icons/RocketLaunchIcon';
+import { GithubIcon } from '../components/icons/GithubIcon';
+import { TwitterIcon } from '../components/icons/TwitterIcon';
+import { DiscordIcon } from '../components/icons/DiscordIcon';
 
 const AuthPage: React.FC = () => {
   const introductionSectionRef = useRef<HTMLDivElement>(null);
@@ -166,32 +167,49 @@ const AuthPage: React.FC = () => {
     };
   }, []);
 
+  const coreConcepts = [
+    {
+        icon: <BriefcaseIcon className="w-4 h-4 text-sky-400"/>,
+        title: 'Organizations',
+        description: 'Create dedicated workspaces for your teams or projects. Each organization is a self-contained unit with its own members and repositories.'
+    },
+    {
+        icon: <ServerStackIcon className="w-4 h-4 text-sky-400"/>,
+        title: 'Repositories',
+        description: 'Store and manage your container images. Repositories belong to organizations, inheriting their access policies.'
+    },
+    {
+        icon: <UsersIcon className="w-4 h-4 text-sky-400"/>,
+        title: 'Members & Roles',
+        description: 'Invite users to your organizations with role-based access control (Owner, Admin, Member) to ensure security and proper governance.'
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 font-sans overflow-x-hidden">
       {/* Header */}
-      <header className="py-4 px-4 sm:px-6 lg:px-8 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-20 border-b border-slate-800/50">
-        <nav className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
-          <div className="flex items-center space-x-3">
-            <AerugoIcon className="w-8 h-8 text-indigo-400" />
+      <header className="py-4 px-4 sm:px-6 lg:px-8 bg-slate-900/80 backdrop-blur-lg sticky top-0 z-30 border-b border-slate-800">
+        <nav className="flex items-center justify-between">
+          <Link to="/" className="flex items-center space-x-3 group">
+            <AerugoIcon className="w-8 h-8 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
             <span className="text-xl font-bold text-slate-50">Aerugo Registry</span>
-          </div>
-          <div className="flex items-center flex-wrap justify-center gap-x-4 gap-y-2 sm:gap-x-6">
+          </Link>
+          <div className="flex items-center gap-x-2 sm:gap-x-4">
              <button
                 onClick={handleDocsClick}
-                className="font-semibold text-indigo-400 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-2 py-1 transition-colors"
+                className="font-semibold text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-3 py-2 transition-colors"
              >
                 Introduction
-                           
               </button>
               <Link
                 to="/docs"
-                className="font-semibold text-indigo-400 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-2 py-1 transition-colors"
+                className="font-semibold text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-3 py-2 transition-colors"
               >
                 Docs
               </Link>
             <Link
                 to="/login"
-                className="font-semibold text-indigo-400 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-2 py-1 transition-colors"
+                className="font-semibold text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-3 py-2 transition-colors"
               >
                 Sign In
               </Link>
@@ -209,14 +227,6 @@ const AuthPage: React.FC = () => {
           <p className="mt-6 max-w-2xl mx-auto text-lg text-slate-400">
             Streamline your development workflow with a private, scalable, and easy-to-use registry for all your container images.
           </p>
-          <div className="mt-8 flex justify-center gap-4">
-            <Link
-              to="/register"
-              className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-md shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900"
-            >
-              Get Started for Free
-            </Link>
-          </div>
         </div>
       </main>
 
@@ -291,8 +301,9 @@ const AuthPage: React.FC = () => {
       </section>
       
       {/* Core Concepts Section */}
-      <section className="py-24 sm:py-32 bg-slate-900/70 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-24 sm:py-32 bg-slate-900/70 overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-[0.03] animate-bg-grid-flow" style={{ backgroundSize: '2.5rem 2.5rem' }}></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <div className="text-center lg:text-left">
                     <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-teal-300 via-sky-400 to-indigo-400 text-transparent bg-clip-text animate-shimmer">
@@ -301,32 +312,27 @@ const AuthPage: React.FC = () => {
                     <p className="mt-6 text-lg text-slate-300/90">
                         Aerugo is built around a flexible, hierarchical structure that makes managing your software supply chain intuitive and secure.
                     </p>
-                    <ul className="mt-8 space-y-4 text-left">
-                        <li className="flex items-start">
-                            <BriefcaseIcon className="w-6 h-6 mr-4 mt-1 text-sky-300 flex-shrink-0"/>
-                            <div>
-                                <h3 className="font-semibold text-slate-50">Organizations</h3>
-                                <p className="text-slate-400">Create dedicated workspaces for your teams or projects. Each organization is a self-contained unit with its own members and repositories.</p>
-                            </div>
-                        </li>
-                         <li className="flex items-start">
-                            <ServerStackIcon className="w-6 h-6 mr-4 mt-1 text-sky-300 flex-shrink-0"/>
-                            <div>
-                                <h3 className="font-semibold text-slate-50">Repositories</h3>
-                                <p className="text-slate-400">Store and manage your container images. Repositories belong to organizations, inheriting their access policies.</p>
-                            </div>
-                        </li>
-                        <li className="flex items-start">
-                            <UsersIcon className="w-6 h-6 mr-4 mt-1 text-sky-300 flex-shrink-0"/>
-                            <div>
-                                <h3 className="font-semibold text-slate-50">Members & Roles</h3>
-                                <p className="text-slate-400">Invite users to your organizations with role-based access control (Owner, Admin, Member) to ensure security and proper governance.</p>
-                            </div>
-                        </li>
-                    </ul>
+                    <div className="mt-10 relative text-left">
+                        <div className="absolute left-4 top-4 bottom-4 w-px bg-slate-700/50" aria-hidden="true">
+                            <div className="absolute inset-y-0 left-0 w-full animate-flow-line" />
+                        </div>
+                        <div className="space-y-12">
+                            {coreConcepts.map((concept, index) => (
+                                <div key={index} className="relative pl-12">
+                                    <div className="absolute left-0 top-0 w-8 h-8 bg-slate-900 rounded-full flex items-center justify-center border-2 border-sky-500 shadow-[0_0_15px_rgba(14,165,233,0.4)] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_25px_rgba(14,165,233,0.6)]">
+                                        {concept.icon}
+                                    </div>
+                                    <div className="pl-2">
+                                        <h3 className="font-semibold text-slate-50 text-lg">{concept.title}</h3>
+                                        <p className="text-slate-400 mt-1">{concept.description}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
                 <div className="min-h-[300px] sm:min-h-[400px] flex items-center justify-center">
-                    <HubAndSpokeDiagram />
+                    <DynamicCoreVisual />
                 </div>
              </div>
         </div>
@@ -334,61 +340,100 @@ const AuthPage: React.FC = () => {
 
 
       {/* Footer */}
-      <footer className="bg-slate-900/50 border-t border-slate-800">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer className="relative bg-slate-900/70 border-t border-slate-800/50 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+            <div 
+                className="absolute inset-0 opacity-[0.03] animate-bg-grid-flow" 
+                style={{
+                    backgroundImage: 'linear-gradient(rgba(203, 213, 225, 1) 1px, transparent 1px), linear-gradient(to right, rgba(203, 213, 225, 1) 1px, transparent 1px)',
+                    backgroundSize: '3rem 3rem'
+                }}
+            />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 text-sm">
                 {/* Brand Column */}
-                <div className="col-span-1 md:col-span-2">
+                <div className="col-span-2 md:col-span-4 lg:col-span-2">
                     <div className="flex items-center space-x-3">
                         <AerugoIcon className="w-8 h-8 text-indigo-400" />
                         <span className="text-xl font-bold text-slate-50">Aerugo Registry</span>
                     </div>
-                    <p className="mt-4 text-slate-400 text-sm max-w-xs">
+                    <p className="mt-4 text-slate-400 max-w-xs">
                         A modern, secure, and performant container registry built for developers and teams.
                     </p>
                 </div>
 
-                {/* Product Links */}
+                {/* Links Columns */}
                 <div>
-                    <h3 className="text-sm font-semibold text-slate-200 tracking-wider uppercase">Product</h3>
-                    <ul className="mt-4 space-y-2">
+                    <h3 className="font-semibold text-slate-100 tracking-wider uppercase">Product</h3>
+                    <ul className="mt-4 space-y-3">
                         <li>
-                            <button onClick={handleDocsClick} className="text-sm text-slate-400 hover:text-white transition-colors">
+                            <button onClick={handleDocsClick} className="text-slate-400 hover:text-indigo-300 transition-colors">
                                 Introduction
                             </button>
                         </li>
                         <li>
-                            <Link to="/repositories" className="text-sm text-slate-400 hover:text-white transition-colors">
+                            <Link to="/repositories" className="text-slate-400 hover:text-indigo-300 transition-colors">
                                 Repositories
                             </Link>
                         </li>
                         <li>
-                            <Link to="/organizations" className="text-sm text-slate-400 hover:text-white transition-colors">
+                            <Link to="/organizations" className="text-slate-400 hover:text-indigo-300 transition-colors">
                                 Organizations
                             </Link>
                         </li>
                     </ul>
                 </div>
 
-                {/* Resources Links */}
                 <div>
-                    <h3 className="text-sm font-semibold text-slate-200 tracking-wider uppercase">Resources</h3>
-                    <ul className="mt-4 space-y-2">
+                    <h3 className="font-semibold text-slate-100 tracking-wider uppercase">Resources</h3>
+                    <ul className="mt-4 space-y-3">
                         <li>
-                            <Link to="/docs" className="text-sm text-slate-400 hover:text-white transition-colors">
+                            <Link to="/docs" className="text-slate-400 hover:text-indigo-300 transition-colors">
                                 Docs
                             </Link>
                         </li>
+                        <li>
+                            <a href="#" className="text-slate-400 hover:text-indigo-300 transition-colors">
+                                GitHub
+                            </a>
+                        </li>
                          <li>
-                             <Link to="/docs#tos" className="text-sm text-slate-400 hover:text-white transition-colors">
+                            <a href="#" className="text-slate-400 hover:text-indigo-300 transition-colors">
+                                API Status
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                 <div>
+                    <h3 className="font-semibold text-slate-100 tracking-wider uppercase">Legal</h3>
+                    <ul className="mt-4 space-y-3">
+                        <li>
+                            <Link to="/docs#tos" className="text-slate-400 hover:text-indigo-300 transition-colors">
                                 Terms of Service
-                             </Link>
-                         </li>
+                            </Link>
+                        </li>
+                        <li>
+                            <a href="#" className="text-slate-400 hover:text-indigo-300 transition-colors">
+                                Privacy Policy
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
-            <div className="mt-8 pt-8 border-t border-slate-800 text-center text-sm text-slate-500">
+            <div className="mt-16 pt-8 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center text-sm text-slate-500">
                 <p>&copy; {new Date().getFullYear()} Aerugo Registry. All rights reserved.</p>
+                <div className="flex items-center space-x-6 mt-4 sm:mt-0">
+                    <a href="#" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="GitHub">
+                        <GithubIcon className="w-6 h-6" />
+                    </a>
+                    <a href="#" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="Twitter">
+                        <TwitterIcon className="w-6 h-6" />
+                    </a>
+                    <a href="#" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="Discord">
+                        <DiscordIcon className="w-6 h-6" />
+                    </a>
+                </div>
             </div>
         </div>
       </footer>
@@ -396,68 +441,15 @@ const AuthPage: React.FC = () => {
   );
 };
 
-const HubAndSpokeDiagram = () => {
-    const nodes = [
-        { icon: <BriefcaseIcon className="w-8 h-8"/>, label: 'Organizations' },
-        { icon: <ServerStackIcon className="w-8 h-8"/>, label: 'Repositories' },
-        { icon: <UsersIcon className="w-8 h-8"/>, label: 'Members & Roles' },
-        { icon: <ShieldCheckIcon className="w-8 h-8"/>, label: 'Security' },
-        { icon: <CodeBracketIcon className="w-8 h-8"/>, label: 'CI/CD Pipelines' },
-    ];
-    const radius = 150; // Radius of the circle on which nodes are placed
-    const center = 175; // Center of the SVG viewBox
-
+const DynamicCoreVisual = () => {
     return (
-        <div className="relative w-[350px] h-[350px]">
-            <svg viewBox="0 0 350 350" className="absolute inset-0 w-full h-full animate-diagram-rotate">
-                 {nodes.map((_, index) => {
-                    const angle = (index / nodes.length) * 2 * Math.PI;
-                    const x2 = center + radius * Math.cos(angle);
-                    const y2 = center + radius * Math.sin(angle);
-                    return (
-                         <line
-                            key={index}
-                            x1={center} y1={center}
-                            x2={x2} y2={y2}
-                            stroke="rgba(79, 70, 229, 0.2)"
-                            strokeWidth="1.5"
-                            className="animate-pulse-spoke-line"
-                            style={{ animationDelay: `${index * 0.2}s` }}
-                        />
-                    );
-                 })}
-            </svg>
-            <div className="relative w-full h-full">
-                {/* Central Hub */}
-                 <div 
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-indigo-900/40 rounded-full flex flex-col items-center justify-center text-center p-2 border-2 border-indigo-500/50 animate-pulse-hub"
-                >
-                    <AerugoIcon className="w-10 h-10 text-indigo-300"/>
-                    <span className="text-sm font-bold text-slate-100 mt-1">Aerugo Registry</span>
-                </div>
-                {/* Spoke Nodes */}
-                {nodes.map((node, index) => {
-                    const angle = (index / nodes.length) * 2 * Math.PI;
-                    const x = center + radius * Math.cos(angle);
-                    const y = center + radius * Math.sin(angle);
-                    return (
-                        <div
-                            key={node.label}
-                            className="absolute -translate-x-1/2 -translate-y-1/2 w-28 h-28 flex flex-col items-center justify-center text-center p-2 animate-float-node"
-                            style={{ 
-                                left: `${(x / 350) * 100}%`, 
-                                top: `${(y / 350) * 100}%`,
-                                animationDelay: `${index * 0.5}s` 
-                            }}
-                        >
-                            <div className="p-3 bg-slate-800 border border-slate-700 rounded-full text-sky-300">
-                                {node.icon}
-                            </div>
-                             <span className="text-xs font-semibold text-slate-300 mt-2">{node.label}</span>
-                        </div>
-                    );
-                })}
-            </div>
+        <div className="relative w-full h-full min-h-[300px] sm:min-h-[400px] flex items-center justify-center">
+            {/* Replace canvas with an image tag for the GIF */}
+            <img 
+                src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3h4MDA3eXpqZ3FzbjVqYzJ0dTVvNnoxbGM4eGNpNjdtdW9mNmY0eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/9tA6H1madRvUc/giphy.gif" 
+                alt="Rotating tech globe visualization" 
+                className="absolute inset-0 w-full h-full object-contain opacity-60 mix-blend-screen transform scale-110"
+            />
         </div>
     );
 };

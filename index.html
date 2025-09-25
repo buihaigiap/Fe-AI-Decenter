@@ -210,6 +210,22 @@
       animation: blinking-cursor 1s step-end infinite;
     }
 
+    @keyframes flow-line-bg {
+      from { background-position: 50% -100%; }
+      to { background-position: 50% 200%; }
+    }
+    .animate-flow-line {
+        background-image: linear-gradient(
+            transparent 0%,
+            rgba(14, 165, 233, 0.8) 40%,
+            rgba(14, 165, 233, 0.8) 60%,
+            transparent 100%
+        );
+        background-size: 1px 200%;
+        background-repeat: no-repeat;
+        animation: flow-line-bg 4s linear infinite;
+    }
+
   </style>
 </head>
   <body class="bg-slate-900 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30">
