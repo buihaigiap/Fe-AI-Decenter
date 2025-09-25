@@ -1,6 +1,4 @@
-
-
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
@@ -23,6 +21,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
   const [authMode, setAuthMode] = useState<AuthMode>(AuthMode.Register);
   const authSectionRef = useRef<HTMLDivElement>(null);
   const introductionSectionRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const switchMode = (mode: AuthMode) => {
     setAuthMode(mode);
@@ -41,16 +41,160 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
     introductionSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  useEffect(() => {
+    // Particle animation logic
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let particles: Particle[] = [];
+    let mouse = { x: -1000, y: -1000, radius: 150 };
+
+    const resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+        init();
+    };
+
+    class Particle {
+        x: number;
+        y: number;
+        size: number;
+        baseX: number;
+        baseY: number;
+        density: number;
+
+        constructor(x: number, y: number) {
+            this.x = x;
+            this.y = y;
+            this.size = 1.5;
+            this.baseX = this.x;
+            this.baseY = this.y;
+            this.density = (Math.random() * 30) + 1;
+        }
+
+        draw() {
+            if (!ctx) return;
+            ctx.fillStyle = 'rgba(165, 180, 252, 0.5)';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        update() {
+            let dx = mouse.x - this.x;
+            let dy = mouse.y - this.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            let forceDirectionX = dx / distance;
+            let forceDirectionY = dy / distance;
+            let maxDistance = mouse.radius;
+            let force = (maxDistance - distance) / maxDistance;
+            let directionX = (forceDirectionX * force * this.density);
+            let directionY = (forceDirectionY * force * this.density);
+
+            if (distance < mouse.radius) {
+                this.x -= directionX;
+                this.y -= directionY;
+            } else {
+                if (this.x !== this.baseX) {
+                    let dx = this.x - this.baseX;
+                    this.x -= dx / 10;
+                }
+                if (this.y !== this.baseY) {
+                    let dy = this.y - this.baseY;
+                    this.y -= dy / 10;
+                }
+            }
+        }
+    }
+
+    const init = () => {
+        particles = [];
+        const particleCount = Math.floor((canvas.width * canvas.height) / 10000);
+        for (let i = 0; i < particleCount; i++) {
+            let x = Math.random() * canvas.width;
+            let y = Math.random() * canvas.height;
+            particles.push(new Particle(x, y));
+        }
+    };
+
+    const animate = () => {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+        }
+        connect();
+        animationFrameId = requestAnimationFrame(animate);
+    };
+
+    const connect = () => {
+        let opacityValue = 1;
+        for (let a = 0; a < particles.length; a++) {
+            for (let b = a; b < particles.length; b++) {
+                let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x)) +
+                               ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
+                if (distance < (canvas.width / 7) * (canvas.height / 7)) {
+                    opacityValue = 1 - (distance / 20000);
+                    ctx.strokeStyle = `rgba(129, 140, 248, ${opacityValue * 0.3})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[a].x, particles[a].y);
+                    ctx.lineTo(particles[b].x, particles[b].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    };
+    
+    const handleMouseMove = (e: MouseEvent) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    };
+    
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('mousemove', handleMouseMove);
+    resizeCanvas();
+    animate();
+
+    // Intersection observer for cards
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    if (cardsContainerRef.current) {
+        observer.observe(cardsContainerRef.current);
+    }
+    
+    return () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resizeCanvas);
+        window.removeEventListener('mousemove', handleMouseMove);
+        if (cardsContainerRef.current) {
+            observer.unobserve(cardsContainerRef.current);
+        }
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900 text-slate-100 font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans overflow-x-hidden">
       {/* Header */}
       <header className="py-4 px-4 sm:px-6 lg:px-8 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-20 border-b border-slate-800/50">
-        <nav className="flex items-center justify-between">
+        <nav className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
           <div className="flex items-center space-x-3">
             <AerugoIcon className="w-8 h-8 text-indigo-400" />
             <span className="text-xl font-bold text-slate-50">Aerugo Registry</span>
           </div>
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center flex-wrap justify-center gap-x-4 gap-y-2 sm:gap-x-6">
              <button
                 onClick={handleDocsClick}
                 className="font-semibold text-indigo-400 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-2 py-1 transition-colors"
@@ -78,9 +222,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
       </header>
 
       {/* Hero Section */}
-      <main className="pt-20 pb-16 sm:pt-24 lg:pt-32 text-center">
-        <div className="max-w-4xl mx-auto px-4">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-slate-100 to-indigo-300 text-transparent bg-clip-text">
+      <main className="relative pt-20 pb-16 sm:pt-24 lg:pt-32 text-center bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900">
+        <canvas ref={canvasRef} className="absolute inset-0 z-0 opacity-70"></canvas>
+        <div className="relative z-10 max-w-4xl mx-auto px-4">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-slate-100 to-indigo-300 text-transparent bg-clip-text animate-shimmer">
             The Modern, Secure Container Registry
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-lg text-slate-400">
@@ -98,63 +243,67 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
       </main>
 
       {/* Introduction Section */}
-      <section ref={introductionSectionRef} id="introduction" className="py-20 bg-transparent scroll-mt-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section ref={introductionSectionRef} id="introduction" className="relative py-24 sm:py-32 bg-slate-900/70 scroll-mt-20 overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 z-0">
+            {/* Pulsing Core */}
+            <div className="absolute inset-0 bg-indigo-950/30 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)] animate-pulse-glow"></div>
+            {/* Scrolling Grid */}
+            <div 
+                className="absolute inset-0 opacity-[0.05] animate-scroll-grid" 
+                style={{
+                    backgroundImage: 'linear-gradient(rgba(203, 213, 225, 0.5) 1px, transparent 1px), linear-gradient(to right, rgba(203, 213, 225, 0.5) 1px, transparent 1px)',
+                    backgroundSize: '4rem 4rem',
+                }}
+            />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-                <h2 className="text-3xl font-bold text-slate-50">Built for Performance, Security, and Scale</h2>
-                <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-400">
-                    Aerugo is a next-generation, distributed, and multi-tenant container registry built with Rust. It is designed for high performance and scalability, leveraging an S3-compatible object storage backend.
+                <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-teal-300 via-sky-400 to-indigo-400 text-transparent bg-clip-text animate-shimmer">
+                    Built for the Future of Development
+                </h2>
+                <p className="mt-6 max-w-3xl mx-auto text-lg text-slate-300/90">
+                    Aerugo is a next-generation, distributed, and multi-tenant container registry built with Rust. Designed for high performance and scalability, leveraging an S3-compatible object storage backend.
                 </p>
             </div>
-            <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-                <IntroFeature
-                    icon={<ServerStackIcon className="h-8 w-8 text-indigo-400" />}
-                    title="Distributed & Highly Available"
-                    description="Designed to run in a clustered environment with no single point of failure."
-                />
-                 <IntroFeature
-                    icon={<UsersIcon className="h-8 w-8 text-indigo-400" />}
-                    title="Multi-tenancy"
-                    description="First-class support for users and organizations with granular access control."
-                />
-                 <IntroFeature
-                    icon={<CloudIcon className="h-8 w-8 text-indigo-400" />}
-                    title="S3-Compatible Backend"
-                    description="Uses any S3-compatible object storage for durability and infinite scalability."
-                />
-                 <IntroFeature
-                    icon={<RocketLaunchIcon className="h-8 w-8 text-indigo-400" />}
-                    title="Written in Rust"
-                    description="Provides memory safety, concurrency, and performance for a secure, efficient core."
-                />
+            <div ref={cardsContainerRef} className="mt-20 grid gap-8 md:grid-cols-2 lg:grid-cols-4 feature-card-container">
+                {techFeatures.map((feature, index) => (
+                    <TechFeatureCard
+                        key={feature.title}
+                        icon={feature.icon}
+                        title={feature.title}
+                        description={feature.description}
+                        animationDelay={`${150 * index}ms`}
+                    />
+                ))}
             </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-slate-900/30">
+      {/* Workflow Section */}
+      <section className="py-24 sm:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-slate-50">Built for Developers and Teams</h2>
-            <p className="mt-4 text-lg text-slate-400">Everything you need, nothing you don't.</p>
-          </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
-            <FeatureCard
-              icon={<BriefcaseIcon className="h-8 w-8 text-indigo-400" />}
-              title="Organize Repositories"
-              description="Group your repositories under organizations to easily manage access and billing for your entire team."
-            />
-            <FeatureCard
-              icon={<ShieldCheckIcon className="h-8 w-8 text-indigo-400" />}
-              title="Secure & Private"
-              description="Control who can see and pull your images with public/private repositories and fine-grained permissions."
-            />
-            <FeatureCard
-              icon={<CodeBracketIcon className="h-8 w-8 text-indigo-400" />}
-              title="Developer Friendly"
-              description="A clean, intuitive UI and a straightforward API make managing your images a breeze. Works with standard Docker commands."
-            />
-          </div>
+            <div className="text-center">
+                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-slate-100 to-indigo-300 text-transparent bg-clip-text animate-shimmer">
+                    Designed for a Modern Workflow
+                </h2>
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-400">
+                    Everything you need to build, secure, and deploy your applications at scale.
+                </p>
+            </div>
+            <div className="mt-20 grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
+                <div className="lg:col-span-2">
+                    <InteractiveWorkflowCard 
+                        {...workflowFeatures[0]} 
+                        className="h-full"
+                    />
+                </div>
+                <div className="grid gap-8 mt-8 lg:mt-0">
+                    <InteractiveWorkflowCard {...workflowFeatures[1]} />
+                    <InteractiveWorkflowCard {...workflowFeatures[2]} />
+                </div>
+            </div>
         </div>
       </section>
 
@@ -203,53 +352,241 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-transparent py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-500">
-          <p>&copy; {new Date().getFullYear()} Aerugo Registry. All rights reserved.</p>
-          <div className="mt-2">
-             <Link to="/docs#tos" className="text-sm text-slate-400 hover:text-indigo-400 transition-colors">
-                Terms of Service
-             </Link>
-          </div>
+      <footer className="bg-slate-900/50 border-t border-slate-800">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                {/* Brand Column */}
+                <div className="col-span-1 md:col-span-2">
+                    <div className="flex items-center space-x-3">
+                        <AerugoIcon className="w-8 h-8 text-indigo-400" />
+                        <span className="text-xl font-bold text-slate-50">Aerugo Registry</span>
+                    </div>
+                    <p className="mt-4 text-slate-400 text-sm max-w-xs">
+                        A modern, secure, and performant container registry built for developers and teams.
+                    </p>
+                </div>
+
+                {/* Product Links */}
+                <div>
+                    <h3 className="text-sm font-semibold text-slate-200 tracking-wider uppercase">Product</h3>
+                    <ul className="mt-4 space-y-2">
+                        <li>
+                            <button onClick={handleDocsClick} className="text-sm text-slate-400 hover:text-white transition-colors">
+                                Introduction
+                            </button>
+                        </li>
+                        <li>
+                            <Link to="/repositories" className="text-sm text-slate-400 hover:text-white transition-colors">
+                                Repositories
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/organizations" className="text-sm text-slate-400 hover:text-white transition-colors">
+                                Organizations
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
+
+                {/* Resources Links */}
+                <div>
+                    <h3 className="text-sm font-semibold text-slate-200 tracking-wider uppercase">Resources</h3>
+                    <ul className="mt-4 space-y-2">
+                        <li>
+                            <Link to="/docs" className="text-sm text-slate-400 hover:text-white transition-colors">
+                                Docs
+                            </Link>
+                        </li>
+                         <li>
+                             <Link to="/docs#tos" className="text-sm text-slate-400 hover:text-white transition-colors">
+                                Terms of Service
+                             </Link>
+                         </li>
+                    </ul>
+                </div>
+            </div>
+            <div className="mt-8 pt-8 border-t border-slate-800 text-center text-sm text-slate-500">
+                <p>&copy; {new Date().getFullYear()} Aerugo Registry. All rights reserved.</p>
+            </div>
         </div>
       </footer>
     </div>
   );
 };
 
+const techFeatures = [
+    {
+        icon: <ServerStackIcon className="h-8 w-8 text-sky-300" />,
+        title: "Distributed & Highly Available",
+        description: "Designed to run in a clustered environment with no single point of failure.",
+    },
+    {
+        icon: <UsersIcon className="h-8 w-8 text-sky-300" />,
+        title: "Multi-tenancy",
+        description: "First-class support for users and organizations with granular access control.",
+    },
+    {
+        icon: <CloudIcon className="h-8 w-8 text-sky-300" />,
+        title: "S3-Compatible Backend",
+        description: "Uses any S3-compatible object storage for durability and infinite scalability.",
+    },
+    {
+        icon: <RocketLaunchIcon className="h-8 w-8 text-sky-300" />,
+        title: "Written in Rust",
+        description: "Provides memory safety, concurrency, and performance for a secure, efficient core.",
+    },
+];
 
-interface IntroFeatureProps {
+const HubAndSpokeDiagram = () => {
+    const nodes = [
+        { cx: 50, cy: 15 },
+        { cx: 85, cy: 32.5 },
+        { cx: 85, cy: 67.5 },
+        { cx: 50, cy: 85 },
+        { cx: 15, cy: 67.5 },
+        { cx: 15, cy: 32.5 },
+    ];
+
+    return (
+        <div className="absolute inset-0 z-0 flex items-center justify-center opacity-25 mix-blend-soft-light pointer-events-none overflow-hidden">
+            <svg viewBox="0 0 100 100" className="w-full h-full animate-diagram-rotate">
+                <defs>
+                    <radialGradient id="hub-glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stopColor="rgba(167, 139, 250, 0.6)" />
+                        <stop offset="100%" stopColor="rgba(124, 58, 237, 0.1)" />
+                    </radialGradient>
+                </defs>
+
+                {/* Lines */}
+                {nodes.map((node, i) => (
+                    <line
+                        key={`line-${i}`}
+                        x1="50" y1="50"
+                        x2={node.cx} y2={node.cy}
+                        className="stroke-violet-400/50 animate-pulse-spoke-line"
+                        strokeWidth="0.5"
+                        style={{ animationDelay: `${i * 200}ms` }}
+                    />
+                ))}
+
+                {/* Hub */}
+                <circle cx="50" cy="50" r="12" fill="url(#hub-glow)" className="animate-pulse-hub" />
+                <circle cx="50" cy="50" r="8" className="fill-violet-300/80" />
+
+                {/* Nodes */}
+                {nodes.map((node, i) => (
+                    <circle
+                        key={`node-${i}`}
+                        cx={node.cx} cy={node.cy} r="4"
+                        className="fill-violet-400/70 animate-float-node"
+                        style={{ animationDelay: `${i * 300}ms` }}
+                    />
+                ))}
+            </svg>
+        </div>
+    );
+};
+
+
+const workflowFeatures = [
+    {
+        icon: <BriefcaseIcon className="h-8 w-8 text-indigo-300" />,
+        title: "Centralized Organizations",
+        description: "Group repositories under organizations for powerful, team-based access control and management.",
+        bgClass: 'animate-bg-grid-flow',
+        decoration: <HubAndSpokeDiagram />
+    },
+    {
+        icon: <ShieldCheckIcon className="h-8 w-8 text-indigo-300" />,
+        title: "Robust Security",
+        description: "Secure your software supply chain with private repositories and granular, role-based permissions.",
+        bgClass: 'animate-bg-shift'
+    },
+    {
+        icon: <CodeBracketIcon className="h-8 w-8 text-indigo-300" />,
+        title: "Seamless Integration",
+        description: "Fully compatible with the Docker CLI and designed to integrate perfectly with your existing CI/CD pipelines.",
+        bgClass: 'animate-bg-lines'
+    }
+];
+
+
+interface TechFeatureCardProps {
     icon: React.ReactNode;
     title: string;
     description: string;
+    animationDelay: string;
 }
 
-const IntroFeature: React.FC<IntroFeatureProps> = ({ icon, title, description }) => (
-    <div className="flex flex-col items-center text-center">
-        <div className="flex items-center justify-center h-16 w-16 rounded-full bg-slate-800 mb-4 border border-slate-700">
-            {icon}
+const TechFeatureCard: React.FC<TechFeatureCardProps> = ({ icon, title, description, animationDelay }) => {
+    return (
+        <div
+            className="feature-card group relative bg-transparent rounded-xl transition-all duration-300 ease-out opacity-0"
+            style={{ animationDelay }}
+        >
+             <div 
+                className="relative h-full bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-700 overflow-hidden transition-all duration-300 group-hover:bg-slate-800/60 group-hover:border-slate-600 animate-bg-pan"
+             >
+                <div className="relative z-10 p-6 h-full flex flex-col transition-transform duration-300 group-hover:scale-105">
+                    <div className="mb-4 inline-block p-3 bg-slate-800 rounded-lg border border-slate-700 transition-colors duration-300 group-hover:bg-slate-700">
+                        {icon}
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-50">{title}</h3>
+                    <p className="mt-2 text-sm text-slate-400 flex-grow">{description}</p>
+                </div>
+            </div>
         </div>
-        <h3 className="text-lg font-semibold text-slate-100">{title}</h3>
-        <p className="mt-1 text-slate-400">{description}</p>
-    </div>
-);
+    );
+};
 
 
-interface FeatureCardProps {
+interface InteractiveWorkflowCardProps {
     icon: React.ReactNode;
     title: string;
     description: string;
+    bgClass: string;
+    className?: string;
+    decoration?: React.ReactNode;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) => (
-    <div className="flex flex-col items-center text-center p-6 bg-slate-800/70 backdrop-blur-sm rounded-lg border border-slate-700/80 transition-all duration-300 ease-in-out transform hover:-translate-y-2 hover:shadow-xl hover:shadow-indigo-950/50">
-        <div className="flex items-center justify-center h-16 w-16 rounded-full bg-slate-700/80 mb-4">
-            {icon}
+const InteractiveWorkflowCard: React.FC<InteractiveWorkflowCardProps> = ({ icon, title, description, bgClass, className = '', decoration }) => {
+    const cardRef = useRef<HTMLDivElement>(null);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const card = cardRef.current;
+        if (!card) return;
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+    };
+
+    return (
+        <div
+            ref={cardRef}
+            onMouseMove={handleMouseMove}
+            className={`group relative p-8 bg-slate-900 rounded-xl border border-slate-700/80 transition-all duration-300 hover:border-indigo-500/50 hover:bg-slate-900/80 overflow-hidden ${className}`}
+        >
+            {decoration}
+            <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{
+                    background: `radial-gradient(350px circle at var(--mouse-x) var(--mouse-y), rgba(79, 70, 229, 0.15), transparent 80%)`,
+                }}
+            />
+            <div className={`absolute -inset-px z-0 opacity-20 group-hover:opacity-30 transition-opacity duration-300 ${bgClass}`} />
+            
+            <div className="relative z-10 flex flex-col items-start h-full">
+                <div className="mb-4 p-4 bg-slate-800 border border-slate-700 rounded-lg transition-colors duration-300 group-hover:bg-slate-700/50">
+                    {icon}
+                </div>
+                <h3 className="text-xl font-semibold text-slate-100">{title}</h3>
+                <p className="mt-2 text-slate-400 flex-grow">{description}</p>
+            </div>
         </div>
-        <h3 className="text-xl font-semibold text-slate-100">{title}</h3>
-        <p className="mt-2 text-slate-400">{description}</p>
-    </div>
-);
+    );
+};
 
 
 export default AuthPage;

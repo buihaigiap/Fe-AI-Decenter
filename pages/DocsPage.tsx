@@ -1,4 +1,5 @@
 
+
 import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import CodeBlock from '../components/docs/CodeBlock';
@@ -48,25 +49,27 @@ const DocsPage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row gap-12">
+        <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar */}
-            <aside className="lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24 self-start ml-6">
-                <nav>
-                    <h3 className="text-xl font-bold uppercase text-slate-400 tracking-wider mb-4">On this page</h3>
-                    <ul className="space-y-2">
-                        {navItems.map(item => (
-                            <li key={item.href}>
-                                <a
-                                    href={item.href}
-                                    onClick={(e) => handleNavClick(e, item.href)}
-                                    className="block text-slate-300 hover:text-white transition-colors py-1"
-                                >
-                                    {item.label}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
+            <aside className="lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24 self-start">
+                 <div className="bg-slate-800/50 border border-slate-700/80 rounded-lg p-4 lg:bg-transparent lg:border-none lg:p-0">
+                    <nav>
+                        <h3 className="text-xl font-bold uppercase text-slate-400 tracking-wider mb-4">On this page</h3>
+                        <ul className="space-y-2">
+                            {navItems.map(item => (
+                                <li key={item.href}>
+                                    <a
+                                        href={item.href}
+                                        onClick={(e) => handleNavClick(e, item.href)}
+                                        className="block text-slate-300 hover:text-white transition-colors py-1"
+                                    >
+                                        {item.label}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+                </div>
             </aside>
 
             {/* Main content */}

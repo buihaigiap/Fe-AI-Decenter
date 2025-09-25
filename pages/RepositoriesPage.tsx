@@ -46,7 +46,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({ token }) => {
 
   return (
     <div className="space-y-6">
-       <div className="flex justify-between items-center px-4 sm:px-0">
+       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4 sm:px-0">
           <h1 className="text-3xl font-bold text-slate-50">Repositories</h1>
           <OrganizationSelector 
               organizations={organizations}

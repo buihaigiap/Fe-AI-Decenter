@@ -5,6 +5,7 @@ import CreateOrganizationForm from './CreateOrganizationForm';
 import Button from '../Button';
 import { PlusIcon } from '../icons/PlusIcon';
 import OrganizationDetail from './OrganizationDetail';
+import { BriefcaseIcon } from '../icons/BriefcaseIcon';
 
 interface OrganizationsManagerProps {
   token: string;
@@ -84,10 +85,17 @@ const OrganizationsManager: React.FC<OrganizationsManagerProps> = ({
         )}
 
         {!showCreateForm && !selectedOrganization && (
-            <div className="h-full flex items-center justify-center bg-slate-800 border-2 border-dashed border-slate-700 rounded-lg">
-                <div className="text-center p-6">
-                    <h3 className="text-lg font-medium text-slate-300">Manage Your Organization</h3>
-                    <p className="text-slate-400 mt-1">Select an organization to manage its members and settings, or create a new one to get started.</p>
+            <div className="relative h-full flex items-center justify-center bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden min-h-[400px]">
+                <div 
+                    className="absolute inset-0 z-0 opacity-20"
+                    style={{
+                        background: `radial-gradient(circle at center, rgba(79, 70, 229, 0.5) 0%, transparent 70%)`,
+                    }}
+                />
+                <div className="relative z-10 text-center p-6 flex flex-col items-center">
+                    <BriefcaseIcon className="w-24 h-24 text-slate-500 animate-subtle-pulse" />
+                    <h3 className="text-xl font-semibold text-slate-200 mt-6">Manage Your Organization</h3>
+                    <p className="text-slate-400 mt-2 max-w-sm">Select an organization from the list to view its details, or create a new one to get started.</p>
                 </div>
             </div>
         )}
