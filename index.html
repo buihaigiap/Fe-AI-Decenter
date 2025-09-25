@@ -76,7 +76,40 @@
       animation: pulse-glow 10s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
     
-    @keyframes background-pan {
+    @keyframes running-lights-vertical {
+        from { background-position: 0 -8rem; }
+        to { background-position: 0 8rem; }
+    }
+    .animate-running-lights-vertical {
+        background-image: repeating-linear-gradient(
+            transparent 0,
+            transparent 3.95rem,
+            rgba(56, 189, 248, 0.3) 4rem,
+            transparent 4.05rem
+        );
+        background-size: 100% 8rem;
+        animation: running-lights-vertical 5s linear infinite;
+        opacity: 0.2;
+    }
+
+    @keyframes running-lights-horizontal {
+        from { background-position: -8rem 0; }
+        to { background-position: 8rem 0; }
+    }
+    .animate-running-lights-horizontal {
+        background-image: repeating-linear-gradient(
+            90deg,
+            transparent 0,
+            transparent 3.95rem,
+            rgba(56, 189, 248, 0.3) 4rem,
+            transparent 4.05rem
+        );
+        background-size: 8rem 100%;
+        animation: running-lights-horizontal 7s linear infinite;
+        opacity: 0.2;
+    }
+    
+    @keyframes bg-pan {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }

@@ -1,3 +1,5 @@
+
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
@@ -256,6 +258,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
                     backgroundSize: '4rem 4rem',
                 }}
             />
+            {/* Running Lights */}
+            <div className="absolute inset-0 animate-running-lights-vertical"></div>
+            <div className="absolute inset-0 animate-running-lights-horizontal"></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -282,7 +287,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
       </section>
 
       {/* Workflow Section */}
-      <section className="py-24 sm:py-32">
+      <section className="pt-12 sm:pt-16 pb-24 sm:pb-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
                 <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-slate-100 to-indigo-300 text-transparent bg-clip-text animate-shimmer">
