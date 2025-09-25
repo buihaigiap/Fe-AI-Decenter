@@ -40,10 +40,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onRegisterSuccess }) => {
 
     try {
       await registerUser({ username, email, password });
-      setSuccess('Registration successful! Please sign in.');
-      setTimeout(() => {
-        onRegisterSuccess();
-      }, 1500);
+      setSuccess('Registration successful! Redirecting to sign in...');
+      onRegisterSuccess();
     } catch (err: any) {
       if (err.status === 409) {
         setError('A user with that username or email already exists.');

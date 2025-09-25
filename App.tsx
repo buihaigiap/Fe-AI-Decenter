@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
@@ -11,6 +12,8 @@ import { User } from './types';
 import { fetchCurrentUser } from './services/api';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import VerifyOtpPage from './pages/VerifyOtpPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 const App: React.FC = () => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
@@ -73,17 +76,29 @@ const App: React.FC = () => {
   return (
     <HashRouter>
       <Routes>
-        <Route 
-          path="/" 
+        <Route path="/" element={<AuthPage />} />
+        
+        {/* Unauthenticated Routes */}
+        <Route
+          path="/login"
           element={
             token && currentUser ? (
               <Navigate to="/repositories" replace />
             ) : (
-              <AuthPage onLoginSuccess={handleLoginSuccess} />
+              <LoginPage onLoginSuccess={handleLoginSuccess} />
             )
-          } 
+          }
         />
-        <Route path="/docs" element={<DocsPage />} />
+        <Route
+          path="/register"
+          element={
+            token && currentUser ? (
+              <Navigate to="/repositories" replace />
+            ) : (
+              <RegisterPage />
+            )
+          }
+        />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-otp" element={<VerifyOtpPage />} />
 
@@ -94,14 +109,13 @@ const App: React.FC = () => {
             token && currentUser ? (
               <DashboardLayout currentUser={currentUser} onLogout={handleLogout} />
             ) : (
-              <Navigate to="/" replace />
+              <Navigate to="/login" replace />
             )
           }
         >
-          <Route path="/repositories" element={<RepositoriesPage token={token} />} />
-          <Route path="/organizations" element={<OrganizationsPage token={token} currentUser={currentUser} />} />
+          <Route path="/repositories" element={<RepositoriesPage token={token!} />} />
+          <Route path="/organizations" element={<OrganizationsPage token={token!} currentUser={currentUser!} />} />
           <Route path="/profile" element={<ProfilePage currentUser={currentUser!} token={token!} />} />
-          {/* FIX: The DocsPage component does not accept a 'token' prop. Removed it to fix the type error. */}
           <Route path="/docs" element= {<DocsPage />} />
         </Route>
 

@@ -1,10 +1,9 @@
 
 
+
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import LoginForm from '../components/LoginForm';
-import RegisterForm from '../components/RegisterForm';
-import { AuthMode } from '../types';
 import { AerugoIcon } from '../components/icons/DockerIcon';
 import { BriefcaseIcon } from '../components/icons/BriefcaseIcon';
 import { ShieldCheckIcon } from '../components/icons/ShieldCheckIcon';
@@ -14,30 +13,10 @@ import { UsersIcon } from '../components/icons/UsersIcon';
 import { CloudIcon } from '../components/icons/CloudIcon';
 import { RocketLaunchIcon } from '../components/icons/RocketLaunchIcon';
 
-
-interface AuthPageProps {
-  onLoginSuccess: (token: string) => void;
-}
-
-const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
-  const [authMode, setAuthMode] = useState<AuthMode>(AuthMode.Register);
-  const authSectionRef = useRef<HTMLDivElement>(null);
+const AuthPage: React.FC = () => {
   const introductionSectionRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  const switchMode = (mode: AuthMode) => {
-    setAuthMode(mode);
-  };
-  
-  const handleRegisterSuccess = () => {
-    setAuthMode(AuthMode.Login);
-  };
-
-  const handleGetStartedClick = () => {
-    setAuthMode(AuthMode.Register);
-    authSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const handleDocsClick = () => {
     introductionSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -210,15 +189,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
               >
                 Docs
               </Link>
-            <button
-                onClick={() => {
-                  setAuthMode(AuthMode.Login);
-                  authSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-                }}
+            <Link
+                to="/login"
                 className="font-semibold text-indigo-400 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-2 py-1 transition-colors"
               >
                 Sign In
-              </button>
+              </Link>
           </div>
         </nav>
       </header>
@@ -234,12 +210,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
             Streamline your development workflow with a private, scalable, and easy-to-use registry for all your container images.
           </p>
           <div className="mt-8 flex justify-center gap-4">
-            <button
-              onClick={handleGetStartedClick}
+            <Link
+              to="/register"
               className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-md shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900"
             >
               Get Started for Free
-            </button>
+            </Link>
           </div>
         </div>
       </main>
@@ -313,50 +289,49 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
             </div>
         </div>
       </section>
-
-      {/* Auth Section */}
-      <section ref={authSectionRef} className="py-20">
-        <div className="w-full max-w-md mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center text-slate-50 mb-2">
-                {authMode === AuthMode.Login ? 'Welcome Back' : 'Create Your Account'}
-            </h2>
-            <p className="text-center text-slate-400 mb-8">
-            {authMode === AuthMode.Login ? 'Sign in to manage your repositories.' : 'Join now to start pushing images.'}
-            </p>
-            
-            <div className="bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-lg p-8 shadow-2xl shadow-slate-950/50">
-            {authMode === AuthMode.Login ? (
-                <LoginForm onLoginSuccess={onLoginSuccess} />
-            ) : (
-                <RegisterForm onRegisterSuccess={handleRegisterSuccess} />
-            )}
-            </div>
-            
-            <div className="text-center mt-6">
-            {authMode === AuthMode.Login ? (
-                <p className="text-slate-400">
-                Don't have an account?{' '}
-                <button
-                    onClick={() => switchMode(AuthMode.Register)}
-                    className="font-semibold text-indigo-400 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded"
-                >
-                    Sign Up
-                </button>
-                </p>
-            ) : (
-                <p className="text-slate-400">
-                Already have an account?{' '}
-                <button
-                    onClick={() => switchMode(AuthMode.Login)}
-                    className="font-semibold text-indigo-400 hover:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded"
-                >
-                    Sign In
-                </button>
-                </p>
-            )}
-            </div>
+      
+      {/* Core Concepts Section */}
+      <section className="py-24 sm:py-32 bg-slate-900/70 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div className="text-center lg:text-left">
+                    <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-teal-300 via-sky-400 to-indigo-400 text-transparent bg-clip-text animate-shimmer">
+                        Powerful Core Concepts
+                    </h2>
+                    <p className="mt-6 text-lg text-slate-300/90">
+                        Aerugo is built around a flexible, hierarchical structure that makes managing your software supply chain intuitive and secure.
+                    </p>
+                    <ul className="mt-8 space-y-4 text-left">
+                        <li className="flex items-start">
+                            <BriefcaseIcon className="w-6 h-6 mr-4 mt-1 text-sky-300 flex-shrink-0"/>
+                            <div>
+                                <h3 className="font-semibold text-slate-50">Organizations</h3>
+                                <p className="text-slate-400">Create dedicated workspaces for your teams or projects. Each organization is a self-contained unit with its own members and repositories.</p>
+                            </div>
+                        </li>
+                         <li className="flex items-start">
+                            <ServerStackIcon className="w-6 h-6 mr-4 mt-1 text-sky-300 flex-shrink-0"/>
+                            <div>
+                                <h3 className="font-semibold text-slate-50">Repositories</h3>
+                                <p className="text-slate-400">Store and manage your container images. Repositories belong to organizations, inheriting their access policies.</p>
+                            </div>
+                        </li>
+                        <li className="flex items-start">
+                            <UsersIcon className="w-6 h-6 mr-4 mt-1 text-sky-300 flex-shrink-0"/>
+                            <div>
+                                <h3 className="font-semibold text-slate-50">Members & Roles</h3>
+                                <p className="text-slate-400">Invite users to your organizations with role-based access control (Owner, Admin, Member) to ensure security and proper governance.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div className="min-h-[300px] sm:min-h-[400px] flex items-center justify-center">
+                    <HubAndSpokeDiagram />
+                </div>
+             </div>
         </div>
       </section>
+
 
       {/* Footer */}
       <footer className="bg-slate-900/50 border-t border-slate-800">
@@ -419,6 +394,72 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
       </footer>
     </div>
   );
+};
+
+const HubAndSpokeDiagram = () => {
+    const nodes = [
+        { icon: <BriefcaseIcon className="w-8 h-8"/>, label: 'Organizations' },
+        { icon: <ServerStackIcon className="w-8 h-8"/>, label: 'Repositories' },
+        { icon: <UsersIcon className="w-8 h-8"/>, label: 'Members & Roles' },
+        { icon: <ShieldCheckIcon className="w-8 h-8"/>, label: 'Security' },
+        { icon: <CodeBracketIcon className="w-8 h-8"/>, label: 'CI/CD Pipelines' },
+    ];
+    const radius = 150; // Radius of the circle on which nodes are placed
+    const center = 175; // Center of the SVG viewBox
+
+    return (
+        <div className="relative w-[350px] h-[350px]">
+            <svg viewBox="0 0 350 350" className="absolute inset-0 w-full h-full animate-diagram-rotate">
+                 {nodes.map((_, index) => {
+                    const angle = (index / nodes.length) * 2 * Math.PI;
+                    const x2 = center + radius * Math.cos(angle);
+                    const y2 = center + radius * Math.sin(angle);
+                    return (
+                         <line
+                            key={index}
+                            x1={center} y1={center}
+                            x2={x2} y2={y2}
+                            stroke="rgba(79, 70, 229, 0.2)"
+                            strokeWidth="1.5"
+                            className="animate-pulse-spoke-line"
+                            style={{ animationDelay: `${index * 0.2}s` }}
+                        />
+                    );
+                 })}
+            </svg>
+            <div className="relative w-full h-full">
+                {/* Central Hub */}
+                 <div 
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-indigo-900/40 rounded-full flex flex-col items-center justify-center text-center p-2 border-2 border-indigo-500/50 animate-pulse-hub"
+                >
+                    <AerugoIcon className="w-10 h-10 text-indigo-300"/>
+                    <span className="text-sm font-bold text-slate-100 mt-1">Aerugo Registry</span>
+                </div>
+                {/* Spoke Nodes */}
+                {nodes.map((node, index) => {
+                    const angle = (index / nodes.length) * 2 * Math.PI;
+                    const x = center + radius * Math.cos(angle);
+                    const y = center + radius * Math.sin(angle);
+                    return (
+                        <div
+                            key={node.label}
+                            className="absolute -translate-x-1/2 -translate-y-1/2 w-28 h-28 flex flex-col items-center justify-center text-center p-2 animate-float-node"
+                            style={{ 
+                                left: `${(x / 350) * 100}%`, 
+                                top: `${(y / 350) * 100}%`,
+                                animationDelay: `${index * 0.5}s` 
+                            }}
+                        >
+                            <div className="p-3 bg-slate-800 border border-slate-700 rounded-full text-sky-300">
+                                {node.icon}
+                            </div>
+                             <span className="text-xs font-semibold text-slate-300 mt-2">{node.label}</span>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
 };
 
 const techFeatures = [
