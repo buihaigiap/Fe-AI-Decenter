@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Organization, OrganizationMember, User } from '../../types';
 import { fetchOrganizationMembers, fetchOrganizationDetails } from '../../services/api';
@@ -25,7 +26,6 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // State for members is now managed here instead of in MembersView
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [isLoadingMembers, setIsLoadingMembers] = useState(true);
   const [errorMembers, setErrorMembers] = useState<string | null>(null);
@@ -65,15 +65,14 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
   }, [getDetails, getMembers]);
 
   const handleSettingsChange = () => {
-      getDetails(); // Re-fetch my own details
-      onDataChange(); // Tell parent to re-fetch the list
+      getDetails();
+      onDataChange();
   }
   
   const handleMembersChanged = () => {
-    getMembers(); // Only re-fetch members when a member is added/removed/updated
+    getMembers();
   }
 
-  // Calculate the current user's role here to pass it to child components
   const currentUserRole = members.find(m => m.user_id === currentUser.id)?.role.toLowerCase();
 
   return (
@@ -94,8 +93,8 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
         </div>
       </header>
       
-      <div className="p-2 border-b border-slate-700/80 bg-slate-900/20">
-          <nav className="flex space-x-2" aria-label="Tabs">
+      <div className="border-b border-slate-700/80">
+          <nav className="flex space-x-6 px-6" aria-label="Tabs">
             <TabButton 
                 icon={<UsersIcon className="w-5 h-5 mr-2" />} 
                 label="Members" 
@@ -147,15 +146,14 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
   );
 };
 
-// Internal tab button component for styling
 const TabButton: React.FC<{icon: React.ReactNode, label: string, isActive: boolean, onClick: () => void}> = ({ icon, label, isActive, onClick }) => (
     <button
       onClick={onClick}
-      className={`relative flex items-center justify-center w-full px-3 py-2 font-semibold text-sm transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 rounded-md
+      className={`flex items-center whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 rounded-sm
         ${
           isActive
-            ? 'bg-slate-700 text-slate-50 shadow-inner'
-            : 'text-slate-400 hover:bg-slate-700/50 hover:text-slate-100'
+            ? 'border-indigo-500 text-indigo-400'
+            : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
         }`}
     >
         {icon}
@@ -163,7 +161,6 @@ const TabButton: React.FC<{icon: React.ReactNode, label: string, isActive: boole
     </button>
 );
 
-// MembersView is now a simpler component that receives its data via props
 const MembersView: React.FC<{
     token: string, 
     organization: Organization, 
@@ -178,7 +175,7 @@ const MembersView: React.FC<{
 
     const handleSuccess = () => {
         setShowAddForm(false);
-        onDataChange(); // Refresh member list by calling the passed-in handler
+        onDataChange();
     }
 
     return (
