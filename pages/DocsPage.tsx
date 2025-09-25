@@ -127,7 +127,7 @@ const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
                     <nav className="flex items-center justify-between max-w-7xl mx-auto">
                         <Link to="/" className="flex items-center space-x-3 group">
                             <AerugoIcon className="w-8 h-8 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
-                            <span className="text-xl font-bold text-slate-50">Aerugo Registry</span>
+                            <span className="text-xl font-bold text-slate-50">Aerugo</span>
                         </Link>
                         <div className="flex items-center gap-x-2 sm:gap-x-4">
                             <Link to="/login" className="font-semibold text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-3 py-2 transition-colors">
@@ -144,7 +144,7 @@ const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
             <MainWrapper {...mainWrapperProps}>
                 <div className={`text-center ${headerTopPadding} pb-12 border-b border-slate-800`}>
                     <h1 className={`${titleClass} tracking-tight bg-gradient-to-r from-slate-100 to-indigo-300 text-transparent bg-clip-text`}>Documentation</h1>
-                    <p className={`${subTitleMargin} max-w-2xl mx-auto text-lg text-slate-400`}>Everything you need to know to get started with Aerugo Registry.</p>
+                    <p className={`${subTitleMargin} max-w-2xl mx-auto text-lg text-slate-400`}>Everything you need to know to get started with Aerugo .</p>
                 </div>
             
                 <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 py-12">
@@ -186,7 +186,7 @@ const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
                             <section id="introduction" className={sectionScrollMarginClass}>
                                 <h1>Introduction</h1>
                                 <p>
-                                    Welcome to the Aerugo Registry! This guide will walk you through managing your container images using this web interface. Here you can create organizations for your teams, manage your repositories, and control access for your members.
+                                    Welcome to the Aerugo! This guide will walk you through managing your container images using this web interface. Here you can create organizations for your teams, manage your repositories, and control access for your members.
                                 </p>
                                 <blockquote>
                                     <p><strong>Note:</strong> This service is currently in a beta phase. APIs and features may change.</p>
@@ -279,7 +279,7 @@ const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
                                 <p>Last Updated: {new Date().toLocaleDateString()}</p>
                                 
                                 <h3>1. Acceptance of Terms</h3>
-                                <p>By accessing or using the Aerugo Registry service ("Service"), you agree to be bound by these Terms of Service ("Terms").</p>
+                                <p>By accessing or using the Aerugo  service ("Service"), you agree to be bound by these Terms of Service ("Terms").</p>
 
                                 <h3>2. User Content & Conduct</h3>
                                 <p>You retain full ownership of any content you upload. You are responsible for safeguarding your account and for all content you upload, ensuring it does not violate any laws or third-party rights.</p>

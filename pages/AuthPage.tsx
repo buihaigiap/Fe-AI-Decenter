@@ -70,9 +70,9 @@ const AuthPage: React.FC = () => {
       {/* Header */}
       <header className="py-4 px-4 sm:px-6 lg:px-8 bg-slate-900/80 backdrop-blur-lg sticky top-0 z-30 border-b border-slate-800">
         <nav className="flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-3 group">
-            <AerugoIcon className="w-8 h-8 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
-            <span className="text-xl font-bold text-slate-50">Aerugo Registry</span>
+          <Link to="/" className="flex items-center  group">
+            <img src="/components/icons/logo.png" alt="Aerugo Logo" className="w-[100px] h-[100px]" />
+            <span className="text-xl font-bold text-slate-50">Aerugo</span>
           </Link>
           <div className="flex items-center gap-x-2 sm:gap-x-4">
              <button
@@ -247,7 +247,7 @@ const AuthPage: React.FC = () => {
                 <div className="col-span-2 md:col-span-4 lg:col-span-2">
                     <div className="flex items-center space-x-3">
                         <AerugoIcon className="w-8 h-8 text-indigo-400" />
-                        <span className="text-xl font-bold text-slate-50">Aerugo Registry</span>
+                        <span className="text-xl font-bold text-slate-50">Aerugo</span>
                     </div>
                     <p className="mt-4 text-slate-400 max-w-xs">
                         A modern, secure, and performant container registry built for developers and teams.
@@ -313,7 +313,7 @@ const AuthPage: React.FC = () => {
                 </div>
             </div>
             <div className="mt-16 pt-8 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center text-sm text-slate-500">
-                <p>&copy; {new Date().getFullYear()} Aerugo Registry. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} Aerugo . All rights reserved.</p>
                 <div className="flex items-center space-x-6 mt-4 sm:mt-0">
                     <a href="https://github.com/AI-Decenter/Aerugo" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-indigo-400 transition-colors" aria-label="GitHub">
                         <GithubIcon className="w-6 h-6" />

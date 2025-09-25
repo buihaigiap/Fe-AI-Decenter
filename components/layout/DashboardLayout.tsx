@@ -47,7 +47,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ currentUser, onLogout
             <div className="flex items-center space-x-4 lg:space-x-8">
               <Link to="/" className="flex items-center space-x-3 flex-shrink-0">
                 <AerugoIcon className="h-7 w-7 text-indigo-500" />
-                <h1 className="text-xl font-bold text-slate-50 hidden md:block">Aerugo Registry</h1>
+                <h1 className="text-xl font-bold text-slate-50 hidden md:block">Aerugo</h1>
               </Link>
               <div className="flex items-center space-x-2 sm:space-x-4">
                 <NavLink to="/repositories" className={navLinkClasses}>
@@ -109,7 +109,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ currentUser, onLogout
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div className="border-t border-slate-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-slate-500 gap-4">
                 <div className="flex flex-col sm:flex-row items-center gap-x-6 gap-y-2">
-                    <p className="text-slate-400">&copy; {new Date().getFullYear()} Aerugo Registry</p>
+                    <p className="text-slate-400">&copy; {new Date().getFullYear()} Aerugo</p>
                     <div className="flex items-center gap-6">
                         <Link to="/docs" className="hover:text-indigo-400 transition-colors">Docs</Link>
                         <Link to="/docs#tos" className="hover:text-indigo-400 transition-colors">Terms</Link>
