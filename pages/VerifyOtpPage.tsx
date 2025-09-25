@@ -1,7 +1,7 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AerugoIcon } from '../components/icons/DockerIcon';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { verifyOtpAndResetPassword } from '../services/api';
@@ -86,7 +86,7 @@ const VerifyOtpPage: React.FC = () => {
             <div className="relative z-10 w-full max-w-md">
                 <div className="text-center mb-8">
                      <Link to="/" className="inline-block transition-transform duration-300 hover:scale-110">
-                        <AerugoIcon className="w-16 h-16 text-indigo-400" />
+                        <img src="/components/icons/logo.png" alt="Aerugo Logo" className="w-24 h-24" />
                     </Link>
                 </div>
                 

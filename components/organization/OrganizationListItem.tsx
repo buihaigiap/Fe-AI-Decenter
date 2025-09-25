@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Organization } from '../../types';
-import { AerugoIcon } from '../icons/DockerIcon';
 
 interface OrganizationListItemProps {
   organization: Organization;
@@ -26,7 +25,7 @@ const OrganizationListItem: React.FC<OrganizationListItemProps> = ({ organizatio
             <div className="flex items-center space-x-3">
                 <div className="flex-shrink-0">
                     <span className="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
-                        <AerugoIcon className="h-5 w-5 text-slate-400" />
+                        <img src="/components/icons/logo.png" alt="Organization Logo" className="h-6 w-6" />
                     </span>
                 </div>
                 <div className="flex-1 text-left min-w-0">

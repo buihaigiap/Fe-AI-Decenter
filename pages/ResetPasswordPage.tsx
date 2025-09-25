@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { AerugoIcon } from '../components/icons/DockerIcon';
 import Input from '../components/Input';
 import Button from '../components/Button';
 
@@ -54,7 +53,7 @@ const ResetPasswordPage: React.FC = () => {
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                      <Link to="/" className="inline-block">
-                        <AerugoIcon className="w-12 h-12 text-indigo-400" />
+                        <img src="/components/icons/logo.png" alt="Aerugo Logo" className="w-16 h-16" />
                     </Link>
                 </div>
                 

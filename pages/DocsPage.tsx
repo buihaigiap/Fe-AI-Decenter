@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CodeBlock from '../components/docs/CodeBlock';
-import { AerugoIcon } from '../components/icons/DockerIcon';
 import ArchitectureDiagram from '../components/docs/ArchitectureDiagram';
 import { InformationCircleIcon } from '../components/icons/InformationCircleIcon';
 import { ChipIcon } from '../components/icons/ChipIcon';
@@ -126,8 +125,8 @@ const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
                 <header className="py-4 px-4 sm:px-6 lg:px-8 bg-slate-900/80 backdrop-blur-lg sticky top-0 z-40 border-b border-slate-800">
                     <nav className="flex items-center justify-between max-w-7xl mx-auto">
                         <Link to="/" className="flex items-center space-x-3 group">
-                            <AerugoIcon className="w-8 h-8 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
-                            <span className="text-xl font-bold text-slate-50">Aerugo</span>
+                            <img src="/components/icons/logo.png" alt="Aerugo Logo" className="w-10 h-10 transition-transform duration-300 group-hover:scale-110" />
+                            <span className="brand-font text-3xl font-bold tracking-wider bg-gradient-to-r from-slate-100 to-indigo-300 text-transparent bg-clip-text">Aerugo</span>
                         </Link>
                         <div className="flex items-center gap-x-2 sm:gap-x-4">
                             <Link to="/login" className="font-semibold text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded px-3 py-2 transition-colors">
@@ -144,7 +143,7 @@ const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
             <MainWrapper {...mainWrapperProps}>
                 <div className={`text-center ${headerTopPadding} pb-12 border-b border-slate-800`}>
                     <h1 className={`${titleClass} tracking-tight bg-gradient-to-r from-slate-100 to-indigo-300 text-transparent bg-clip-text`}>Documentation</h1>
-                    <p className={`${subTitleMargin} max-w-2xl mx-auto text-lg text-slate-400`}>Everything you need to know to get started with Aerugo .</p>
+                    <p className={`${subTitleMargin} max-w-2xl mx-auto text-lg text-slate-400`}>Everything you need to know to get started with Aerugo.</p>
                 </div>
             
                 <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 py-12">
@@ -186,7 +185,7 @@ const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
                             <section id="introduction" className={sectionScrollMarginClass}>
                                 <h1>Introduction</h1>
                                 <p>
-                                    Welcome to the Aerugo! This guide will walk you through managing your container images using this web interface. Here you can create organizations for your teams, manage your repositories, and control access for your members.
+                                    Welcome to Aerugo! This guide will walk you through managing your container images using this web interface. Here you can create organizations for your teams, manage your repositories, and control access for your members.
                                 </p>
                                 <blockquote>
                                     <p><strong>Note:</strong> This service is currently in a beta phase. APIs and features may change.</p>
@@ -279,7 +278,7 @@ const DocsPage: React.FC<DocsPageProps> = ({ isEmbedded = false }) => {
                                 <p>Last Updated: {new Date().toLocaleDateString()}</p>
                                 
                                 <h3>1. Acceptance of Terms</h3>
-                                <p>By accessing or using the Aerugo  service ("Service"), you agree to be bound by these Terms of Service ("Terms").</p>
+                                <p>By accessing or using the Aerugo service ("Service"), you agree to be bound by these Terms of Service ("Terms").</p>
 
                                 <h3>2. User Content & Conduct</h3>
                                 <p>You retain full ownership of any content you upload. You are responsible for safeguarding your account and for all content you upload, ensuring it does not violate any laws or third-party rights.</p>

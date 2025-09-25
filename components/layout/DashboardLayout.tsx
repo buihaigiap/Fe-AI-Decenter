@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, Link } from 'react-router-dom';
 import { User } from '../../types';
-import { AerugoIcon } from '../icons/DockerIcon';
 import { UserCircleIcon } from '../icons/UserCircleIcon';
 import { LogoutIcon } from '../icons/LogoutIcon';
 import { GithubIcon } from '../icons/GithubIcon';
@@ -43,11 +42,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ currentUser, onLogout
     <div className="min-h-screen bg-slate-900 text-slate-100 font-sans flex flex-col">
       <header className="py-2 bg-slate-900/80 backdrop-blur-lg sticky top-0 z-30 border-b border-slate-800">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
+          <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4 lg:space-x-8">
               <Link to="/" className="flex items-center space-x-3 flex-shrink-0">
-                <AerugoIcon className="h-7 w-7 text-indigo-500" />
-                <h1 className="text-xl font-bold text-slate-50 hidden md:block">Aerugo</h1>
+                <img src="/components/icons/logo.png" alt="Aerugo Logo" className="h-10 w-10" />
+                <h1 className="brand-font text-3xl font-bold text-slate-50 hidden md:block tracking-wider">Aerugo</h1>
               </Link>
               <div className="flex items-center space-x-2 sm:space-x-4">
                 <NavLink to="/repositories" className={navLinkClasses}>
