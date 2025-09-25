@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Repository, ImageTag } from '../../types';
+import { Repository } from '../../types';
 import CommandSnippet from './CommandSnippet';
 import { ArrowLeftIcon } from '../icons/ArrowLeftIcon';
 import RepositorySettings from './RepositorySettings';
-import RepositoryTags from './RepositoryTags';
-import { TagIcon } from '../icons/TagIcon';
 import { CogIcon } from '../icons/CogIcon';
 import { CodeBracketIcon } from '../icons/CodeBracketIcon';
 import { fetchRepositoryDetails } from '../../services/api';
@@ -19,10 +17,9 @@ interface RepositoryDetailProps {
 const REGISTRY_HOST = 'registry.example.com';
 
 const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, organizationName, onBack }) => {
-    const [activeTab, setActiveTab] = useState<'tags' | 'instructions' | 'settings'>('tags');
+    const [activeTab, setActiveTab] = useState<'instructions' | 'settings'>('instructions');
     
     const [detailedRepo, setDetailedRepo] = useState<Repository>(repository);
-    const [tags, setTags] = useState<ImageTag[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +30,6 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, 
             // Use the original repository name for fetching, as it's the identifier
             const response = await fetchRepositoryDetails(organizationName, repository.name, token);
             setDetailedRepo(response.repository);
-            setTags(response.tags || []);
         } catch (err) {
             console.error("Failed to fetch repository details", err);
             setError('Failed to load repository details.');
@@ -63,12 +59,6 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, 
        <div className="border-b border-slate-700 mb-6">
           <nav className="flex space-x-2 sm:space-x-4 overflow-x-auto" aria-label="Tabs">
             <TabButton 
-                icon={<TagIcon className="w-5 h-5 mr-2 flex-shrink-0" />}
-                label="Tags" 
-                isActive={activeTab === 'tags'} 
-                onClick={() => setActiveTab('tags')} 
-            />
-            <TabButton 
                 icon={<CodeBracketIcon className="w-5 h-5 mr-2 flex-shrink-0" />}
                 label="Instructions" 
                 isActive={activeTab === 'instructions'} 
@@ -84,45 +74,45 @@ const RepositoryDetail: React.FC<RepositoryDetailProps> = ({ token, repository, 
       </div>
 
       <main>
-        {activeTab === 'tags' && (
-            <RepositoryTags 
-                repositoryPath={repositoryPath}
-                tags={tags}
-                isLoading={isLoading}
-                error={error}
-            />
-        )}
-        {activeTab === 'instructions' && (
-             <div className="space-y-10">
-                <div>
-                  <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
-                    Push an image
-                  </h3>
-                  <div className="space-y-6">
-                    <div>
-                        <h4 className="text-md font-medium text-slate-300 mb-2">1. Log in to the registry</h4>
-                        <CommandSnippet command={`docker login ${REGISTRY_HOST}`} />
+        {isLoading ? (
+            <div className="text-center py-8 text-slate-400">Loading details...</div>
+        ) : error ? (
+            <div className="text-center py-8 text-red-500">{error}</div>
+        ) : (
+            <div key={activeTab} className="animate-fade-in-up">
+                {activeTab === 'instructions' && (
+                    <div className="space-y-10">
+                        <div>
+                        <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
+                            Push an image
+                        </h3>
+                        <div className="space-y-6">
+                            <div>
+                                <h4 className="text-md font-medium text-slate-300 mb-2">1. Log in to the registry</h4>
+                                <CommandSnippet command={`docker login ${REGISTRY_HOST}`} />
+                            </div>
+                            <div>
+                                <h4 className="text-md font-medium text-slate-300 mb-2">2. Tag your local image</h4>
+                                <CommandSnippet command={`docker tag my-local-image:latest ${repositoryPath}:new-tag`} />
+                            </div>
+                            <div>
+                                <h4 className="text-md font-medium text-slate-300 mb-2">3. Push the image</h4>
+                                <CommandSnippet command={`docker push ${repositoryPath}:new-tag`} />
+                            </div>
+                        </div>
+                        </div>
                     </div>
-                    <div>
-                        <h4 className="text-md font-medium text-slate-300 mb-2">2. Tag your local image</h4>
-                        <CommandSnippet command={`docker tag my-local-image:latest ${repositoryPath}:new-tag`} />
-                    </div>
-                    <div>
-                        <h4 className="text-md font-medium text-slate-300 mb-2">3. Push the image</h4>
-                         <CommandSnippet command={`docker push ${repositoryPath}:new-tag`} />
-                    </div>
-                  </div>
-                </div>
+                )}
+                {activeTab === 'settings' && (
+                    <RepositorySettings 
+                        token={token}
+                        organizationName={organizationName}
+                        repository={detailedRepo}
+                        onRepositoryDeleted={onBack}
+                        onRepositoryUpdated={getDetails}
+                    />
+                )}
             </div>
-        )}
-        {activeTab === 'settings' && (
-            <RepositorySettings 
-                token={token}
-                organizationName={organizationName}
-                repository={detailedRepo}
-                onRepositoryDeleted={onBack}
-                onRepositoryUpdated={getDetails}
-            />
         )}
       </main>
     </div>

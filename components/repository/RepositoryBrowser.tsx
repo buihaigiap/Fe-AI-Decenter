@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { fetchRepositories, fetchRepositoriesByNamespace } from '../../services/api';
-import { Repository } from '../../types';
+import { Repository, Organization } from '../../types';
 import RepositoryList from './RepositoryList';
 import CreateRepositoryForm from './CreateRepositoryForm';
 import RepositoryDetail from './RepositoryDetail';
@@ -10,10 +10,11 @@ import { PlusIcon } from '../icons/PlusIcon';
 
 interface RepositoryBrowserProps {
   token: string;
-  organizationName?: string;
+  organization?: Organization;
 }
 
-const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizationName }) => {
+const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organization }) => {
+  const organizationName = organization?.name;
   // State for the repositories shown in the "My Repositories" section.
   // This is context-dependent (all repos vs. repos in a specific org).
   const [contextRepositories, setContextRepositories] = useState<Repository[]>([]);
@@ -123,15 +124,15 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
       );
     }
     return (
-      <div className="space-y-8">
+      <div className="space-y-12">
         <div>
-          <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
+          <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-3 mb-6">
             My Repositories
-            {organizationName && <span className="text-base font-normal text-slate-400"> in {organizationName}</span>}
+            {organization && <span className="text-base font-normal text-slate-400"> in {organization.display_name}</span>}
           </h3>
           <RepositoryList 
             repositories={myRepositories} 
-            organizationName={organizationName} 
+            organization={organization} 
             onSelectRepository={(repo) => setViewingRepository(repo)}
           />
         </div>
@@ -139,12 +140,12 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
         {/* Only show Community Repositories if no specific organization is selected */}
         {!organizationName && (
           <div>
-            <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">
+            <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-3 mb-6">
               Community Repositories
             </h3>
             <RepositoryList 
               repositories={communityRepositories} 
-              organizationName={undefined} 
+              organization={undefined} 
               onSelectRepository={(repo) => setViewingRepository(repo)}
             />
           </div>
@@ -154,11 +155,10 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
   };
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 shadow-lg">
+    <div>
       {!viewingRepository && !showCreateForm && (
-        <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-          <h2 className="text-2xl font-bold text-slate-50">Repositories</h2>
-          <div className="flex items-center gap-4 w-full md:w-auto">
+        <header className="flex flex-col md:flex-row justify-end items-center mb-6 gap-4">
+          <div className="flex items-center gap-4 w-full md:w-auto md:max-w-md flex-1">
             <div className="relative flex-grow">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                  <SearchIcon className="h-5 w-5 text-slate-400" />
@@ -168,7 +168,7 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
                 placeholder="Search repositories..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-md text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full pl-10 pr-4 py-2 bg-slate-700/80 border border-slate-600 rounded-md text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
             <Button 

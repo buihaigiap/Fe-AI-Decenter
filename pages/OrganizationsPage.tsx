@@ -34,10 +34,12 @@ const OrganizationsPage: React.FC<OrganizationsPageProps> = ({ token, currentUse
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-bold text-slate-50">Organizations</h1>
-        <p className="text-slate-400 mt-1">Create and manage your teams and workspaces.</p>
-      </header>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 className="text-3xl font-bold text-slate-50">Organizations</h1>
+            <p className="text-slate-400 mt-1 max-w-2xl">Create and manage your teams and workspaces.</p>
+        </div>
+      </div>
       <OrganizationsManager 
           token={token}
           currentUser={currentUser}

@@ -77,25 +77,25 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
   const currentUserRole = members.find(m => m.user_id === currentUser.id)?.role.toLowerCase();
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-lg">
-      <header className="p-6 border-b border-slate-700 flex items-center space-x-4">
+    <div className="bg-slate-800/70 border border-slate-700/80 rounded-xl shadow-2xl shadow-slate-950/50">
+      <header className="p-6 border-b border-slate-700/80 flex items-center space-x-5">
         <div className="flex-shrink-0">
             {detailedOrg.avatar_url ? (
-                <img className="h-14 w-14 rounded-full object-cover" src={detailedOrg.avatar_url} alt={`${detailedOrg.display_name} avatar`} />
+                <img className="h-16 w-16 rounded-full object-cover border-2 border-slate-600/50" src={detailedOrg.avatar_url} alt={`${detailedOrg.display_name} avatar`} />
             ) : (
-                <span className="h-14 w-14 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
-                    <AerugoIcon className="h-8 w-8 text-slate-400" />
+                <span className="h-16 w-16 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
+                    <AerugoIcon className="h-9 w-9 text-slate-400" />
                 </span>
             )}
         </div>
-        <div>
+        <div className="flex-1">
             <h2 className="text-2xl font-bold text-slate-50">{detailedOrg.display_name}</h2>
             <p className="text-slate-400">@{detailedOrg.name}</p>
         </div>
       </header>
-
-      <div className="border-b border-slate-700">
-          <nav className="flex space-x-2 px-4" aria-label="Tabs">
+      
+      <div className="p-2 border-b border-slate-700/80 bg-slate-900/20">
+          <nav className="flex space-x-2" aria-label="Tabs">
             <TabButton 
                 icon={<UsersIcon className="w-5 h-5 mr-2" />} 
                 label="Members" 
@@ -110,6 +110,7 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
             />
           </nav>
       </div>
+
 
       <div className="p-6">
         {isLoading ? (
@@ -150,15 +151,15 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
 const TabButton: React.FC<{icon: React.ReactNode, label: string, isActive: boolean, onClick: () => void}> = ({ icon, label, isActive, onClick }) => (
     <button
       onClick={onClick}
-      className={`relative flex items-center px-4 py-3 font-medium text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 rounded-t-md whitespace-nowrap ${
-        isActive
-          ? 'text-slate-50'
-          : 'text-slate-400 hover:text-slate-100'
-      }`}
+      className={`relative flex items-center justify-center w-full px-3 py-2 font-semibold text-sm transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 rounded-md
+        ${
+          isActive
+            ? 'bg-slate-700 text-slate-50 shadow-inner'
+            : 'text-slate-400 hover:bg-slate-700/50 hover:text-slate-100'
+        }`}
     >
         {icon}
         <span>{label}</span>
-        {isActive && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500"></div>}
     </button>
 );
 

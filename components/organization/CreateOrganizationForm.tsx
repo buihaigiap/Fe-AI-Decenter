@@ -15,7 +15,6 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ token, 
     name: '',
     display_name: '',
     description: '',
-    avatar_url: '',
     website_url: '',
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +42,6 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ token, 
     try {
       const payload: CreateOrganizationRequest = {
         ...formData,
-        avatar_url: formData.avatar_url || undefined,
         website_url: formData.website_url || undefined,
       };
       await createOrganization(payload, token);
@@ -98,20 +96,17 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ token, 
           onChange={handleChange}
           placeholder="https://example.com"
         />
-        <Input
-          id="avatar_url"
-          name="avatar_url"
-          label="Avatar URL (Optional)"
-          type="url"
-          value={formData.avatar_url || ''}
-          onChange={handleChange}
-          placeholder="https://example.com/logo.png"
-        />
 
         {error && <p className="text-sm text-red-500">{error}</p>}
         
-        <div className="flex justify-end items-center space-x-4 pt-2">
-            <Button type="button" onClick={onCancel} className="bg-transparent hover:bg-slate-700 text-slate-300">
+        <div className="flex justify-between items-center mt-6 pt-5 border-t border-slate-700/60">
+            <Button 
+              type="button" 
+              onClick={onCancel} 
+              fullWidth={false}
+              className="bg-transparent hover:bg-slate-700 border-slate-700 hover:border-slate-600 text-slate-300"
+              disabled={isLoading}
+            >
                 Cancel
             </Button>
             <Button type="submit" isLoading={isLoading} fullWidth={false}>

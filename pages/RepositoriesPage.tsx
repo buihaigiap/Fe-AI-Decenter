@@ -46,8 +46,11 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({ token }) => {
 
   return (
     <div className="space-y-6">
-       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4 sm:px-0">
-          <h1 className="text-3xl font-bold text-slate-50">Repositories</h1>
+       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-50">Repositories</h1>
+            <p className="text-slate-400 mt-1 max-w-2xl">Explore and manage your container image repositories.</p>
+        </div>
           <OrganizationSelector 
               organizations={organizations}
               isLoading={isLoadingOrgs}
@@ -56,7 +59,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({ token }) => {
               selectedOrganizationId={selectedOrgId}
           />
        </div>
-       <RepositoryBrowser key={selectedOrgId ?? 'all'} token={token} organizationName={selectedOrg?.name} />
+       <RepositoryBrowser key={selectedOrgId ?? 'all'} token={token} organization={selectedOrg} />
     </div>
   );
 };
