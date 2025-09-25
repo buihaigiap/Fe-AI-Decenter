@@ -168,6 +168,14 @@
         transform-origin: 50% 50%;
         animation: float-node 8s ease-in-out infinite;
     }
+    
+    @keyframes blinking-cursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .animate-blinking-cursor {
+      animation: blinking-cursor 1s step-end infinite;
+    }
 
   </style>
 </head>

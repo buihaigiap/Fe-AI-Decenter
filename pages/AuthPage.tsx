@@ -297,7 +297,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
                     <InteractiveWorkflowCard 
                         {...workflowFeatures[0]} 
                         className="h-full"
-                    />
+                    >
+                        <AnimatedCodeSnippet />
+                    </InteractiveWorkflowCard>
                 </div>
                 <div className="grid gap-8 mt-8 lg:mt-0">
                     <InteractiveWorkflowCard {...workflowFeatures[1]} />
@@ -437,54 +439,61 @@ const techFeatures = [
     },
 ];
 
-const HubAndSpokeDiagram = () => {
-    const nodes = [
-        { cx: 50, cy: 15 },
-        { cx: 85, cy: 32.5 },
-        { cx: 85, cy: 67.5 },
-        { cx: 50, cy: 85 },
-        { cx: 15, cy: 67.5 },
-        { cx: 15, cy: 32.5 },
-    ];
+const AnimatedCodeSnippet = () => {
+  const codeLines = [
+    '# repository-policy.yaml',
+    'repository: a-team/webapp-frontend',
+    '',
+    '# Access rules define team and user permissions.',
+    'permissions:',
+    "  - team: 'frontend-developers'",
+    "    level: 'read-write'",
+    "  - team: 'platform-engineering'",
+    "    level: 'read-only'",
+  ];
+  const fullCode = codeLines.join('\n');
+  const [displayedCode, setDisplayedCode] = useState('');
+  
+  useEffect(() => {
+    let currentIndex = 0;
+    let timeoutId: number;
 
-    return (
-        <div className="absolute inset-0 z-0 flex items-center justify-center opacity-25 mix-blend-soft-light pointer-events-none overflow-hidden">
-            <svg viewBox="0 0 100 100" className="w-full h-full animate-diagram-rotate">
-                <defs>
-                    <radialGradient id="hub-glow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stopColor="rgba(167, 139, 250, 0.6)" />
-                        <stop offset="100%" stopColor="rgba(124, 58, 237, 0.1)" />
-                    </radialGradient>
-                </defs>
+    const type = () => {
+        if (currentIndex < fullCode.length) {
+            setDisplayedCode(prev => fullCode.substring(0, currentIndex + 1));
+            currentIndex++;
+            timeoutId = window.setTimeout(type, Math.random() * 20 + 10);
+        } else {
+            timeoutId = window.setTimeout(() => {
+                setDisplayedCode('');
+                currentIndex = 0;
+                type();
+            }, 4000);
+        }
+    };
 
-                {/* Lines */}
-                {nodes.map((node, i) => (
-                    <line
-                        key={`line-${i}`}
-                        x1="50" y1="50"
-                        x2={node.cx} y2={node.cy}
-                        className="stroke-violet-400/50 animate-pulse-spoke-line"
-                        strokeWidth="0.5"
-                        style={{ animationDelay: `${i * 200}ms` }}
-                    />
-                ))}
+    timeoutId = window.setTimeout(type, 500);
 
-                {/* Hub */}
-                <circle cx="50" cy="50" r="12" fill="url(#hub-glow)" className="animate-pulse-hub" />
-                <circle cx="50" cy="50" r="8" className="fill-violet-300/80" />
+    return () => clearTimeout(timeoutId);
+  }, [fullCode]);
 
-                {/* Nodes */}
-                {nodes.map((node, i) => (
-                    <circle
-                        key={`node-${i}`}
-                        cx={node.cx} cy={node.cy} r="4"
-                        className="fill-violet-400/70 animate-float-node"
-                        style={{ animationDelay: `${i * 300}ms` }}
-                    />
-                ))}
-            </svg>
-        </div>
-    );
+  return (
+    <div className="mt-6 w-full h-80 bg-slate-900/70 rounded-lg border border-slate-700 font-mono text-sm text-indigo-300 overflow-hidden flex flex-col">
+      <div className="flex-shrink-0 bg-slate-800/80 px-4 py-2 flex items-center gap-2 border-b border-slate-700">
+        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+      </div>
+      <div className="p-4 overflow-hidden">
+        <pre className="whitespace-pre-wrap">
+            <code>
+            {displayedCode}
+            <span className="inline-block w-2.5 h-4 bg-indigo-300 animate-blinking-cursor ml-0.5"></span>
+            </code>
+        </pre>
+      </div>
+    </div>
+  );
 };
 
 
@@ -494,7 +503,6 @@ const workflowFeatures = [
         title: "Centralized Organizations",
         description: "Group repositories under organizations for powerful, team-based access control and management.",
         bgClass: 'animate-bg-grid-flow',
-        decoration: <HubAndSpokeDiagram />
     },
     {
         icon: <ShieldCheckIcon className="h-8 w-8 text-indigo-300" />,
@@ -546,10 +554,10 @@ interface InteractiveWorkflowCardProps {
     description: string;
     bgClass: string;
     className?: string;
-    decoration?: React.ReactNode;
+    children?: React.ReactNode;
 }
 
-const InteractiveWorkflowCard: React.FC<InteractiveWorkflowCardProps> = ({ icon, title, description, bgClass, className = '', decoration }) => {
+const InteractiveWorkflowCard: React.FC<InteractiveWorkflowCardProps> = ({ icon, title, description, bgClass, className = '', children }) => {
     const cardRef = useRef<HTMLDivElement>(null);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -568,7 +576,6 @@ const InteractiveWorkflowCard: React.FC<InteractiveWorkflowCardProps> = ({ icon,
             onMouseMove={handleMouseMove}
             className={`group relative p-8 bg-slate-900 rounded-xl border border-slate-700/80 transition-all duration-300 hover:border-indigo-500/50 hover:bg-slate-900/80 overflow-hidden ${className}`}
         >
-            {decoration}
             <div 
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 style={{
@@ -582,7 +589,8 @@ const InteractiveWorkflowCard: React.FC<InteractiveWorkflowCardProps> = ({ icon,
                     {icon}
                 </div>
                 <h3 className="text-xl font-semibold text-slate-100">{title}</h3>
-                <p className="mt-2 text-slate-400 flex-grow">{description}</p>
+                <p className="mt-2 text-slate-400">{description}</p>
+                {children}
             </div>
         </div>
     );
