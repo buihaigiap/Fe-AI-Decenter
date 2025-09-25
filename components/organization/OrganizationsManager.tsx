@@ -42,13 +42,17 @@ const OrganizationsManager: React.FC<OrganizationsManagerProps> = ({
     setShowCreateForm(false); // Hide create form when selecting an org
   };
 
+  // This will help animate the right column when its content changes
+  const rightColumnKey = showCreateForm ? 'create' : selectedOrganization?.id ?? 'placeholder';
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-1 space-y-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      {/* Left Column - List of Orgs */}
+      <div className="lg:col-span-1 lg:sticky lg:top-24 space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-slate-50">Organizations</h2>
+          <h2 className="text-xl font-semibold text-slate-100">Your Organizations</h2>
           {!showCreateForm && (
-              <Button onClick={() => { setShowCreateForm(true); setSelectedOrganization(null); }} fullWidth={false} className="whitespace-nowrap">
+              <Button onClick={() => { setShowCreateForm(true); setSelectedOrganization(null); }} fullWidth={false} className="whitespace-nowrap flex-shrink-0">
                   <PlusIcon className="w-5 h-5 -ml-1 mr-2" />
                   Create New
               </Button>
@@ -65,40 +69,45 @@ const OrganizationsManager: React.FC<OrganizationsManagerProps> = ({
             />
         )}
       </div>
+
+      {/* Right Column - Details / Create Form / Placeholder */}
       <div className="lg:col-span-2">
-        {showCreateForm && (
-            <CreateOrganizationForm 
-                token={token} 
-                onSuccess={handleCreationSuccess}
-                onCancel={() => setShowCreateForm(false)}
-            />
-        )}
-
-        {!showCreateForm && selectedOrganization && (
-            <OrganizationDetail 
-                key={selectedOrganization.id} // Re-mount component on org change
-                token={token}
-                currentUser={currentUser}
-                organization={selectedOrganization} 
-                onDataChange={handleDataChange}
-            />
-        )}
-
-        {!showCreateForm && !selectedOrganization && (
-            <div className="relative h-full flex items-center justify-center bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden min-h-[400px]">
-                <div 
-                    className="absolute inset-0 z-0 opacity-20"
-                    style={{
-                        background: `radial-gradient(circle at center, rgba(79, 70, 229, 0.5) 0%, transparent 70%)`,
-                    }}
+        <div key={rightColumnKey} className="animate-fade-in-up">
+            {showCreateForm && (
+                <CreateOrganizationForm 
+                    token={token} 
+                    onSuccess={handleCreationSuccess}
+                    onCancel={() => setShowCreateForm(false)}
                 />
-                <div className="relative z-10 text-center p-6 flex flex-col items-center">
-                    <BriefcaseIcon className="w-24 h-24 text-slate-500 animate-subtle-pulse" />
-                    <h3 className="text-xl font-semibold text-slate-200 mt-6">Manage Your Organization</h3>
-                    <p className="text-slate-400 mt-2 max-w-sm">Select an organization from the list to view its details, or create a new one to get started.</p>
+            )}
+
+            {!showCreateForm && selectedOrganization && (
+                <OrganizationDetail 
+                    key={selectedOrganization.id} // Re-mount component on org change
+                    token={token}
+                    currentUser={currentUser}
+                    organization={selectedOrganization} 
+                    onDataChange={handleDataChange}
+                />
+            )}
+
+            {!showCreateForm && !selectedOrganization && (
+                <div className="relative h-full flex items-center justify-center bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden min-h-[400px] lg:min-h-[60vh]">
+                    <div className="absolute inset-0 z-0 opacity-[0.03] animate-bg-grid-flow" style={{ backgroundSize: '2.5rem 2.5rem' }}></div>
+                    <div 
+                        className="absolute inset-0 z-0"
+                        style={{
+                            background: `radial-gradient(circle at center, rgba(79, 70, 229, 0.2) 0%, transparent 60%)`,
+                        }}
+                    />
+                    <div className="relative z-10 text-center p-6 flex flex-col items-center">
+                        <BriefcaseIcon className="w-24 h-24 text-slate-500 animate-subtle-pulse" />
+                        <h3 className="text-xl font-semibold text-slate-200 mt-6">Manage Your Organization</h3>
+                        <p className="text-slate-400 mt-2 max-w-sm">Select an organization from the list to view its details, or create a new one to get started.</p>
+                    </div>
                 </div>
-            </div>
-        )}
+            )}
+        </div>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import AddMemberForm from './AddMemberForm';
 import OrganizationSettings from './OrganizationSettings';
 import { UsersIcon } from '../icons/UsersIcon';
 import { CogIcon } from '../icons/CogIcon';
+import { AerugoIcon } from '../icons/DockerIcon';
 
 interface OrganizationDetailProps {
   token: string;
@@ -77,13 +78,24 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-lg">
-      <header className="p-6 border-b border-slate-700">
-        <h2 className="text-2xl font-bold text-slate-50">{detailedOrg.display_name}</h2>
-        <p className="text-slate-400">@{detailedOrg.name}</p>
+      <header className="p-6 border-b border-slate-700 flex items-center space-x-4">
+        <div className="flex-shrink-0">
+            {detailedOrg.avatar_url ? (
+                <img className="h-14 w-14 rounded-full object-cover" src={detailedOrg.avatar_url} alt={`${detailedOrg.display_name} avatar`} />
+            ) : (
+                <span className="h-14 w-14 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
+                    <AerugoIcon className="h-8 w-8 text-slate-400" />
+                </span>
+            )}
+        </div>
+        <div>
+            <h2 className="text-2xl font-bold text-slate-50">{detailedOrg.display_name}</h2>
+            <p className="text-slate-400">@{detailedOrg.name}</p>
+        </div>
       </header>
 
       <div className="border-b border-slate-700">
-          <nav className="flex space-x-4 px-4 sm:px-6 overflow-x-auto" aria-label="Tabs">
+          <nav className="flex space-x-2 px-4" aria-label="Tabs">
             <TabButton 
                 icon={<UsersIcon className="w-5 h-5 mr-2" />} 
                 label="Members" 
@@ -105,7 +117,7 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
         ) : error ? (
             <div className="text-center py-8 text-red-500">{error}</div>
         ) : (
-          <>
+          <div key={activeTab} className="animate-fade-in-up">
             {activeTab === 'members' && (
                 <MembersView 
                     token={token} 
@@ -127,7 +139,7 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
                     onOrganizationDeleted={onDataChange}
                 />
             )}
-          </>
+          </div>
         )}
       </div>
     </div>
@@ -138,14 +150,15 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ token, currentU
 const TabButton: React.FC<{icon: React.ReactNode, label: string, isActive: boolean, onClick: () => void}> = ({ icon, label, isActive, onClick }) => (
     <button
       onClick={onClick}
-      className={`flex items-center px-3 py-3 font-medium text-sm border-b-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800 rounded-t-md whitespace-nowrap ${
+      className={`relative flex items-center px-4 py-3 font-medium text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 rounded-t-md whitespace-nowrap ${
         isActive
-          ? 'border-indigo-500 text-indigo-400'
-          : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
+          ? 'text-slate-50'
+          : 'text-slate-400 hover:text-slate-100'
       }`}
     >
         {icon}
-        {label}
+        <span>{label}</span>
+        {isActive && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500"></div>}
     </button>
 );
 

@@ -33,14 +33,20 @@ const OrganizationsPage: React.FC<OrganizationsPageProps> = ({ token, currentUse
   }, [getOrganizations]);
 
   return (
-    <OrganizationsManager 
-        token={token}
-        currentUser={currentUser}
-        organizations={organizations}
-        isLoading={isLoading}
-        error={error}
-        onDataChange={getOrganizations}
-    />
+    <div className="space-y-6">
+      <header>
+        <h1 className="text-3xl font-bold text-slate-50">Organizations</h1>
+        <p className="text-slate-400 mt-1">Create and manage your teams and workspaces.</p>
+      </header>
+      <OrganizationsManager 
+          token={token}
+          currentUser={currentUser}
+          organizations={organizations}
+          isLoading={isLoading}
+          error={error}
+          onDataChange={getOrganizations}
+      />
+    </div>
   );
 };
 
