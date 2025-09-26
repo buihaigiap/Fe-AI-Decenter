@@ -59,8 +59,8 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
       setUpdateSuccess('Organization updated successfully!');
       onOrganizationUpdated();
       setTimeout(() => setUpdateSuccess(null), 3000);
-    } catch (err) {
-      setUpdateError('Failed to update organization. Please try again.');
+    } catch (err: any) {
+      setUpdateError(err.message || 'Failed to update organization. Please try again.');
       console.error(err);
     } finally {
       setIsUpdating(false);
@@ -78,8 +78,8 @@ const OrganizationSettings: React.FC<OrganizationSettingsProps> = ({
         await deleteOrganization(organization.id, token);
         setIsDeleteModalOpen(false);
         onOrganizationDeleted();
-    } catch (err) {
-        setDeleteError('Failed to delete organization. Please try again.');
+    } catch (err: any) {
+        setDeleteError(err.message || 'Failed to delete organization. Please try again.');
         console.error(err);
     } finally {
         setIsDeleting(false);

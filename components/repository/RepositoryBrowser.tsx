@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { fetchRepositories, fetchRepositoriesByNamespace } from '../../services/api';
+import { fetchRepositories, fetchRepositoriesByNamespace, fetchPublicRepositories } from '../../services/api';
 import { Repository, Organization } from '../../types';
 import RepositoryList from './RepositoryList';
 import CreateRepositoryForm from './CreateRepositoryForm';
@@ -46,12 +46,14 @@ const RepositoryBrowser: React.FC<RepositoryBrowserProps> = ({ token, organizati
           // Community repos are not shown in this view, so clear the list.
           setAllPublicRepositories([]); 
         } else {
-          // "All Organizations" is selected. Fetch everything to show both "My Repos" and "Community Repos".
-          const allRepos = await fetchRepositories(token);
-          const reposArray = Array.isArray(allRepos) ? allRepos : [];
+          // "All Organizations" is selected. Fetch user repos and public repos in parallel.
+          const [myRepos, publicRepos] = await Promise.all([
+            fetchRepositories(token),
+            fetchPublicRepositories(token)
+          ]);
           
-          setContextRepositories(reposArray);
-          setAllPublicRepositories(reposArray.filter(r => r.is_public));
+          setContextRepositories(Array.isArray(myRepos) ? myRepos : []);
+          setAllPublicRepositories(Array.isArray(publicRepos) ? publicRepos : []);
         }
       } catch (err) {
         setError('Failed to load repositories.');

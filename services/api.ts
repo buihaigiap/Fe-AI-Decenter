@@ -37,6 +37,12 @@ interface RepositoriesApiResponse {
     repositories: Repository[];
 }
 
+// Interface for public repositories API response
+interface PublicRepositoriesApiResponse {
+  repositories: Repository[];
+  total: number;
+}
+
 // Custom error class to standardize API errors.
 // Components that use these API calls expect an object with a `status` property.
 class ApiError extends Error {
@@ -167,6 +173,15 @@ export const fetchRepositories = async (token: string): Promise<Repository[]> =>
     const response = await axios.get<RepositoriesApiResponse>(`${API_BASE_URL}/api/v1/repos/repositories`, getAuthHeaders(token));
     return response.data?.repositories || [];
   } catch(error) {
+    handleError(error);
+  }
+};
+
+export const fetchPublicRepositories = async (token: string): Promise<Repository[]> => {
+  try {
+    const response = await axios.get<PublicRepositoriesApiResponse>(`${API_BASE_URL}/api/v1/repos/repositories/public`, getAuthHeaders(token));
+    return response.data?.repositories || [];
+  } catch (error) {
     handleError(error);
   }
 };
