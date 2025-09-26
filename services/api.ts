@@ -15,7 +15,10 @@ import {
     VerifyOtpRequest,
     RepositoryDetailsResponse,
     AuthRequest,
-    UpdateRepositoryRequest
+    UpdateRepositoryRequest,
+    ApiKey,
+    CreateApiKeyRequest,
+    CreateApiKeyResponse
 } from '../types';
 
 // Interface to match the structure of the API response for organizations
@@ -117,6 +120,33 @@ export const forgotPassword = async (data: ForgotPasswordRequest): Promise<void>
 export const verifyOtpAndResetPassword = async (data: VerifyOtpRequest): Promise<void> => {
     try {
         await axios.post(`${API_BASE_URL}/api/v1/auth/verify-otp`, data);
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+// --- API Key Endpoints ---
+export const fetchApiKeys = async (token: string): Promise<ApiKey[]> => {
+    try {
+        const response = await axios.get<ApiKey[]>(`${API_BASE_URL}/api/v1/auth/api-keys`, getAuthHeaders(token));
+        return response.data || [];
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+export const createApiKey = async (data: CreateApiKeyRequest, token: string): Promise<CreateApiKeyResponse> => {
+    try {
+        const response = await axios.post<CreateApiKeyResponse>(`${API_BASE_URL}/api/v1/auth/api-keys`, data, getAuthHeaders(token));
+        return response.data;
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+export const deleteApiKey = async (keyId: number, token: string): Promise<void> => {
+    try {
+        await axios.delete(`${API_BASE_URL}/api/v1/auth/api-keys/${keyId}`, getAuthHeaders(token));
     } catch (error) {
         handleError(error);
     }

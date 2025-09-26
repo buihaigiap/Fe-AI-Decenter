@@ -157,3 +157,24 @@ export interface Webhook {
       timestamp: string;
   };
 }
+
+export interface ApiKey {
+  id: number;
+  name: string;
+  created_at: string;
+  expires_at: string | null;
+  last_used_at: string | null;
+  is_active: boolean;
+}
+
+export interface CreateApiKeyRequest {
+  name: string;
+}
+
+export interface CreateApiKeyResponse {
+  id: number;
+  api_key: string;
+  created_at: string;
+  expires_at: string | null;
+  warning: string;
+}

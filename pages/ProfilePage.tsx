@@ -6,13 +6,14 @@ import { IdentificationIcon } from '../components/icons/IdentificationIcon';
 import { KeyIcon } from '../components/icons/KeyIcon';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import ApiKeyManager from '../components/ApiKeyManager';
 
 interface ProfilePageProps {
   currentUser: User;
   token: string;
 }
 
-type Tab = 'details' | 'password';
+type Tab = 'details' | 'password' | 'apikeys';
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, token }) => {
   const [activeTab, setActiveTab] = useState<Tab>('details');
@@ -56,12 +57,19 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, token }) => {
                   isActive={activeTab === 'password'}
                   onClick={() => setActiveTab('password')}
                 />
+                <TabButton
+                  icon={<KeyIcon className="w-5 h-5 mr-2" />}
+                  label="API Keys"
+                  isActive={activeTab === 'apikeys'}
+                  onClick={() => setActiveTab('apikeys')}
+                />
               </nav>
             </div>
             
             <div className="p-6 md:p-8">
               {activeTab === 'details' && <AccountDetails currentUser={currentUser} />}
               {activeTab === 'password' && <ChangePasswordForm token={token} />}
+              {activeTab === 'apikeys' && <ApiKeyManager token={token} />}
             </div>
           </div>
         </main>
